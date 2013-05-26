@@ -24,7 +24,7 @@ public class Table extends DbObject {
     @Override
     public String generateCreateScript() {
 
-        String columnsScript = Joiner.on(",").join(columns);
+        String columnsScript = Joiner.on(", ").join(columns);
         return String.format("create table %s (%s)", getFullName(), columnsScript);
     }
 

@@ -26,6 +26,6 @@ public class Column {
 
     @Override
     public String toString() {
-        return String.format("[%s] [%s] %s NULL", name, type.getSqlType(), isNull ? "" : "NOT");
+        return String.format("[%s] [%s]%s null", name, type.getSqlType(), isNull ? "" : " not");
     }
 }
