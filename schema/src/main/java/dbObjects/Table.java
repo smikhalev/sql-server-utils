@@ -32,4 +32,17 @@ public class Table extends DbObject {
     public String generateDropScript() {
         return String.format("drop table %s", getFullName());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Table table = (Table) o;
+
+        return super.equals(o) && columns.equals(table.getColumns());
+    }
 }

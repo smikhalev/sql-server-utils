@@ -14,11 +14,20 @@ public class TableBuilder {
         table = new Table(name);
     }
 
-    public TableBuilder addColumn(String name, DbType type, boolean isNull) {
+    public TableBuilder addNullColumn(String name, DbType type) {
+        return addColumn(name, type, true);
+    }
+
+    public TableBuilder addNotNullColumn(String name, DbType type) {
+        return addColumn(name, type, false);
+    }
+
+    private TableBuilder addColumn(String name, DbType type, boolean isNull) {
         Column column = new Column(name, type, isNull);
         table.getColumns().add(column);
         return this;
     }
+
 
     public Table build() {
         return table;

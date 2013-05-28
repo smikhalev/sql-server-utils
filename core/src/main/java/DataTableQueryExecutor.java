@@ -2,7 +2,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-public class DataTableQueryExecutor extends QueryExecutor<DataTable> {
+public class DataTableQueryExecutor extends ResultSetExecutor<DataTable> {
     public DataTableQueryExecutor(String connectionString) {
         super(connectionString);
     }

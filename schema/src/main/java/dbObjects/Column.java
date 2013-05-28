@@ -28,4 +28,22 @@ public class Column {
     public String toString() {
         return String.format("[%s] [%s]%s null", name, type.getSqlType(), isNull ? "" : " not");
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Column column = (Column) o;
+
+        return isNull == column.isNull
+            && name.equals(column.getName())
+            && type == column.type;
+    }
 }
+
+

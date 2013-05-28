@@ -9,7 +9,7 @@ public class QueryExecutorTest {
 
     @Test
     public void executeSimpleQueryTest() {
-        QueryExecutor<HashMap<String, String>> executor = new QueryExecutor<HashMap<String, String>>(connectionString) {
+        ResultSetExecutor<HashMap<String, String>> executor = new ResultSetExecutor<HashMap<String, String>>(connectionString) {
             @Override
             protected HashMap<String, String> processResult(ResultSet results) throws SQLException {
                 HashMap<String, String> firstRow = new HashMap<>();

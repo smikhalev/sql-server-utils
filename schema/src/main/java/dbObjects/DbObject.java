@@ -30,4 +30,12 @@ public abstract class DbObject implements Scriptable {
     public String getFullName() {
         return String.format("[%s].[%s]", schema, name);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        DbObject dbObject = (DbObject) o;
+
+        return name.equals(dbObject.getName()) &&
+               schema.equals(dbObject.getSchema());
+    }
 }
