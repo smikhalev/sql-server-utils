@@ -11,13 +11,15 @@
 
     <properties>
         <project.version>1.0</project.version>
+        <spring.version>3.2.3.RELEASE</spring.version>
     </properties>
 
     <modules>
-        <module>schema</module>
+        <module>database</module>
         <module>data-pump</module>
         <module>core</module>
     </modules>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -29,6 +31,27 @@
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>6.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
