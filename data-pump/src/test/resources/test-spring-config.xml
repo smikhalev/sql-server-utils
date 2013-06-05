@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="simpleConnectionProvider" class="com.smikhalev.sqlserverutils.core.connection.SimpleConnectionProvider">
+        <constructor-arg>
+            <value>jdbc:jtds:sqlserver://mikhalevpc/mini-pump;user=sa;password=sa2013;</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="dataTableExecutor" class="com.smikhalev.sqlserverutils.core.executor.DataTableExecutor">
+        <constructor-arg ref="simpleConnectionProvider"/>
+    </bean>
+
+    <bean id="scriptExecutor" class="com.smikhalev.sqlserverutils.core.executor.ScriptExecutor">
+        <constructor-arg ref="simpleConnectionProvider"/>
+    </bean>
+
+    <bean id="schemaLoader" class="com.smikhalev.sqlserverutils.schema.DatabaseLoader">
+        <constructor-arg ref="dataTableExecutor"/>
+    </bean>
+
+    <bean id="charColumnGenerator" class="com.smikhalev.sqlserverutils.generator.columngenerator.CharColumnGenerator"/>
+    <bean id="dateTimeColumnGenerator" class="com.smikhalev.sqlserverutils.generator.columngenerator.DateColumnGenerator"/>
+    <bean id="floatColumnGenerator" class="com.smikhalev.sqlserverutils.generator.columngenerator.FloatColumnGenerator"/>
+
+    <bean id="columnGenerator" class="java.util.EnumMap">
+        <constructor-arg>
+            <map
+                key-type="com.smikhalev.sqlserverutils.schema.dbobjects.DbType"
+                value-type="com.smikhalev.sqlserverutils.generator.ColumnGenerator">
+                <entry key="BIGINT">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                        <constructor-arg value="9223372036854775807"/>
+                    </bean>
+                </entry>
+                <entry key="INT">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                        <constructor-arg value="2147483647"/>
+                    </bean>
+                </entry>
+                <entry key="SMALLINT">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                        <constructor-arg value="32767"/>
+                    </bean>
+                </entry>
+                <entry key="TINYINT">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                        <constructor-arg value="256"/>
+                    </bean>
+                </entry>
+                <entry key="BIT">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                        <constructor-arg value="2"/>
+                    </bean>
+                </entry>
+                <entry key="NVARCHAR" value-ref="charColumnGenerator"/>
+                <entry key="VARCHAR" value-ref="charColumnGenerator"/>
+                <entry key="DATETIME" value-ref="dateTimeColumnGenerator"/>
+                <entry key="DATE">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.CastColumnGenerator">
+                        <constructor-arg ref="dateTimeColumnGenerator"/>
+                        <constructor-arg value="date"/>
+                    </bean>
+                </entry>
+                <entry key="TIME">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.CastColumnGenerator">
+                        <constructor-arg ref="dateTimeColumnGenerator"/>
+                        <constructor-arg value="time"/>
+                    </bean>
+                </entry>
+                <entry key="FLOAT" value-ref="floatColumnGenerator"/>
+                <entry key="REAL" value-ref="floatColumnGenerator"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="columnGeneratorFactory" class="com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory">
+        <constructor-arg name="columnGenerators" ref="columnGenerator"/>
+    </bean>
+
+    <bean id="dataGenerator" class="com.smikhalev.sqlserverutils.generator.SimpleDataGenerator">
+        <constructor-arg ref="columnGeneratorFactory"/>
+        <constructor-arg ref="scriptExecutor"/>
+        <constructor-arg value="1000000"/>
+    </bean>
+</beans>

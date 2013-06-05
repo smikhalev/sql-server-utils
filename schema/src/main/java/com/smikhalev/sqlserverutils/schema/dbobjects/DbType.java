@@ -35,4 +35,9 @@ public enum DbType {
     public String getSqlType() {
         return sqlType;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

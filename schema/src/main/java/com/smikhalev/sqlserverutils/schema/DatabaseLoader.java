@@ -2,7 +2,7 @@ package com.smikhalev.sqlserverutils.schema;
 
 import com.smikhalev.sqlserverutils.core.executor.DataRow;
 import com.smikhalev.sqlserverutils.core.executor.DataTable;
-import com.smikhalev.sqlserverutils.core.executor.DataTableQueryExecutor;
+import com.smikhalev.sqlserverutils.core.executor.DataTableExecutor;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,10 +10,10 @@ import java.util.List;
 
 public class DatabaseLoader {
 
-    private DataTableQueryExecutor queryExecutor;
+    private DataTableExecutor queryExecutor;
 
     @Autowired
-    public DatabaseLoader(DataTableQueryExecutor queryExecutor) {
+    public DatabaseLoader(DataTableExecutor queryExecutor) {
         this.queryExecutor = queryExecutor;
     }
 
@@ -44,33 +44,37 @@ public class DatabaseLoader {
 
             Table table = new Table(tableName, schemaName);
 
-            loadColumns(objectId, table);
+            loadColumns(table);
             loadIndexes(objectId, table);
 
             tables.add(table);
         }
     }
 
-    public void loadColumns(int objectId, Table table) {
+    public void loadColumns(Table table) {
         String query =
-            "select" +
-            "    c.name as column_name," +
-            "    t.name as type_name," +
-            "    c.is_nullable " +
-            "from sys.columns c " +
-            "inner join sys.types t" +
-            "    on c.user_type_id = t.user_type_id " +
-            "where object_id = ?";
+            "select " +
+            "    column_name, " +
+            "    data_type, " +
+            "    is_nullable, " +
+            "    coalesce(character_maximum_length, 0) as char_max_length\n" +
+            "from information_schema.columns \n" +
+            "where table_name=? and table_schema=?";
 
-        DataTable dataTable = queryExecutor.execute(query, objectId);
+        DataTable dataTable = queryExecutor.execute(query, table.getName(), table.getSchema());
 
         for (DataRow row : dataTable.getRows()) {
             String columnName = (String) row.get("column_name");
-            String typeName = (String) row.get("type_name");
-            boolean isNull = (boolean) row.get("is_nullable");
+            String dataType = (String) row.get("data_type");
+            String isNullable = (String) row.get("is_nullable");
+            int maxCharLength = (int) row.get("char_max_length");
 
-            DbType dbType = DbType.valueOf(typeName.toUpperCase());
-            Column column = new Column(columnName, dbType, isNull);
+            DbType dbType = DbType.valueOf(dataType.toUpperCase());
+            boolean isNull = isNullable.equals("YES") ? true : false;
+
+            Column column = maxCharLength == 0
+                    ? new Column(columnName, dbType, isNull)
+                    : new CharColumn(columnName, dbType, isNull, maxCharLength);
 
             table.getColumns().add(column);
         }

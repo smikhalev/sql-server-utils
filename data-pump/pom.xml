@@ -5,11 +5,40 @@
     <parent>
         <artifactId>sql-server-utils</artifactId>
         <groupId>sql-server-utils</groupId>
-        <version>${project.version}</version>
+        <version>1.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>data-pump</artifactId>
-    <version>${project.version}</version>
+    <version>1.0</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>sql-server-utils</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>sql-server-utils</groupId>
+            <artifactId>schema</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

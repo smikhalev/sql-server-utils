@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-public class DataTableQueryExecutor extends ResultSetExecutor<DataTable> {
-    public DataTableQueryExecutor(ConnectionProvider connectionProvider) {
+public class DataTableExecutor extends ResultSetExecutor<DataTable> {
+    public DataTableExecutor(ConnectionProvider connectionProvider) {
         super(connectionProvider);
     }
 

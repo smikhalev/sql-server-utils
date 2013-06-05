@@ -53,8 +53,10 @@ public class Column {
 
         return isNull == column.isNull
             && name.equals(column.getName())
-            && type == column.type;
+            && type == column.getType();
     }
 }
+
+
 
 

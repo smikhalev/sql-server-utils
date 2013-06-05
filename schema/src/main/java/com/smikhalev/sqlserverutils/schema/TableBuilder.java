@@ -22,8 +22,16 @@ public class TableBuilder {
         return addColumn(name, type, true);
     }
 
+    public TableBuilder addNullColumn(String name, DbType type, int size) {
+        return addColumn(name, type, true, size);
+    }
+
     public TableBuilder addNotNullColumn(String name, DbType type) {
         return addColumn(name, type, false);
+    }
+
+    public TableBuilder addNotNullColumn(String name, DbType type, int size) {
+        return addColumn(name, type, false, size);
     }
 
     public TableBuilder setClusteredIndex(String name, String... columns) {
@@ -66,7 +74,16 @@ public class TableBuilder {
         return indexColumns;
     }
 
+    private TableBuilder addColumn(String name, DbType type, boolean isNull, int size) {
+        Column column = new CharColumn(name, type, isNull, size);
+        table.getColumns().add(column);
+        return this;
+    }
+
     private TableBuilder addColumn(String name, DbType type, boolean isNull) {
+        if (type == DbType.NVARCHAR || type == DbType.VARCHAR)
+            return addColumn(name, type, isNull, 1);
+
         Column column = new Column(name, type, isNull);
         table.getColumns().add(column);
         return this;

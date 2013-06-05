@@ -10,7 +10,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="dataTableExecutor" class="com.smikhalev.sqlserverutils.core.executor.DataTableQueryExecutor">
+    <bean id="dataTableExecutor" class="com.smikhalev.sqlserverutils.core.executor.DataTableExecutor">
         <constructor-arg ref="simpleConnectionProvider"/>
     </bean>
 

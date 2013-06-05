@@ -5,7 +5,6 @@ import com.smikhalev.sqlserverutils.schema.DatabaseLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.Assert;
 
 @ContextConfiguration(locations = {"classpath:test-spring-config.xml"} )
 public class BaseDatabaseContextTest extends AbstractTestNGSpringContextTests {

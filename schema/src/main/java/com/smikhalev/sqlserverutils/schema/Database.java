@@ -47,4 +47,9 @@ public class Database implements Scriptable {
 
         return tables.equals(database.getTables());
     }
+
+    @Override
+    public String toString() {
+        return generateCreateScript();
+    }
 }

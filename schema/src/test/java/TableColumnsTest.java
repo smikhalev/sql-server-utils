@@ -65,6 +65,21 @@ public class TableColumnsTest extends BaseDatabaseContextTest {
     }
 
     @Test
+    public void testSizeOfColumnTypes() throws Exception {
+        DatabaseBuilder builder = new DatabaseBuilder();
+        builder.addTable(
+                new TableBuilder("all_types_table")
+                        .addNullColumn("nvarchar_column", DbType.NVARCHAR, 50)
+                        .addNullColumn("varchar_column", DbType.VARCHAR, 10)
+                        .build()
+        );
+        Database expectedDatabase = builder.build();
+
+        Database actualDatabase = loadDatabase(expectedDatabase);
+        Assert.assertEquals(actualDatabase, expectedDatabase, "Databases are not the same.");
+    }
+
+    @Test
     public void testSomeTablesTable() throws Exception {
         DatabaseBuilder builder = new DatabaseBuilder();
         builder.addTable(
