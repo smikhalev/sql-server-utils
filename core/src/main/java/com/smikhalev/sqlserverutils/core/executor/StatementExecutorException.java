@@ -1,6 +1,8 @@
 package com.smikhalev.sqlserverutils.core.executor;
 
-public class StatementExecutorException extends RuntimeException {
+import com.smikhalev.sqlserverutils.core.ApplicationException;
+
+public class StatementExecutorException extends ApplicationException {
     public StatementExecutorException(String message, Throwable cause) {
         super(message, cause);
     }

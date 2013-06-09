@@ -1,16 +1,13 @@
 package com.smikhalev.sqlserverutils.generator;
 
 import com.google.common.base.Joiner;
-import com.smikhalev.sqlserverutils.core.executor.ScriptExecutor;
+import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Column;
-import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /*
  * This class is based on fake query from sys.all_columns.
@@ -22,10 +19,10 @@ import java.util.Map;
 public class SimpleDataGenerator implements DataGenerator {
 
     private ColumnGeneratorFactory columnGeneratorFactory;
-    private ScriptExecutor executor;
+    private StatementExecutor executor;
     private int chunkSize;
 
-    public SimpleDataGenerator(ColumnGeneratorFactory columnGeneratorFactory, ScriptExecutor executor, int chunkSize) {
+    public SimpleDataGenerator(ColumnGeneratorFactory columnGeneratorFactory, StatementExecutor executor, int chunkSize) {
         this.columnGeneratorFactory = columnGeneratorFactory;
         this.executor = executor;
         this.chunkSize = chunkSize;
@@ -43,7 +40,7 @@ public class SimpleDataGenerator implements DataGenerator {
 
     private void generateChunkData(Database database, int count) {
         for(Table table : database.getTables()) {
-            executor.execute(generateDataScript(table, count));
+            executor.executeScript(generateDataScript(table, count));
         }
     }
 
@@ -56,7 +53,7 @@ public class SimpleDataGenerator implements DataGenerator {
     private String generateHeader(Table table) {
         List<String> columnNames = new ArrayList<>();
 
-        for(Column column : table.getColumns()) {
+        for(Column column : table.getColumns().values()) {
             columnNames.add(column.getName());
         }
 
@@ -67,7 +64,7 @@ public class SimpleDataGenerator implements DataGenerator {
     private String generateSelectScript(Table table, int count) {
         List<String> valueScripts = new ArrayList<>();
 
-        for(Column column : table.getColumns()) {
+        for(Column column : table.getColumns().values()) {
             ColumnGenerator generator = columnGeneratorFactory.create(column);
             String valueScript = String.format("%s as [%s]",
                                     generator.generateValueScript(), column.getName());

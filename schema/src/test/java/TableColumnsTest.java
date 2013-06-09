@@ -23,22 +23,6 @@ public class TableColumnsTest extends BaseDatabaseContextTest {
         Assert.assertEquals(actualDatabase, expectedDatabase, "Databases are not the same.");
     }
 
-    @Test (expectedExceptions = StatementExecutorException.class,
-           expectedExceptionsMessageRegExp = "Column names in each table must be unique.*")
-    public void testColumnsWithTheSameNameTable() throws Exception {
-        DatabaseBuilder builder = new DatabaseBuilder();
-        builder.addTable(
-                new TableBuilder("simple_table")
-                        .addNullColumn("bit_column", DbType.BIT)
-                        .addNullColumn("bit_column", DbType.BIT)
-                        .build()
-        );
-        Database expectedDatabase = builder.build();
-
-        Database actualDatabase = loadDatabase(expectedDatabase);
-        Assert.assertEquals(actualDatabase, expectedDatabase, "Databases are not the same.");
-    }
-
     @Test
     public void testOneTableWithAllColumnTypes() throws Exception {
         DatabaseBuilder builder = new DatabaseBuilder();
@@ -133,11 +117,11 @@ public class TableColumnsTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalSimpleTable();
         Database expectedDatabase = buildTypicalSimpleTable();
 
-        Column expectedColumn = expectedDatabase.getTables().get(0).getColumns().get(0);
+        Column expectedColumn = expectedDatabase.getTables().get(0).getColumns().get("bit_column");
         expectedColumn.setName("wrong name");
 
         Database actualDatabase = loadDatabase(sourceDatabase);
-        Column actualColumn = actualDatabase.getTables().get(0).getColumns().get(0);
+        Column actualColumn = actualDatabase.getTables().get(0).getColumns().get("bit_column");
         Assert.assertNotEquals(actualColumn, expectedColumn, "This column should not be the same");
     }
 
@@ -146,11 +130,11 @@ public class TableColumnsTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalSimpleTable();
         Database expectedDatabase = buildTypicalSimpleTable();
 
-        Column expectedColumn = expectedDatabase.getTables().get(0).getColumns().get(0);
+        Column expectedColumn = expectedDatabase.getTables().get(0).getColumns().get("bit_column");
         expectedColumn.setType(DbType.FLOAT);
 
         Database actualDatabase = loadDatabase(sourceDatabase);
-        Column actualColumn = actualDatabase.getTables().get(0).getColumns().get(0);
+        Column actualColumn = actualDatabase.getTables().get(0).getColumns().get("bit_column");
         Assert.assertNotEquals(actualColumn, expectedColumn, "This column should not be the same");
     }
 
@@ -159,11 +143,11 @@ public class TableColumnsTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalSimpleTable();
         Database expectedDatabase = buildTypicalSimpleTable();
 
-        Column expectedColumn = expectedDatabase.getTables().get(0).getColumns().get(0);
+        Column expectedColumn = expectedDatabase.getTables().get(0).getColumns().get("bit_column");
         expectedColumn.setNull(false);
 
         Database actualDatabase = loadDatabase(sourceDatabase);
-        Column actualColumn = actualDatabase.getTables().get(0).getColumns().get(0);
+        Column actualColumn = actualDatabase.getTables().get(0).getColumns().get("bit_column");
         Assert.assertNotEquals(actualColumn, expectedColumn, "This column should not be the same");
     }
 

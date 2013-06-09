@@ -1,6 +1,7 @@
 package com.smikhalev.sqlserverutils.schema;
 
 import com.google.common.base.Joiner;
+import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Database implements Scriptable {
             tableCreateScripts.add(table.generateCreateScript());
         }
 
-        return Joiner.on(NEW_LINE).join(tableCreateScripts);
+        return Joiner.on(Constants.NEW_LINE).join(tableCreateScripts);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class Database implements Scriptable {
             tableDropScripts.add(table.generateDropScript());
         }
 
-        return Joiner.on(NEW_LINE).join(tableDropScripts);
+        return Joiner.on(Constants.NEW_LINE).join(tableDropScripts);
     }
 
     @Override

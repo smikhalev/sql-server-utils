@@ -10,15 +10,11 @@
         </constructor-arg>
     </bean>
 
-    <bean id="dataTableExecutor" class="com.smikhalev.sqlserverutils.core.executor.DataTableExecutor">
+    <bean id="statementExecutor" class="com.smikhalev.sqlserverutils.core.executor.StatementExecutor">
         <constructor-arg ref="simpleConnectionProvider"/>
     </bean>
 
-    <bean id="scriptExecutor" class="com.smikhalev.sqlserverutils.core.executor.ScriptExecutor">
-        <constructor-arg ref="simpleConnectionProvider"/>
-    </bean>
-
-    <bean id="schemaLoader" class="com.smikhalev.sqlserverutils.schema.DatabaseLoader">
-        <constructor-arg ref="dataTableExecutor"/>
+    <bean id="databaseLoader" class="com.smikhalev.sqlserverutils.schema.DatabaseLoader">
+        <constructor-arg ref="statementExecutor"/>
     </bean>
 </beans>

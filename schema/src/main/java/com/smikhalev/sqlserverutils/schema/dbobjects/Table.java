@@ -1,14 +1,16 @@
 package com.smikhalev.sqlserverutils.schema.dbobjects;
 
 import com.google.common.base.Joiner;
+import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.schema.exception.GenerateScriptException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Table extends DbObject {
 
-    private List<Column> columns = new ArrayList<>();
+    private HashMap<String, Column> columns = new HashMap<>();
     private ClusteredIndex clusteredIndex;
     private List<NonClusteredIndex> nonClusteredIndexes = new ArrayList<>();
 
@@ -16,7 +18,11 @@ public class Table extends DbObject {
         super(name, schema);
     }
 
-    public List<Column> getColumns() {
+    public boolean isHeap() {
+        return clusteredIndex == null;
+    }
+
+    public HashMap<String, Column> getColumns() {
         return columns;
     }
 
@@ -56,14 +62,14 @@ public class Table extends DbObject {
             nonClusteredIndexScripts.add(index.generateCreateScript());
         }
 
-        return Joiner.on(NEW_LINE).join(nonClusteredIndexScripts);
+        return Joiner.on(Constants.NEW_LINE).join(nonClusteredIndexScripts);
     }
 
     private String generateCreateTableScript() {
         if (columns.isEmpty())
             throw new GenerateScriptException("Table should contain at least one column.");
 
-        String columnsScript = Joiner.on(", ").join(columns);
+        String columnsScript = Joiner.on(", ").join(columns.values());
         return String.format("create table %s (%s)", getFullName(), columnsScript);
     }
 

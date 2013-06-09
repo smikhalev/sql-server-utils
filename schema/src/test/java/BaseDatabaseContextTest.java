@@ -1,4 +1,4 @@
-import com.smikhalev.sqlserverutils.core.executor.ScriptExecutor;
+import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseContext;
 import com.smikhalev.sqlserverutils.schema.DatabaseLoader;
@@ -12,10 +12,10 @@ public class BaseDatabaseContextTest extends AbstractTestNGSpringContextTests {
     private DatabaseLoader databaseLoader;
 
     @Autowired
-    private ScriptExecutor scriptExecutor;
+    private StatementExecutor executor;
 
     protected Database loadDatabase(Database sourceDatabase) throws Exception {
-        try (DatabaseContext dbContext = new DatabaseContext(sourceDatabase, scriptExecutor)) {
+        try (DatabaseContext dbContext = new DatabaseContext(sourceDatabase, executor)) {
             dbContext.create();
             return databaseLoader.load();
         }

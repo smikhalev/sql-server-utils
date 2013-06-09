@@ -2,19 +2,17 @@ package com.smikhalev.sqlserverutils.schema;
 
 import com.smikhalev.sqlserverutils.core.executor.DataRow;
 import com.smikhalev.sqlserverutils.core.executor.DataTable;
-import com.smikhalev.sqlserverutils.core.executor.DataTableExecutor;
+import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class DatabaseLoader {
 
-    private DataTableExecutor queryExecutor;
+    private StatementExecutor executor;
 
-    @Autowired
-    public DatabaseLoader(DataTableExecutor queryExecutor) {
-        this.queryExecutor = queryExecutor;
+    public DatabaseLoader(StatementExecutor executor) {
+        this.executor = executor;
     }
 
     public Database load() {
@@ -35,7 +33,7 @@ public class DatabaseLoader {
             "inner join sys.schemas s" +
             "    on t.schema_id = s.schema_id";
 
-        DataTable dataTable = queryExecutor.execute(query);
+        DataTable dataTable = executor.executeAsDataTable(query);
 
         for (DataRow row : dataTable.getRows()) {
             int objectId = (int) row.get("object_id");
@@ -61,7 +59,7 @@ public class DatabaseLoader {
             "from information_schema.columns \n" +
             "where table_name=? and table_schema=?";
 
-        DataTable dataTable = queryExecutor.execute(query, table.getName(), table.getSchema());
+        DataTable dataTable = executor.executeAsDataTable(query, table.getName(), table.getSchema());
 
         for (DataRow row : dataTable.getRows()) {
             String columnName = (String) row.get("column_name");
@@ -76,29 +74,30 @@ public class DatabaseLoader {
                     ? new Column(columnName, dbType, isNull)
                     : new CharColumn(columnName, dbType, isNull, maxCharLength);
 
-            table.getColumns().add(column);
+            table.getColumns().put(columnName, column);
         }
     }
 
     public void loadIndexes(int objectId, Table table) {
         String query =
-            "select name, index_id, type\n" +
+            "select name, index_id, type, is_unique\n" +
             "from sys.indexes\n" +
             "where object_id = ?" +
             " and type <> 0";
 
-        DataTable dataTable = queryExecutor.execute(query, objectId);
+        DataTable dataTable = executor.executeAsDataTable(query, objectId);
 
         for (DataRow row : dataTable.getRows()) {
             String indexName = (String) row.get("name");
             int indexId = (int) row.get("index_id");
             int indexTypeId = (int) row.get("type");
+            boolean isUnique = (boolean) row.get("is_unique");
 
             IndexType indexType = IndexType.values()[indexTypeId - 1];
 
             Index index = indexType == IndexType.CLUSTERED
-                    ? new ClusteredIndex(indexName, table)
-                    : new NonClusteredIndex(indexName, table);
+                    ? new ClusteredIndex(indexName, table, isUnique)
+                    : new NonClusteredIndex(indexName, table, isUnique);
 
             loadIndex(objectId, indexId, index);
 
@@ -123,7 +122,7 @@ public class DatabaseLoader {
             "  and index_id = ?\n" +
             "order by key_ordinal";
 
-        DataTable dataTable = queryExecutor.execute(query, objectId, indexId);
+        DataTable dataTable = executor.executeAsDataTable(query, objectId, indexId);
 
         for (DataRow row : dataTable.getRows()) {
             String columnName = (String) row.get("column_name");

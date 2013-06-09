@@ -1,6 +1,7 @@
 package com.smikhalev.sqlserverutils.schema.dbobjects;
 
 import com.google.common.base.Joiner;
+import com.smikhalev.sqlserverutils.core.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +9,8 @@ import java.util.List;
 public class NonClusteredIndex extends Index {
     private List<String> includedColumns = new ArrayList<>();
 
-    public NonClusteredIndex(String name, Table table) {
-        super(name, table);
+    public NonClusteredIndex(String name, Table table, boolean isUnique) {
+        super(name, table, isUnique);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class NonClusteredIndex extends Index {
         String result = "";
 
         if (includedColumns.size() > 0){
-            String includedColumns = Joiner.on(COMMA_AND_NEW_LINE).join(getIncludedColumns());
+            String includedColumns = Joiner.on(Constants.COMMA_AND_NEW_LINE).join(getIncludedColumns());
 
             result = String.format("include (%s)", includedColumns);
         }

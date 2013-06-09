@@ -1,6 +1,7 @@
 package com.smikhalev.sqlserverutils.schema.dbobjects;
 
 import com.google.common.base.Joiner;
+import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.schema.exception.GenerateScriptException;
 
 import java.util.ArrayList;
@@ -10,10 +11,12 @@ public abstract class Index extends DbObject {
 
     private Table table;
     private List<IndexColumn> keyColumns = new ArrayList<>();
+    private boolean isUnique;
 
-    public Index(String name, Table table) {
+    public Index(String name, Table table, boolean isUnique) {
         super(name, null);
         this.table = table;
+        this.isUnique = isUnique;
     }
 
     public Table getTable() {
@@ -24,6 +27,10 @@ public abstract class Index extends DbObject {
         return keyColumns;
     }
 
+    public boolean isUnique(){
+        return isUnique;
+    }
+
     public abstract IndexType getIndexType();
 
     @Override
@@ -31,10 +38,11 @@ public abstract class Index extends DbObject {
         if (keyColumns.isEmpty())
             throw new GenerateScriptException("Index should contain at least one key column.");
 
-        String keyColumnsScript = Joiner.on(COMMA_AND_NEW_LINE).join(keyColumns);
+        String keyColumnsScript = Joiner.on(Constants.COMMA_AND_NEW_LINE).join(keyColumns);
+        String unique = isUnique ? "unique" : "";
 
-        return String.format("create %s index [%s] on %s (%s)",
-                getIndexType().getName(), getName(), table.getFullName(), keyColumnsScript);
+        return String.format("create %s %s index [%s] on %s (%s)",
+                unique, getIndexType().getName(), getName(), table.getFullName(), keyColumnsScript);
     }
 
     @Override
@@ -54,11 +62,7 @@ public abstract class Index extends DbObject {
 
         return super.equals(index)
             && keyColumns.equals(index.keyColumns)
+            && isUnique == index.isUnique()
             && table.getFullName().equals(index.getTable().getFullName());
-    }
-
-    @Override
-    public int hashCode() {
-        return 0;
     }
 }

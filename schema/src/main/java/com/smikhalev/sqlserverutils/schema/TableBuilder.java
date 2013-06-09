@@ -35,7 +35,15 @@ public class TableBuilder {
     }
 
     public TableBuilder setClusteredIndex(String name, String... columns) {
-        ClusteredIndex index = new ClusteredIndex(name, table);
+        return setClusteredIndex(name, false, columns);
+    }
+
+    public TableBuilder setUniqueClusteredIndex(String name, String... columns) {
+        return setClusteredIndex(name, true, columns);
+    }
+
+    private TableBuilder setClusteredIndex(String name, boolean isUnique, String[] columns) {
+        ClusteredIndex index = new ClusteredIndex(name, table, isUnique);
         List<IndexColumn> indexColumns = convertIntoDefaultIndexKeyColumn(columns);
         index.getKeyColumns().addAll(indexColumns);
         table.setClusteredIndex(index);
@@ -44,7 +52,15 @@ public class TableBuilder {
     }
 
     public TableBuilder addNonClusteredIndex(String name, String... columns) {
-        NonClusteredIndex index = new NonClusteredIndex(name, table);
+        return addNonClusteredIndex(name, false, columns);
+    }
+
+    public TableBuilder addUniqueNonClusteredIndex(String name, String... columns) {
+        return addNonClusteredIndex(name, true, columns);
+    }
+
+    private TableBuilder addNonClusteredIndex(String name, boolean isUnique, String[] columns) {
+        NonClusteredIndex index = new NonClusteredIndex(name, table, isUnique);
         List<IndexColumn> indexColumns = convertIntoDefaultIndexKeyColumn(columns);
         index.getKeyColumns().addAll(indexColumns);
         table.getNonClusteredIndexes().add(index);
@@ -53,7 +69,7 @@ public class TableBuilder {
     }
 
     public TableBuilder addNonClusteredIndexWithIncludeColumns(String name, String[]  keyColumns, String[] includedColumns) {
-        NonClusteredIndex index = new NonClusteredIndex(name, table);
+        NonClusteredIndex index = new NonClusteredIndex(name, table, false);
         List<IndexColumn> indexColumns = convertIntoDefaultIndexKeyColumn(keyColumns);
         index.getKeyColumns().addAll(indexColumns);
         index.getIncludedColumns().addAll(Lists.newArrayList(includedColumns));
@@ -76,7 +92,7 @@ public class TableBuilder {
 
     private TableBuilder addColumn(String name, DbType type, boolean isNull, int size) {
         Column column = new CharColumn(name, type, isNull, size);
-        table.getColumns().add(column);
+        table.getColumns().put(name, column);
         return this;
     }
 
@@ -85,7 +101,7 @@ public class TableBuilder {
             return addColumn(name, type, isNull, 1);
 
         Column column = new Column(name, type, isNull);
-        table.getColumns().add(column);
+        table.getColumns().put(name, column);
         return this;
     }
 

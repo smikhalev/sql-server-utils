@@ -10,16 +10,8 @@
         </constructor-arg>
     </bean>
 
-    <bean id="dataTableExecutor" class="com.smikhalev.sqlserverutils.core.executor.DataTableExecutor">
+    <bean id="statementExecutor" class="com.smikhalev.sqlserverutils.core.executor.StatementExecutor">
         <constructor-arg ref="simpleConnectionProvider"/>
-    </bean>
-
-    <bean id="scriptExecutor" class="com.smikhalev.sqlserverutils.core.executor.ScriptExecutor">
-        <constructor-arg ref="simpleConnectionProvider"/>
-    </bean>
-
-    <bean id="schemaLoader" class="com.smikhalev.sqlserverutils.schema.DatabaseLoader">
-        <constructor-arg ref="dataTableExecutor"/>
     </bean>
 
     <bean id="charColumnGenerator" class="com.smikhalev.sqlserverutils.generator.columngenerator.CharColumnGenerator"/>
@@ -83,7 +75,34 @@
 
     <bean id="dataGenerator" class="com.smikhalev.sqlserverutils.generator.SimpleDataGenerator">
         <constructor-arg ref="columnGeneratorFactory"/>
-        <constructor-arg ref="scriptExecutor"/>
+        <constructor-arg ref="statementExecutor"/>
         <constructor-arg value="1000000"/>
     </bean>
+
+    <bean id="tableSizeProvider" class="com.smikhalev.sqlserverutils.test.sizeprovider.SystemViewTableSizeWithoutLazyLoadingProvider">
+        <constructor-arg ref="statementExecutor"/>
+    </bean>
+
+    <bean id="indexSizeProvider" class="com.smikhalev.sqlserverutils.test.sizeprovider.SystemViewIndexSizeWithoutLazyLoadingProvider">
+        <constructor-arg ref="statementExecutor"/>
+    </bean>
+
+    <bean id="strategySelector" class="com.smikhalev.sqlserverutils.export.ExportStrategySelector">
+        <constructor-arg>
+            <list>
+                <bean class="com.smikhalev.sqlserverutils.export.strategy.FullExportOfSmallTableStrategy">
+                    <constructor-arg ref="tableSizeProvider"/>
+                    <constructor-arg value="10"/>
+                </bean>
+                <bean class="com.smikhalev.sqlserverutils.export.strategy.UniqueNonClusteredIndexChunkStrategy">
+                    <constructor-arg ref="tableSizeProvider"/>
+                    <constructor-arg ref="indexSizeProvider"/>
+                    <constructor-arg value="10"/>
+                </bean>
+                <bean class="com.smikhalev.sqlserverutils.export.strategy.FullExportStrategy"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.export.encoder.SimpleValueEncoder"/>
 </beans>

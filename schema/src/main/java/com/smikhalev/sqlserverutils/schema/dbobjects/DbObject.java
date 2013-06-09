@@ -37,6 +37,10 @@ public abstract class DbObject implements Scriptable {
     }
 
     public String getFullName() {
+        return buildFullName(schema, name);
+    }
+
+    public static String buildFullName(String schema, String name) {
         return String.format("[%s].[%s]", schema, name);
     }
 

@@ -1,13 +1,13 @@
 package com.smikhalev.sqlserverutils.schema;
 
-import com.smikhalev.sqlserverutils.core.executor.ScriptExecutor;
+import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 
 public class DatabaseContext implements AutoCloseable {
 
-    private ScriptExecutor executor;
+    private StatementExecutor executor;
     private Database database;
 
-    public DatabaseContext(Database database, ScriptExecutor executor) {
+    public DatabaseContext(Database database, StatementExecutor executor) {
         this.executor = executor;
         this.database = database;
     }
@@ -19,11 +19,11 @@ public class DatabaseContext implements AutoCloseable {
 
     public void create() {
         String createScript = database.generateCreateScript();
-        executor.execute(createScript);
+        executor.executeScript(createScript);
     }
 
     public void drop() {
         String dropScript = database.generateDropScript();
-        executor.execute(dropScript);
+        executor.executeScript(dropScript);
     }
 }
