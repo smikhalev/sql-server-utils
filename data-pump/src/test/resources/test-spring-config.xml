@@ -90,15 +90,34 @@
     <bean id="strategySelector" class="com.smikhalev.sqlserverutils.export.ExportStrategySelector">
         <constructor-arg>
             <list>
-                <bean class="com.smikhalev.sqlserverutils.export.strategy.FullExportOfSmallTableStrategy">
+                <bean class="com.smikhalev.sqlserverutils.export.strategy.TableSizeDependantStrategy">
+                    <constructor-arg>
+                        <bean class="com.smikhalev.sqlserverutils.export.strategy.FullExportStrategy"/>
+                    </constructor-arg>
                     <constructor-arg ref="tableSizeProvider"/>
-                    <constructor-arg value="10"/>
+                    <constructor-arg name="tableSizeLimit" value="10"/>
                 </bean>
                 <bean class="com.smikhalev.sqlserverutils.export.strategy.UniqueNonClusteredIndexChunkStrategy">
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg ref="indexSizeProvider"/>
-                    <constructor-arg value="10"/>
+                    <constructor-arg name="chunkSize" value="10"/>
                 </bean>
+                <bean class="com.smikhalev.sqlserverutils.export.strategy.UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy">
+                    <constructor-arg ref="tableSizeProvider"/>
+                    <constructor-arg ref="indexSizeProvider"/>
+                    <constructor-arg name="chunkSize" value="10"/>
+                </bean>
+                <bean class="com.smikhalev.sqlserverutils.export.strategy.ClusteredIndexChunkStrategy">
+                    <constructor-arg ref="tableSizeProvider"/>
+                    <constructor-arg ref="indexSizeProvider"/>
+                    <constructor-arg name="chunkSize" value="10"/>
+                </bean>
+                <bean class="com.smikhalev.sqlserverutils.export.strategy.NonClusteredIndexChunkStrategy">
+                    <constructor-arg ref="tableSizeProvider"/>
+                    <constructor-arg ref="indexSizeProvider"/>
+                    <constructor-arg name="chunkSize" value="10"/>
+                </bean>
+
                 <bean class="com.smikhalev.sqlserverutils.export.strategy.FullExportStrategy"/>
             </list>
         </constructor-arg>

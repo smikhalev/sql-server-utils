@@ -12,7 +12,6 @@ import com.smikhalev.sqlserverutils.schema.DatabaseBuilder;
 import com.smikhalev.sqlserverutils.schema.DatabaseContext;
 import com.smikhalev.sqlserverutils.schema.TableBuilder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
-import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -52,7 +51,6 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
         String exportString = exportDatabase(database);
 
         Assert.assertNotNull(exportString);
-        System.out.println(exportString);
         Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
     }
 
@@ -72,7 +70,58 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
         String exportString = exportDatabase(database);
 
         Assert.assertNotNull(exportString);
-        System.out.println(exportString);
+        Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
+    }
+
+    @Test
+    public void testUniqueClusteredIndexWithNonClusteredExport() throws Exception {
+        Database database = new DatabaseBuilder()
+                .addTable(new TableBuilder("middle_table")
+                        .addNullColumn("bigint_column", DbType.BIGINT)
+                        .addNullColumn("int_column", DbType.INT)
+                        .addNullColumn("bit_column", DbType.BIT)
+                        .setUniqueClusteredIndex("unique_clustered", "bigint_column")
+                        .addNonClusteredIndex("small_non_clustered", "bit_column")
+                        .build()
+                ).build();
+
+        String exportString = exportDatabase(database);
+
+        Assert.assertNotNull(exportString);
+        Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
+    }
+
+    @Test
+    public void testClusteredIndexExport() throws Exception {
+        Database database = new DatabaseBuilder()
+                .addTable(new TableBuilder("middle_table")
+                        .addNullColumn("bigint_column", DbType.BIGINT)
+                        .addNullColumn("int_column", DbType.INT)
+                        .addNullColumn("bit_column", DbType.BIT)
+                        .setClusteredIndex("clustered", "bigint_column")
+                        .build()
+                ).build();
+
+        String exportString = exportDatabase(database);
+
+        Assert.assertNotNull(exportString);
+        Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
+    }
+
+    @Test
+    public void testNonClusteredIndexExport() throws Exception {
+        Database database = new DatabaseBuilder()
+                .addTable(new TableBuilder("middle_table")
+                        .addNullColumn("bigint_column", DbType.BIGINT)
+                        .addNullColumn("int_column", DbType.INT)
+                        .addNullColumn("bit_column", DbType.BIT)
+                        .addNonClusteredIndex("small_non_clustered", "bigint_column")
+                        .build()
+                ).build();
+
+        String exportString = exportDatabase(database);
+
+        Assert.assertNotNull(exportString);
         Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
     }
 

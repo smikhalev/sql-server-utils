@@ -4,9 +4,7 @@ import com.smikhalev.sqlserverutils.export.ExportStrategy;
 import com.smikhalev.sqlserverutils.export.ExportStrategySelector;
 import com.smikhalev.sqlserverutils.export.IndexSizeProvider;
 import com.smikhalev.sqlserverutils.export.TableSizeProvider;
-import com.smikhalev.sqlserverutils.export.strategy.FullExportOfSmallTableStrategy;
-import com.smikhalev.sqlserverutils.export.strategy.FullExportStrategy;
-import com.smikhalev.sqlserverutils.export.strategy.UniqueNonClusteredIndexChunkStrategy;
+import com.smikhalev.sqlserverutils.export.strategy.*;
 import com.smikhalev.sqlserverutils.schema.TableBuilder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
@@ -64,8 +62,11 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
             }
         };
 
-        strategies.add(new FullExportOfSmallTableStrategy(tableSizeProvider, 10));
+        strategies.add(new TableSizeDependantStrategy(new FullExportStrategy(), tableSizeProvider, 10));
         strategies.add(new UniqueNonClusteredIndexChunkStrategy(tableSizeProvider, indexSizeProvider, 5));
+        strategies.add(new UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy(tableSizeProvider, indexSizeProvider, 5));
+        strategies.add(new ClusteredIndexChunkStrategy(tableSizeProvider, indexSizeProvider, 5));
+        strategies.add(new NonClusteredIndexChunkStrategy(tableSizeProvider, indexSizeProvider, 5));
         strategies.add(new FullExportStrategy());
 
         selector = new ExportStrategySelector(strategies);
@@ -79,7 +80,9 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
 
         ExportStrategy strategy = selector.select(table);
 
-        Assert.assertTrue(strategy instanceof FullExportOfSmallTableStrategy);
+        Assert.assertTrue(strategy instanceof TableSizeDependantStrategy);
+        ExportStrategy innerStrategy = ((TableSizeDependantStrategy) strategy).getInnerStrategy();
+        Assert.assertTrue(innerStrategy instanceof FullExportStrategy);
     }
 
     @Test
@@ -112,6 +115,50 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
         Assert.assertTrue(!queries.isEmpty());
         Assert.assertTrue(queries.get(0).contains("order by [int_column]"));
     }
+
+    @Test
+    public void testUniqueClusteredIndexStrategyWithNonClustered(){
+        Table table = new TableBuilder("middle_table")
+                .addNullColumn("bigint_column", DbType.BIGINT)
+                .setUniqueClusteredIndex("clustered", "bigint_column")
+                .addNonClusteredIndex("small_non_clustered", "bigint_column")
+                .build();
+
+        ExportStrategy strategy = selector.select(table);
+
+        Assert.assertTrue(strategy instanceof UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy);
+        List<String> queries = strategy.generateExportSelects(table);
+        Assert.assertTrue(!queries.isEmpty());
+    }
+
+    @Test
+    public void testClusteredIndexStrategy(){
+        Table table = new TableBuilder("middle_table")
+                .addNullColumn("bigint_column", DbType.BIGINT)
+                .setClusteredIndex("clustered", "bigint_column")
+                .build();
+
+        ExportStrategy strategy = selector.select(table);
+
+        Assert.assertTrue(strategy instanceof ClusteredIndexChunkStrategy);
+        List<String> queries = strategy.generateExportSelects(table);
+        Assert.assertTrue(!queries.isEmpty());
+    }
+
+    @Test
+    public void testNonClusteredIndexStrategy(){
+        Table table = new TableBuilder("middle_table")
+                .addNullColumn("bigint_column", DbType.BIGINT)
+                .addNonClusteredIndex("clustered", "bigint_column")
+                .build();
+
+        ExportStrategy strategy = selector.select(table);
+
+        Assert.assertTrue(strategy instanceof NonClusteredIndexChunkStrategy);
+        List<String> queries = strategy.generateExportSelects(table);
+        Assert.assertTrue(!queries.isEmpty());
+    }
+
 
     @Test
     public void testExportOfLastStrategy(){

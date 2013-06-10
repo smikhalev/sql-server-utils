@@ -2,21 +2,29 @@ package com.smikhalev.sqlserverutils.export.strategy;
 
 import com.google.common.base.Joiner;
 import com.smikhalev.sqlserverutils.export.BaseExportStrategy;
+import com.smikhalev.sqlserverutils.export.IndexSizeProvider;
 import com.smikhalev.sqlserverutils.export.TableSizeProvider;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
+import com.smikhalev.sqlserverutils.schema.dbobjects.NonClusteredIndex;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class IndexChunkStrategy extends BaseExportStrategy {
-    private int pageSize;
+    private int chunkSize;
     private TableSizeProvider tableSizeProvider;
+    private IndexSizeProvider indexSizeProvider;
 
-    public IndexChunkStrategy(TableSizeProvider tableSizeProvider, int pageSize) {
+    public IndexChunkStrategy(TableSizeProvider tableSizeProvider, IndexSizeProvider indexSizeProvider, int chunkSize) {
         this.tableSizeProvider = tableSizeProvider;
-        this.pageSize = pageSize;
+        this.chunkSize = chunkSize;
+        this.indexSizeProvider = indexSizeProvider;
     }
+
+    protected abstract Index getIndex(Table table);
+
+    public abstract boolean isApplicable(Table table);
 
     @Override
     public List<String> generateExportSelects(Table table) {
@@ -24,7 +32,7 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
 
         long tableSize = tableSizeProvider.getSize(table);
 
-        for(long offset = 0; offset < tableSize; offset = offset + pageSize) {
+        for(long offset = 0; offset < tableSize; offset = offset + chunkSize) {
             String select = generateExportSelect(table, offset);
             selects.add(select);
         }
@@ -32,16 +40,34 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
         return selects;
     }
 
+    protected IndexSizeProvider getIndexSizeProvider() {
+        return indexSizeProvider;
+    }
+
     protected String generateExportSelect(Table table, long offset) {
         return generateSelectClause(table)
              + generateFromClause(table)
-             + generateOrderByClause(table.getClusteredIndex(), offset);
+             + generateOrderByClause(getIndex(table), offset);
     }
 
     protected String generateOrderByClause(Index index, long offset) {
         String order = Joiner.on(",").join(index.getKeyColumns());
-        return String.format(" order by %s offset %s rows fetch next %s rows only", order, offset, pageSize);
+        return String.format(" order by %s offset %s rows fetch next %s rows only", order, offset, chunkSize);
     }
 
-    public abstract boolean isApplicable(Table table);
+    protected Index findSmallestNonClusteredIndex(Table table)  {
+        Index minimumIndex = null;
+        long minimumIndexSize = 0;
+        for(NonClusteredIndex index : table.getNonClusteredIndexes()) {
+            long indexSize = indexSizeProvider.getSize(index);
+            if (minimumIndex == null || minimumIndexSize > indexSize)
+            {
+                minimumIndex = index;
+                minimumIndexSize = indexSize;
+            }
+        }
+
+        return minimumIndex;
+    }
+
 }
