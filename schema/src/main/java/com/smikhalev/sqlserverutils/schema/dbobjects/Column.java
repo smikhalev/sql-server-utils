@@ -36,8 +36,7 @@ public class Column {
         isNull = aNull;
     }
 
-    @Override
-    public String toString() {
+    public String generateCreateScript() {
         return String.format("[%s] [%s]%s null", name, type.getSqlType(), isNull ? "" : " not");
     }
 

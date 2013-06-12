@@ -1,8 +1,8 @@
-package com.smikhalev.sqlserverutils.export.strategy;
+package com.smikhalev.sqlserverutils.exportdata.strategy;
 
 import com.google.common.base.Joiner;
-import com.smikhalev.sqlserverutils.export.IndexSizeProvider;
-import com.smikhalev.sqlserverutils.export.TableSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.IndexSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public abstract class IndexChunkSubQueryStrategy extends IndexChunkStrategy {
     protected String generateSelectClause(Table table) {
         List<String> columnNames = new ArrayList<>();
 
-        for(Column column : table.getColumns().values()) {
+        for(Column column : table.getColumns()) {
             columnNames.add(String.format("m.[%s]", column.getName()));
         }
 

@@ -39,7 +39,7 @@ public class SimpleDataGenerator implements DataGenerator {
     }
 
     private void generateChunkData(Database database, int count) {
-        for(Table table : database.getTables()) {
+        for(Table table : database.getTables().values()) {
             executor.executeScript(generateDataScript(table, count));
         }
     }
@@ -51,20 +51,13 @@ public class SimpleDataGenerator implements DataGenerator {
     }
 
     private String generateHeader(Table table) {
-        List<String> columnNames = new ArrayList<>();
-
-        for(Column column : table.getColumns().values()) {
-            columnNames.add(column.getName());
-        }
-
-        String columns = Joiner.on(",").join(columnNames);
-        return String.format("insert into %s (%s) ", table.getFullName(), columns);
+        return String.format("insert into %s (%s) ", table.getFullName(), table.getColumns().generateFields());
     }
 
     private String generateSelectScript(Table table, int count) {
         List<String> valueScripts = new ArrayList<>();
 
-        for(Column column : table.getColumns().values()) {
+        for(Column column : table.getColumns()) {
             ColumnGenerator generator = columnGeneratorFactory.create(column);
             String valueScript = String.format("%s as [%s]",
                                     generator.generateValueScript(), column.getName());

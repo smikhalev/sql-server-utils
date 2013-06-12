@@ -1,4 +1,3 @@
-import com.google.common.collect.Lists;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseBuilder;
 import com.smikhalev.sqlserverutils.schema.TableBuilder;
@@ -7,7 +6,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
-import java.util.List;
 
 public class TableIndexesTest extends BaseDatabaseContextTest {
 
@@ -70,12 +68,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        Index expectedIndex = expectedDatabase.getTables().get(0).getClusteredIndex();
+        Index expectedIndex = getTable(expectedDatabase).getClusteredIndex();
         expectedIndex.setName("wrong name");
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        Index actualIndex = actualDatabase.getTables().get(0).getClusteredIndex();
+        Index actualIndex = getTable(actualDatabase).getClusteredIndex();
         Assert.assertNotEquals(actualIndex, expectedIndex, "This index should not be the same");
     }
 
@@ -84,12 +82,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        Table expectedTable =  expectedDatabase.getTables().get(0);
+        Table expectedTable = getTable(expectedDatabase);
         expectedTable.setClusteredIndex(null);
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        Index actualTable = actualDatabase.getTables().get(0).getClusteredIndex();
+        Index actualTable = getTable(actualDatabase).getClusteredIndex();
         Assert.assertNotEquals(actualTable, expectedTable, "This table should not be the same");
     }
 
@@ -98,12 +96,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        Table expectedTable =  expectedDatabase.getTables().get(0);
+        Table expectedTable =  getTable(expectedDatabase);
         expectedTable.getNonClusteredIndexes().remove(0);
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        Index actualTable = actualDatabase.getTables().get(0).getClusteredIndex();
+        Index actualTable = getTable(actualDatabase).getClusteredIndex();
         Assert.assertNotEquals(actualTable, expectedTable, "This table should not be the same");
     }
 
@@ -112,12 +110,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        IndexColumn expectedIndexColumn = expectedDatabase.getTables().get(0).getClusteredIndex().getKeyColumns().get(0);
+        IndexColumn expectedIndexColumn = getTable(expectedDatabase).getClusteredIndex().getKeyColumns().get(0);
         expectedIndexColumn.setName("wrong name");
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        IndexColumn actualIndexColumn = actualDatabase.getTables().get(0).getClusteredIndex().getKeyColumns().get(0);
+        IndexColumn actualIndexColumn = getTable(actualDatabase).getClusteredIndex().getKeyColumns().get(0);
         Assert.assertNotEquals(actualIndexColumn, expectedIndexColumn, "This index column should not be the same");
     }
 
@@ -126,12 +124,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        IndexColumn expectedIndexColumn = expectedDatabase.getTables().get(0).getClusteredIndex().getKeyColumns().get(0);
+        IndexColumn expectedIndexColumn = getTable(expectedDatabase).getClusteredIndex().getKeyColumns().get(0);
         expectedIndexColumn.setSort(SortType.DESC);
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        IndexColumn actualIndexColumn = actualDatabase.getTables().get(0).getClusteredIndex().getKeyColumns().get(0);
+        IndexColumn actualIndexColumn = getTable(actualDatabase).getClusteredIndex().getKeyColumns().get(0);
         Assert.assertNotEquals(actualIndexColumn, expectedIndexColumn, "This index column should not be the same");
     }
 
@@ -140,12 +138,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        Index expectedIndex = expectedDatabase.getTables().get(0).getClusteredIndex();
+        Index expectedIndex = getTable(expectedDatabase).getClusteredIndex();
         expectedIndex.getKeyColumns().remove(0);
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        Index actualIndex = actualDatabase.getTables().get(0).getClusteredIndex();
+        Index actualIndex = getTable(actualDatabase).getClusteredIndex();
         Assert.assertNotEquals(actualIndex, expectedIndex, "This index should not be the same");
     }
 
@@ -154,12 +152,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        Index expectedIndex = expectedDatabase.getTables().get(0).getClusteredIndex();
+        Index expectedIndex = getTable(expectedDatabase).getClusteredIndex();
         Collections.reverse(expectedIndex.getKeyColumns());
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        Index actualIndex = actualDatabase.getTables().get(0).getClusteredIndex();
+        Index actualIndex = getTable(actualDatabase).getClusteredIndex();
         Assert.assertNotEquals(actualIndex, expectedIndex, "This index should not be the same");
     }
 
@@ -168,12 +166,12 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        NonClusteredIndex expectedIndex = expectedDatabase.getTables().get(0).getNonClusteredIndexes().get(0);
+        NonClusteredIndex expectedIndex = getTable(expectedDatabase).getNonClusteredIndexes().get(0);
         expectedIndex.getIncludedColumns().clear();
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
-        Index actualIndex = actualDatabase.getTables().get(0).getClusteredIndex();
+        Index actualIndex = getTable(actualDatabase).getClusteredIndex();
         Assert.assertNotEquals(actualIndex, expectedIndex, "This index should not be the same");
     }
 
@@ -182,17 +180,20 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
         Database sourceDatabase = buildTypicalDatabase();
         Database expectedDatabase = buildTypicalDatabase();
 
-        NonClusteredIndex expectedIndex = expectedDatabase.getTables().get(0).getNonClusteredIndexes().get(0);
+        NonClusteredIndex expectedIndex = getTable(expectedDatabase).getNonClusteredIndexes().get(0);
         Collections.reverse(expectedIndex.getIncludedColumns());
 
         Database actualDatabase = loadDatabase(sourceDatabase);
 
         // The order in included columns doesn't matter that is why this modification
         // should not change anything
-        Index actualIndex = actualDatabase.getTables().get(0).getNonClusteredIndexes().get(0);
+        Index actualIndex = getTable(actualDatabase).getNonClusteredIndexes().get(0);
         Assert.assertEquals(actualIndex, expectedIndex, "This index should be the same");
     }
 
+    private Table getTable(Database actualDatabase) {
+        return actualDatabase.getTables().get("[dbo].[simple_table]");
+    }
 
     private Database buildTypicalDatabase() {
         DatabaseBuilder builder = new DatabaseBuilder();

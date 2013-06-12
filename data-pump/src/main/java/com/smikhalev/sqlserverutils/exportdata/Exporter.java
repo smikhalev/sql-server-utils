@@ -1,7 +1,6 @@
-package com.smikhalev.sqlserverutils.export;
+package com.smikhalev.sqlserverutils.exportdata;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.export.encoder.SimpleValueEncoder;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
@@ -19,8 +18,8 @@ public class Exporter {
         this.valueEncoder = valueEncoder;
     }
 
-    public void export(Database database, Writer writer) {
-        for (Table table : database.getTables()) {
+    public void exportData(Database database, Writer writer) {
+        for (Table table : database.getTables().values()) {
             exportTable(table, writer);
         }
     }

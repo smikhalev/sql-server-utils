@@ -87,41 +87,64 @@
         <constructor-arg ref="statementExecutor"/>
     </bean>
 
-    <bean id="strategySelector" class="com.smikhalev.sqlserverutils.export.ExportStrategySelector">
+    <bean id="strategySelector" class="com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector">
         <constructor-arg>
             <list>
-                <bean class="com.smikhalev.sqlserverutils.export.strategy.TableSizeDependantStrategy">
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.TableSizeDependantStrategy">
                     <constructor-arg>
-                        <bean class="com.smikhalev.sqlserverutils.export.strategy.FullExportStrategy"/>
+                        <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.FullExportStrategy"/>
                     </constructor-arg>
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg name="tableSizeLimit" value="10"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.export.strategy.UniqueNonClusteredIndexChunkStrategy">
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.UniqueNonClusteredIndexChunkStrategy">
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg ref="indexSizeProvider"/>
                     <constructor-arg name="chunkSize" value="10"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.export.strategy.UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy">
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy">
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg ref="indexSizeProvider"/>
                     <constructor-arg name="chunkSize" value="10"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.export.strategy.ClusteredIndexChunkStrategy">
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.ClusteredIndexChunkStrategy">
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg ref="indexSizeProvider"/>
                     <constructor-arg name="chunkSize" value="10"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.export.strategy.NonClusteredIndexChunkStrategy">
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.NonClusteredIndexChunkStrategy">
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg ref="indexSizeProvider"/>
                     <constructor-arg name="chunkSize" value="10"/>
                 </bean>
 
-                <bean class="com.smikhalev.sqlserverutils.export.strategy.FullExportStrategy"/>
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.FullExportStrategy"/>
             </list>
         </constructor-arg>
     </bean>
 
-    <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.export.encoder.SimpleValueEncoder"/>
+    <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.encoder.SimpleValueEncoder"/>
+
+    <bean id="exporter" class="com.smikhalev.sqlserverutils.exportdata.Exporter">
+        <constructor-arg ref="strategySelector"/>
+        <constructor-arg ref="valueEncoder"/>
+        <constructor-arg ref="statementExecutor"/>
+    </bean>
+
+    <bean id="tableValueConstructor" class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
+
+    <bean id="packetImporter" class="com.smikhalev.sqlserverutils.importdata.PacketImporter">
+        <constructor-arg ref="tableValueConstructor"/>
+        <constructor-arg ref="statementExecutor"/>
+    </bean>
+
+    <bean id="valueConverter" class="com.smikhalev.sqlserverutils.importdata.ImportValueConverter"/>
+
+    <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.Importer">
+        <constructor-arg ref="packetImporter"/>
+        <constructor-arg ref="valueConverter"/>
+        <constructor-arg value="10"/>
+    </bean>
 </beans>
+
+

@@ -96,7 +96,7 @@ public class DataGeneratorTest extends AbstractTestNGSpringContextTests {
     public void testAllColumnTypesGeneration() throws Exception {
         Database database = new DatabaseBuilder()
             .addTable(
-                new TableBuilder("all_types_table")
+                new TableBuilder("simple_table")
                     .addNullColumn("bit_column", DbType.BIT)
                     .addNullColumn("tyinyint_column", DbType.TINYINT)
                     .addNullColumn("smallint_column", DbType.SMALLINT)
@@ -129,7 +129,7 @@ public class DataGeneratorTest extends AbstractTestNGSpringContextTests {
             DataGenerator generator = new SimpleDataGenerator(columnGeneratorFactory, executor, chunkSize);
             generator.generateData(database, rowCount);
 
-            String query = String.format("select count(*) as rows_count from %s", database.getTables().get(0).getFullName());
+            String query = String.format("select count(*) as rows_count from %s", database.getTables().get("[dbo].[simple_table]").getFullName());
             dataTable = executor.executeAsDataTable(query);
         }
         return dataTable;

@@ -1,9 +1,9 @@
-package com.smikhalev.sqlserverutils.export.sizeprovider;
+package com.smikhalev.sqlserverutils.exportdata.sizeprovider;
 
 import com.smikhalev.sqlserverutils.core.executor.DataRow;
 import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.export.TableSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbObject;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 

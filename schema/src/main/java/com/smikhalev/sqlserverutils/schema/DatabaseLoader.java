@@ -5,7 +5,9 @@ import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseLoader {
 
@@ -23,7 +25,7 @@ public class DatabaseLoader {
         return database;
     }
 
-    public void loadTables(List<Table> tables) {
+    public void loadTables(Map<String, Table> tables) {
         String query =
             "select" +
             "    object_id," +
@@ -45,7 +47,8 @@ public class DatabaseLoader {
             loadColumns(table);
             loadIndexes(objectId, table);
 
-            tables.add(table);
+            String key = DbObject.buildFullName(schemaName, tableName);
+            tables.put(key, table);
         }
     }
 
@@ -74,7 +77,7 @@ public class DatabaseLoader {
                     ? new Column(columnName, dbType, isNull)
                     : new CharColumn(columnName, dbType, isNull, maxCharLength);
 
-            table.getColumns().put(columnName, column);
+            table.getColumns().add(column);
         }
     }
 

@@ -5,12 +5,14 @@ import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Database implements Scriptable {
-    private List<Table> tables = new ArrayList<>();
+    private Map<String, Table> tables = new HashMap<>();
 
-    public List<Table> getTables() {
+    public Map<String, Table> getTables() {
         return tables;
     }
 
@@ -18,7 +20,7 @@ public class Database implements Scriptable {
     public String generateCreateScript() {
         ArrayList<String> tableCreateScripts = new ArrayList<>();
 
-        for(Table table : tables) {
+        for(Table table : tables.values()) {
             tableCreateScripts.add(table.generateCreateScript());
         }
 
@@ -29,7 +31,7 @@ public class Database implements Scriptable {
     public String generateDropScript() {
         ArrayList<String> tableDropScripts = new ArrayList<>();
 
-        for(Table table : tables) {
+        for(Table table : tables.values()) {
             tableDropScripts.add(table.generateDropScript());
         }
 

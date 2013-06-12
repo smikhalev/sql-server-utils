@@ -1,10 +1,10 @@
 package com.smikhalev.sqlserverutils.test;
 
-import com.smikhalev.sqlserverutils.export.ExportStrategy;
-import com.smikhalev.sqlserverutils.export.ExportStrategySelector;
-import com.smikhalev.sqlserverutils.export.IndexSizeProvider;
-import com.smikhalev.sqlserverutils.export.TableSizeProvider;
-import com.smikhalev.sqlserverutils.export.strategy.*;
+import com.smikhalev.sqlserverutils.exportdata.ExportStrategy;
+import com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector;
+import com.smikhalev.sqlserverutils.exportdata.IndexSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.strategy.*;
 import com.smikhalev.sqlserverutils.schema.TableBuilder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Index;

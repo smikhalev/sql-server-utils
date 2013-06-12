@@ -16,7 +16,7 @@ public class DatabaseLoaderTest extends AbstractTestNGSpringContextTests {
     public void simpleSchemaLoad() {
         Database database = databaseLoader.load();
 
-        for (Table table : database.getTables())
+        for (Table table : database.getTables().values())
         {
             String createScript = table.generateCreateScript();
             System.out.println(createScript);

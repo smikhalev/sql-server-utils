@@ -1,4 +1,4 @@
-package com.smikhalev.sqlserverutils.export;
+package com.smikhalev.sqlserverutils.exportdata;
 
 import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.core.ResultSetProcessor;
@@ -46,8 +46,7 @@ public class ExportResultSetProcessor implements ResultSetProcessor {
     private void writeRowData(ResultSet results, ResultSetMetaData metaData) throws SQLException, IOException {
         for (int columnIndex = 1; columnIndex <= metaData.getColumnCount(); columnIndex++) {
             Object columnValue = results.getObject(columnIndex);
-            String columnName = metaData.getColumnName(columnIndex);
-            DbType columnType = table.getColumns().get(columnName).getType();
+            DbType columnType = table.getColumns().get(columnIndex - 1).getType();
 
             String value = valueEncoder.encode(columnType, columnValue);
             writer.write(value);

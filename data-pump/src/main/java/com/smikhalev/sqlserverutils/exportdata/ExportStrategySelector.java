@@ -1,7 +1,6 @@
-package com.smikhalev.sqlserverutils.export;
+package com.smikhalev.sqlserverutils.exportdata;
 
 import com.smikhalev.sqlserverutils.core.ApplicationException;
-import com.smikhalev.sqlserverutils.export.ExportStrategy;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.List;
@@ -20,6 +19,6 @@ public class ExportStrategySelector {
                 return strategy;
         }
 
-        throw new ApplicationException("There is not applicable export strategy for table.");
+        throw new ApplicationException("There is not applicable exportdata strategy for table.");
     }
 }

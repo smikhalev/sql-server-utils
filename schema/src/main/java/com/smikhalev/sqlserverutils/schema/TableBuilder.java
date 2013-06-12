@@ -92,7 +92,7 @@ public class TableBuilder {
 
     private TableBuilder addColumn(String name, DbType type, boolean isNull, int size) {
         Column column = new CharColumn(name, type, isNull, size);
-        table.getColumns().put(name, column);
+        table.getColumns().add(column);
         return this;
     }
 
@@ -101,7 +101,7 @@ public class TableBuilder {
             return addColumn(name, type, isNull, 1);
 
         Column column = new Column(name, type, isNull);
-        table.getColumns().put(name, column);
+        table.getColumns().add(column);
         return this;
     }
 

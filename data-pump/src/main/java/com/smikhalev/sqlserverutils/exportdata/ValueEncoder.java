@@ -1,4 +1,4 @@
-package com.smikhalev.sqlserverutils.export;
+package com.smikhalev.sqlserverutils.exportdata;
 
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 

@@ -14,7 +14,7 @@ public class CharColumn extends Column {
     }
 
     @Override
-    public String toString() {
+    public String generateCreateScript() {
         return String.format("[%s] [%s](%d)%s null",
                 getName(), getType().getSqlType(), maxCharLength, isNull() ? "" : " not");
     }

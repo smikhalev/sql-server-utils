@@ -1,9 +1,9 @@
 package com.smikhalev.sqlserverutils.test;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.export.Exporter;
-import com.smikhalev.sqlserverutils.export.ExportStrategySelector;
-import com.smikhalev.sqlserverutils.export.ValueEncoder;
+import com.smikhalev.sqlserverutils.exportdata.Exporter;
+import com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector;
+import com.smikhalev.sqlserverutils.exportdata.ValueEncoder;
 import com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory;
 import com.smikhalev.sqlserverutils.generator.DataGenerator;
 import com.smikhalev.sqlserverutils.generator.SimpleDataGenerator;
@@ -25,16 +25,13 @@ import java.io.Writer;
 public class ExporterTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    private ColumnGeneratorFactory columnGeneratorFactory;
-
-    @Autowired
     private StatementExecutor executor;
 
     @Autowired
-    private ExportStrategySelector strategySelector;
+    private Exporter exporter;
 
     @Autowired
-    private ValueEncoder valueEncoder;
+    private DataGenerator generator;
 
     private final int EXPORT_SIZE = 123;
 
@@ -132,18 +129,13 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
     private String exportDatabase(Database database) throws Exception {
         String result;
 
-        final int chunkSize = 100;
-
         try(Writer writer = new StringWriter()) {
-            Exporter exporter = new Exporter(strategySelector, valueEncoder, executor);
-
             try (DatabaseContext dbContext = new DatabaseContext(database, executor)) {
                 dbContext.create();
 
-                DataGenerator generator = new SimpleDataGenerator(columnGeneratorFactory, executor, chunkSize);
                 generator.generateData(database, EXPORT_SIZE);
 
-                exporter.export(database, writer);
+                exporter.exportData(database, writer);
             }
             result = ((StringWriter) writer).getBuffer().toString();
         }

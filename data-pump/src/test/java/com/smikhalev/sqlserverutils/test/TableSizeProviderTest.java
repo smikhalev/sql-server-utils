@@ -1,8 +1,7 @@
 package com.smikhalev.sqlserverutils.test;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.export.sizeprovider.SystemViewTableSizeProvider;
-import com.smikhalev.sqlserverutils.export.TableSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
 import com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory;
 import com.smikhalev.sqlserverutils.generator.DataGenerator;
 import com.smikhalev.sqlserverutils.generator.SimpleDataGenerator;
@@ -67,7 +66,7 @@ public class TableSizeProviderTest extends AbstractTestNGSpringContextTests {
             DataGenerator generator = new SimpleDataGenerator(columnGeneratorFactory, executor, chunkSize);
             generator.generateData(database, tableSize);
 
-            return tableSizeProvider.getSize(database.getTables().get(0));
+            return tableSizeProvider.getSize(database.getTables().get("[dbo].[simple_table]"));
         }
     }
 

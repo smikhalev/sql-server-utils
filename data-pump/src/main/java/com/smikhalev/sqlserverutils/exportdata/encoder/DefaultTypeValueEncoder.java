@@ -1,6 +1,6 @@
-package com.smikhalev.sqlserverutils.export.encoder;
+package com.smikhalev.sqlserverutils.exportdata.encoder;
 
-import com.smikhalev.sqlserverutils.export.TypeValueEncoder;
+import com.smikhalev.sqlserverutils.exportdata.TypeValueEncoder;
 
 public class DefaultTypeValueEncoder implements TypeValueEncoder {
     @Override

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Table extends DbObject {
 
-    private HashMap<String, Column> columns = new HashMap<>();
+    private Columns columns = new Columns();
     private ClusteredIndex clusteredIndex;
     private List<NonClusteredIndex> nonClusteredIndexes = new ArrayList<>();
 
@@ -22,7 +22,7 @@ public class Table extends DbObject {
         return clusteredIndex == null;
     }
 
-    public HashMap<String, Column> getColumns() {
+    public Columns getColumns() {
         return columns;
     }
 
@@ -69,8 +69,12 @@ public class Table extends DbObject {
         if (columns.isEmpty())
             throw new GenerateScriptException("Table should contain at least one column.");
 
-        String columnsScript = Joiner.on(", ").join(columns.values());
-        return String.format("create table %s (%s)", getFullName(), columnsScript);
+        List<String> columnsWithTypes = new ArrayList<>();
+        for(Column column : columns) {
+            columnsWithTypes.add(column.generateCreateScript());
+        }
+
+        return String.format("create table %s (%s)", getFullName(), Joiner.on(",").join(columnsWithTypes));
     }
 
     @Override

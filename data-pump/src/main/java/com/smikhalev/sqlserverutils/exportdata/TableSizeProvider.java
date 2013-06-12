@@ -1,6 +1,5 @@
-package com.smikhalev.sqlserverutils.export;
+package com.smikhalev.sqlserverutils.exportdata;
 
-import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 public interface TableSizeProvider {

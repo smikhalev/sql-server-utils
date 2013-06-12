@@ -1,6 +1,6 @@
-package com.smikhalev.sqlserverutils.export.strategy;
+package com.smikhalev.sqlserverutils.exportdata.strategy;
 
-import com.smikhalev.sqlserverutils.export.BaseExportStrategy;
+import com.smikhalev.sqlserverutils.exportdata.BaseExportStrategy;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.Arrays;

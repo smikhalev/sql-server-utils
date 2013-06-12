@@ -1,7 +1,7 @@
 package com.smikhalev.sqlserverutils.test.sizeprovider;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.export.sizeprovider.SystemViewTableSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.sizeprovider.SystemViewTableSizeProvider;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 public class SystemViewTableSizeWithoutLazyLoadingProvider extends SystemViewTableSizeProvider {

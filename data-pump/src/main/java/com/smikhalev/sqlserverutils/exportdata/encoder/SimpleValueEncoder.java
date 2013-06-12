@@ -1,6 +1,6 @@
-package com.smikhalev.sqlserverutils.export.encoder;
+package com.smikhalev.sqlserverutils.exportdata.encoder;
 
-import com.smikhalev.sqlserverutils.export.ValueEncoder;
+import com.smikhalev.sqlserverutils.exportdata.ValueEncoder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 
 public class SimpleValueEncoder implements ValueEncoder {

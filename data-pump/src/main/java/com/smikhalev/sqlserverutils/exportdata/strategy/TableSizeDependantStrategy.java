@@ -1,7 +1,7 @@
-package com.smikhalev.sqlserverutils.export.strategy;
+package com.smikhalev.sqlserverutils.exportdata.strategy;
 
-import com.smikhalev.sqlserverutils.export.ExportStrategy;
-import com.smikhalev.sqlserverutils.export.TableSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.ExportStrategy;
+import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.List;
