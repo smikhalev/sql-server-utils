@@ -145,6 +145,10 @@
         <constructor-arg ref="valueConverter"/>
         <constructor-arg value="10"/>
     </bean>
+
+    <bean id="tableComparator" class="com.smikhalev.sqlserverutils.test.TableComparator">
+        <constructor-arg ref="statementExecutor"/>
+    </bean>
 </beans>
 
 

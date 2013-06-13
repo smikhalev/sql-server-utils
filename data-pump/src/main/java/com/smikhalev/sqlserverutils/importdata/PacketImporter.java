@@ -1,11 +1,6 @@
 package com.smikhalev.sqlserverutils.importdata;
 
-import com.google.common.base.Joiner;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.schema.dbobjects.Column;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PacketImporter {
 
