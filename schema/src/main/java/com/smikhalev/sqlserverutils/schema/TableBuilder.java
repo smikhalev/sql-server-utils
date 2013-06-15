@@ -97,7 +97,7 @@ public class TableBuilder {
     }
 
     private TableBuilder addColumn(String name, DbType type, boolean isNull) {
-        if (type == DbType.NVARCHAR || type == DbType.VARCHAR)
+        if (type.isStringType())
             return addColumn(name, type, isNull, 1);
 
         Column column = new Column(name, type, isNull);

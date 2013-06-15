@@ -25,43 +25,51 @@ public class ParallelExporterTest extends BaseExportTest {
     @Autowired
     private StatementExecutor executor;
 
-    private final int EXPORT_SIZE = 10000;
+    private final int PERFORMANCE_EXPORT_SIZE = 10000;
+
+    @Test // 47,5 sec - chunk size = 10
+    @Ignore
+    public void testSimpleParallelIn10ThreadExport() throws Exception {
+        Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 10);
+        performanceTest(exporter, 1000);
+    }
 
     @Test   // 95,1 sec - chunk size = 10
     @Ignore // just to minimize build time
-    public void testSimpleNotParallelExport() throws Exception {
+    public void testNotParallelExport() throws Exception {
         Exporter exporter = new SequentialExporter(selector, valueEncoder, executor);
-        performanceTest(exporter);
+        performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
     @Test   // 99.3 sec - chunk size = 10
     @Ignore // just to minimize build time
-    public void testSimpleParallelIn1ThreadExport() throws Exception {
+    public void testParallelIn1ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 1);
-        performanceTest(exporter);
+        performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
     @Test   // 66,7 sec - chunk size = 10
     @Ignore // just to minimize build time
-    public void testSimpleParallelIn2ThreadExport() throws Exception {
+    public void testParallelIn2ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 2);
-        performanceTest(exporter);
+        performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
     @Test // 47,5 sec - chunk size = 10
-    public void testSimpleParallelIn10ThreadExport() throws Exception {
+    @Ignore
+    public void testParallelIn10ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 10);
-        performanceTest(exporter);
+        performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
     @Test // 45,09 sec - chunk size = 10
     @Ignore
-    public void testSimpleParallelIn50ThreadExport() throws Exception {
+    public void testParallelIn50ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 50);
-        performanceTest(exporter);
+        performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
-    private void performanceTest(Exporter exporter) throws Exception {
+    private void performanceTest(Exporter exporter, int size) throws Exception {
         Database database = new DatabaseBuilder()
                 .addTable(
                         new TableBuilder("simple_table")
@@ -80,9 +88,9 @@ public class ParallelExporterTest extends BaseExportTest {
                                 .build()
                 ).build();
 
-        String exportString = exportDatabase(database, exporter, EXPORT_SIZE);
+        String exportString = exportDatabase(database, exporter, size);
 
         Assert.assertNotNull(exportString);
-        Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
+        Assert.assertEquals(getExportStringSize(exportString), size);
     }
 }

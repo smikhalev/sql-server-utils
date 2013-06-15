@@ -19,13 +19,19 @@ public class UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy extends I
 
     @Override
     protected Index getIndex(Table table) {
-        return table.getClusteredIndex();
+        return findSmallestNonClusteredIndex(table);
     }
 
     @Override
-    protected String generateInnerSelect(Table table, long offset, Index index) {
-        return generateInnerSelectFields(index) +
+    protected String generateInnerSelect(Table table, Index index, long offset) {
+        return generateInnerSelectFields(table.getClusteredIndex()) +
                generateFromClause(table) +
-               generateOrderByClause(findSmallestNonClusteredIndex(table), offset);
+               generateOrderByClause(index, offset);
+    }
+
+    @Override
+    protected String generateMainSelect(Table table, Index index, String innerSelect) {
+        return generateSelectClause(table) +
+               generateMainFromClause(table, table.getClusteredIndex(), innerSelect);
     }
 }

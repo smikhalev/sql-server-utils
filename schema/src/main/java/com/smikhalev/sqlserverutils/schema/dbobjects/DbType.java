@@ -1,43 +1,55 @@
 package com.smikhalev.sqlserverutils.schema.dbobjects;
 
-import java.sql.Types;
-
 /**
  * http://technet.microsoft.com/en-us/library/ms378878.aspx
  */
 public enum DbType {
 
-    BIT(Types.BIT, "bit"),
-    TINYINT(Types.TINYINT, "tinyint"),
-    SMALLINT(Types.SMALLINT, "smallint"),
-    INT(Types.INTEGER, "int"),
-    BIGINT(Types.BIGINT, "bigint"),
-    FLOAT(Types.DOUBLE, "float"),
-    REAL(Types.REAL, "real"),
-    NVARCHAR(Types.NVARCHAR, "nvarchar"),
-    VARCHAR(Types.VARCHAR, "varchar"),
-    DATE(Types.DATE, "date"),
-    TIME(Types.TIME, "time"),
-    DATETIME(Types.TIMESTAMP, "datetime");
+    BIT("bit", DbSubType.INTEGER),
+    TINYINT("tinyint", DbSubType.INTEGER),
+    SMALLINT("smallint", DbSubType.INTEGER),
+    INT("int", DbSubType.INTEGER),
+    BIGINT("bigint", DbSubType.INTEGER),
+    FLOAT("float", DbSubType.FLOAT),
+    REAL("real", DbSubType.FLOAT),
+    NVARCHAR("nvarchar", DbSubType.STRING),
+    VARCHAR("varchar", DbSubType.STRING),
+    DATE("date", DbSubType.DATETIME),
+    TIME("time", DbSubType.DATETIME),
+    DATETIME("datetime", DbSubType.DATETIME);
 
-    private int javaType;
-    private String sqlType;
-
-    DbType(int javaType, String sqlType) {
-        this.javaType = javaType;
-        this.sqlType = sqlType;
+    private static enum DbSubType {
+        INTEGER,
+        STRING,
+        FLOAT,
+        DATETIME
     }
 
-    public int getJavaType() {
-        return javaType;
+    private String sqlType;
+    private DbSubType subType;
+
+    DbType(String sqlType, DbSubType subType) {
+        this.sqlType = sqlType;
+        this.subType = subType;
+    }
+
+    public boolean isTimeType() {
+        return subType == DbSubType.DATETIME;
+    }
+
+    public boolean isIntegerType() {
+        return subType == DbSubType.INTEGER;
+    }
+
+    public boolean isFloatType() {
+        return subType == DbSubType.FLOAT;
+    }
+
+    public boolean isStringType() {
+        return subType == DbSubType.STRING;
     }
 
     public String getSqlType() {
         return sqlType;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 }

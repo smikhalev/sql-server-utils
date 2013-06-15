@@ -9,7 +9,7 @@ public class SimpleValueEncoder implements ValueEncoder {
     private BitTypeValueEncoder bitTypeValueEncoder = new BitTypeValueEncoder();
 
     public String encode(DbType type, Object value) {
-        if (type == DbType.VARCHAR || type == DbType.NVARCHAR)
+        if (type.isStringType())
             return stringValueEncoder.encode(value);
 
         if (type == DbType.BIT)

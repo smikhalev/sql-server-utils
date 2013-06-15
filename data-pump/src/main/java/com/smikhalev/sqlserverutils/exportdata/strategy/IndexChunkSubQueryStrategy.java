@@ -18,32 +18,21 @@ import java.util.List;
  *   ) d
  *   inner join test_order_by_clause m
  *       on m.id = d.id
- *       UniqueNonClusteredIndexChunkStrategy
- */
+  */
 public abstract class IndexChunkSubQueryStrategy extends IndexChunkStrategy {
 
     public IndexChunkSubQueryStrategy(TableSizeProvider tableSizeProvider, IndexSizeProvider indexSizeProvider, int pageSize) {
         super(tableSizeProvider, indexSizeProvider, pageSize);
     }
 
-    protected String generateExportSelect(Table table, long offset) {
-        Index index = getIndex(table);
-        String innerSelect = generateInnerSelect(table, offset, index);
+    @Override
+    protected String generateExportSelect(Table table, Index index, long offset) {
+        String innerSelect = generateInnerSelect(table, index, offset);
         String mainSelect = generateMainSelect(table, index, innerSelect);
         return mainSelect;
     }
 
-    protected String generateMainSelect(Table table, Index index, String innerSelect) {
-        return generateSelectClause(table) +
-        generateMainFromClause(table, index, innerSelect);
-    }
-
-    protected String generateInnerSelect(Table table, long offset, Index index) {
-        return generateInnerSelectFields(index) +
-            generateFromClause(table) +
-            generateOrderByClause(index, offset);
-    }
-
+    @Override
     protected String generateSelectClause(Table table) {
         List<String> columnNames = new ArrayList<>();
 
@@ -54,6 +43,17 @@ public abstract class IndexChunkSubQueryStrategy extends IndexChunkStrategy {
         String fields = Joiner.on(", ").join(columnNames);
         String select = String.format("select %s ", fields);
         return select;
+    }
+
+    protected String generateMainSelect(Table table, Index index, String innerSelect) {
+        return generateSelectClause(table) +
+        generateMainFromClause(table, index, innerSelect);
+    }
+
+    protected String generateInnerSelect(Table table, Index index, long offset) {
+        return generateInnerSelectFields(index) +
+            generateFromClause(table) +
+            generateOrderByClause(index, offset);
     }
 
     protected String generateMainFromClause(Table table, Index index, String innerSelect) {
