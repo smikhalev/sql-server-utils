@@ -3,7 +3,7 @@ package com.smikhalev.sqlserverutils.test;
 import com.smikhalev.sqlserverutils.core.executor.DataRow;
 import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.exportdata.Exporter;
+import com.smikhalev.sqlserverutils.exportdata.exporter.SequentialExporter;
 import com.smikhalev.sqlserverutils.generator.DataGenerator;
 import com.smikhalev.sqlserverutils.importdata.Importer;
 import com.smikhalev.sqlserverutils.schema.Database;
@@ -32,7 +32,7 @@ public class ImporterTest extends AbstractTestNGSpringContextTests {
     private StatementExecutor executor;
 
     @Autowired
-    private Exporter exporter;
+    private SequentialExporter exporter;
 
     @Autowired
     private DataGenerator generator;
@@ -68,7 +68,7 @@ public class ImporterTest extends AbstractTestNGSpringContextTests {
                             .addNullColumn("smallint_column", DbType.SMALLINT)
                             .addNullColumn("int_column", DbType.INT)
                             .addNullColumn("bigint_column", DbType.BIGINT)
-                            .addNullColumn("float_column", DbType.FLOAT)
+                            //.addNullColumn("float_column", DbType.FLOAT)
                             .addNullColumn("real_column", DbType.REAL)
                             .addNullColumn("nvarchar_column", DbType.NVARCHAR, 20)
                             .addNullColumn("varchar_column", DbType.VARCHAR, 25)

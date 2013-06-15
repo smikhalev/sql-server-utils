@@ -34,6 +34,9 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
                     case "[dbo].[small_table]":
                         return 5;
 
+                    case "[dbo].[huge_table]":
+                        return 100000;
+
                     default:
                         return 15;
                 }
@@ -169,5 +172,17 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
         ExportStrategy strategy = selector.select(table);
 
         Assert.assertTrue(strategy instanceof FullExportStrategy);
+    }
+
+    @Test
+    public void testPerformanceOfIndexChunk(){
+        Table table = new TableBuilder("huge_table")
+                .addNullColumn("bigint_column", DbType.BIGINT)
+                .addNonClusteredIndex("non_clustered", "big_int_column")
+                .build();
+
+        ExportStrategy strategy = selector.select(table);
+        strategy.generateExportSelects(table);
+        Assert.assertTrue(strategy instanceof NonClusteredIndexChunkStrategy);
     }
 }

@@ -32,8 +32,10 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
 
         long tableSize = tableSizeProvider.getSize(table);
 
+        Index index = getIndex(table);
+
         for(long offset = 0; offset < tableSize; offset = offset + chunkSize) {
-            String select = generateExportSelect(table, offset);
+            String select = generateExportSelect(table, index, offset);
             selects.add(select);
         }
 
@@ -44,10 +46,10 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
         return indexSizeProvider;
     }
 
-    protected String generateExportSelect(Table table, long offset) {
+    protected String generateExportSelect(Table table, Index index, long offset) {
         return generateSelectClause(table)
              + generateFromClause(table)
-             + generateOrderByClause(getIndex(table), offset);
+             + generateOrderByClause(index, offset);
     }
 
     protected String generateOrderByClause(Index index, long offset) {
@@ -69,5 +71,4 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
 
         return minimumIndex;
     }
-
 }

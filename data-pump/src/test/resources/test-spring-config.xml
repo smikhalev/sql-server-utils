@@ -125,10 +125,17 @@
 
     <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.encoder.SimpleValueEncoder"/>
 
-    <bean id="exporter" class="com.smikhalev.sqlserverutils.exportdata.Exporter">
+    <bean id="sequentialExporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.SequentialExporter">
         <constructor-arg ref="strategySelector"/>
         <constructor-arg ref="valueEncoder"/>
         <constructor-arg ref="statementExecutor"/>
+    </bean>
+
+    <bean id="parallelExporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.ParallelExporter">
+        <constructor-arg ref="strategySelector"/>
+        <constructor-arg ref="valueEncoder"/>
+        <constructor-arg ref="statementExecutor"/>
+        <constructor-arg value="10"/>
     </bean>
 
     <bean id="tableValueConstructor" class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>

@@ -6,6 +6,7 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 public class NonClusteredIndexChunkStrategy extends IndexChunkStrategy {
+
     public NonClusteredIndexChunkStrategy(TableSizeProvider tableSizeProvider, IndexSizeProvider indexSizeProvider, int chunkSize) {
         super(tableSizeProvider, indexSizeProvider, chunkSize);
     }

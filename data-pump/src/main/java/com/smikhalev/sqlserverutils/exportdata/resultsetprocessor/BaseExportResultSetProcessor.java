@@ -1,8 +1,8 @@
-package com.smikhalev.sqlserverutils.exportdata;
+package com.smikhalev.sqlserverutils.exportdata.resultsetprocessor;
 
-import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.core.ResultSetProcessor;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutorException;
+import com.smikhalev.sqlserverutils.exportdata.ValueEncoder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
@@ -12,16 +12,25 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-public class ExportResultSetProcessor implements ResultSetProcessor {
-
+public abstract class BaseExportResultSetProcessor implements ResultSetProcessor {
     private Table table;
     private Writer writer;
     private ValueEncoder valueEncoder;
 
-    public ExportResultSetProcessor(Table table, Writer writer, ValueEncoder valueEncoder){
+    public BaseExportResultSetProcessor(Table table, Writer writer, ValueEncoder valueEncoder){
         this.table = table;
         this.writer = writer;
         this.valueEncoder = valueEncoder;
+    }
+
+    protected abstract void writeNewLine() throws IOException;
+
+    protected abstract void writeValue(String value) throws IOException;
+
+    protected abstract void writeSeparator() throws IOException;
+
+    protected Writer getWriter() {
+        return writer;
     }
 
     @Override
@@ -39,7 +48,7 @@ public class ExportResultSetProcessor implements ResultSetProcessor {
         while (results.next()) {
             writeTableRowPrefix();
             writeRowData(results, metaData);
-            writer.write(Constants.NEW_LINE);
+            writeNewLine();
         }
     }
 
@@ -49,19 +58,19 @@ public class ExportResultSetProcessor implements ResultSetProcessor {
             DbType columnType = table.getColumns().get(columnIndex - 1).getType();
 
             String value = valueEncoder.encode(columnType, columnValue);
-            writer.write(value);
+            writeValue(value);
 
             if (columnIndex != metaData.getColumnCount())
-                writer.write(",");
+                writeSeparator();
         }
     }
 
     private void writeTableRowPrefix() throws SQLException, IOException {
-        writer.write(table.getSchema());
-        writer.write(",");
+        writeValue(table.getSchema());
+        writeSeparator();
 
-        writer.write(table.getName());
-        writer.write(",");
+        writeValue(table.getName());
+        writeSeparator();
     }
 
     @Override

@@ -9,6 +9,13 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.HashMap;
 
+/*
+ * SQL Server doesn't guarantee that row count will be accurate.
+ * All documentation says that row_count is approximate count.
+ * http://msdn.microsoft.com/en-us/library/ms175012.aspx
+ * Is absolutely understandable that during any load or activity it will be approximate.
+ * The real question is will be this row_count accurate without any load?
+ */
 public class SystemViewTableSizeProvider implements TableSizeProvider {
 
     private StatementExecutor executor;
@@ -55,6 +62,7 @@ public class SystemViewTableSizeProvider implements TableSizeProvider {
             "    on t.schema_id = s.schema_id\n" +
             "inner join sys.partitions p\n" +
             "    on t.object_id = p.object_id\n" +
+            "where index_id < 2" +
             "group by s.name, t.name";
 
         return executor.executeAsDataTable(query);

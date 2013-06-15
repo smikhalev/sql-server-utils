@@ -1,12 +1,8 @@
 package com.smikhalev.sqlserverutils.test;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.exportdata.Exporter;
-import com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector;
-import com.smikhalev.sqlserverutils.exportdata.ValueEncoder;
-import com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory;
+import com.smikhalev.sqlserverutils.exportdata.exporter.SequentialExporter;
 import com.smikhalev.sqlserverutils.generator.DataGenerator;
-import com.smikhalev.sqlserverutils.generator.SimpleDataGenerator;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseBuilder;
 import com.smikhalev.sqlserverutils.schema.DatabaseContext;
@@ -21,17 +17,10 @@ import org.testng.annotations.Test;
 import java.io.StringWriter;
 import java.io.Writer;
 
-@ContextConfiguration(locations = {"classpath:test-spring-config.xml"})
-public class ExporterTest extends AbstractTestNGSpringContextTests {
+public class SequentialExporterTest extends BaseExportTest {
 
     @Autowired
-    private StatementExecutor executor;
-
-    @Autowired
-    private Exporter exporter;
-
-    @Autowired
-    private DataGenerator generator;
+    private SequentialExporter exporter;
 
     private final int EXPORT_SIZE = 123;
 
@@ -45,7 +34,7 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
                             .build()
             ).build();
 
-        String exportString = exportDatabase(database);
+        String exportString = exportDatabase(database, exporter, EXPORT_SIZE);
 
         Assert.assertNotNull(exportString);
         Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
@@ -64,7 +53,7 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
                 .build()
             ).build();
 
-        String exportString = exportDatabase(database);
+        String exportString = exportDatabase(database, exporter, EXPORT_SIZE);
 
         Assert.assertNotNull(exportString);
         Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
@@ -82,7 +71,7 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
                         .build()
                 ).build();
 
-        String exportString = exportDatabase(database);
+        String exportString = exportDatabase(database, exporter, EXPORT_SIZE);
 
         Assert.assertNotNull(exportString);
         Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
@@ -99,7 +88,7 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
                         .build()
                 ).build();
 
-        String exportString = exportDatabase(database);
+        String exportString = exportDatabase(database, exporter, EXPORT_SIZE);
 
         Assert.assertNotNull(exportString);
         Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
@@ -116,30 +105,10 @@ public class ExporterTest extends AbstractTestNGSpringContextTests {
                         .build()
                 ).build();
 
-        String exportString = exportDatabase(database);
+        String exportString = exportDatabase(database, exporter, EXPORT_SIZE);
 
         Assert.assertNotNull(exportString);
         Assert.assertEquals(getExportStringSize(exportString), EXPORT_SIZE);
     }
 
-    private int getExportStringSize(String export) {
-        return export.length() - export.replace("\n", "").length();
-    }
-
-    private String exportDatabase(Database database) throws Exception {
-        String result;
-
-        try(Writer writer = new StringWriter()) {
-            try (DatabaseContext dbContext = new DatabaseContext(database, executor)) {
-                dbContext.create();
-
-                generator.generateData(database, EXPORT_SIZE);
-
-                exporter.exportData(database, writer);
-            }
-            result = ((StringWriter) writer).getBuffer().toString();
-        }
-
-        return result;
-    }
 }
