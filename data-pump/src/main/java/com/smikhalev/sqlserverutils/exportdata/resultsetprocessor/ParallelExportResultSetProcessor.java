@@ -14,6 +14,7 @@ import java.io.Writer;
 public class ParallelExportResultSetProcessor extends BaseExportResultSetProcessor {
 
     private StringBuffer line = new StringBuffer();
+    private int lineExportedCount = 0;
 
     public ParallelExportResultSetProcessor(Table table, Writer writer, ValueEncoder valueEncoder) {
         super(table, writer, valueEncoder);
@@ -34,5 +35,10 @@ public class ParallelExportResultSetProcessor extends BaseExportResultSetProcess
         line.append(Constants.NEW_LINE);
         getWriter().write(line.toString());
         line.setLength(0);
+        lineExportedCount++;
+    }
+
+    public int getLineExportedCount() {
+        return lineExportedCount;
     }
 }

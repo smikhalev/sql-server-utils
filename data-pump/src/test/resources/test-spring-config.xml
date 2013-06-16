@@ -138,18 +138,22 @@
         <constructor-arg value="10"/>
     </bean>
 
-    <bean id="tableValueConstructor" class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
-
+    <bean id="packetInsertGenerator" class="com.smikhalev.sqlserverutils.importdata.PacketInsertGenerator">
+        <constructor-arg>
+            <bean class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
+        </constructor-arg>
+    </bean>
+    
     <bean id="packetImporter" class="com.smikhalev.sqlserverutils.importdata.PacketImporter">
-        <constructor-arg ref="tableValueConstructor"/>
         <constructor-arg ref="statementExecutor"/>
+        <constructor-arg ref="packetInsertGenerator"/>
+        <constructor-arg ref="valueConverter"/>
     </bean>
 
     <bean id="valueConverter" class="com.smikhalev.sqlserverutils.importdata.ImportValueConverter"/>
 
-    <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.Importer">
+    <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.importer.SequentialImporter">
         <constructor-arg ref="packetImporter"/>
-        <constructor-arg ref="valueConverter"/>
         <constructor-arg value="10"/>
     </bean>
 

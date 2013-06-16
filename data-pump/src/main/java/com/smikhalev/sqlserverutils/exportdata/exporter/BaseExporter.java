@@ -20,7 +20,10 @@ public abstract class BaseExporter implements Exporter {
         this.executor = executor;
     }
 
-    public abstract void doExport(Iterable<TableExportSelect> exportSelects, Writer writer);
+    protected abstract void exportTable(List<String> selects, Table table, Writer writer);
+
+    protected void finalExport() {
+    };
 
     protected ValueEncoder getValueEncoder() {
         return valueEncoder;
@@ -31,15 +34,13 @@ public abstract class BaseExporter implements Exporter {
     }
 
     public void exportData(Database database, Writer writer) {
-        List<TableExportSelect> exportSelects = new ArrayList<>();
-
         for (Table table : database.getTables().values()) {
             ExportStrategy exportStrategy = exportStrategySelector.select(table);
             List<String> selects = exportStrategy.generateExportSelects(table);
 
-            exportSelects.add(new TableExportSelect(table, selects));
+            exportTable(selects, table, writer);
         }
 
-        doExport(exportSelects, writer);
+        finalExport();
     }
 }

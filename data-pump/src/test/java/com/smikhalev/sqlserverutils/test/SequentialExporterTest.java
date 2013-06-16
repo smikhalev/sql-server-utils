@@ -1,23 +1,15 @@
 package com.smikhalev.sqlserverutils.test;
 
-import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.exporter.SequentialExporter;
-import com.smikhalev.sqlserverutils.generator.DataGenerator;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseBuilder;
-import com.smikhalev.sqlserverutils.schema.DatabaseContext;
 import com.smikhalev.sqlserverutils.schema.TableBuilder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.StringWriter;
-import java.io.Writer;
-
-public class SequentialExporterTest extends BaseExportTest {
+public class SequentialExporterTest extends BaseExporterTest {
 
     @Autowired
     private SequentialExporter exporter;

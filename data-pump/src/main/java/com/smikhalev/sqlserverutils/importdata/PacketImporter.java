@@ -2,22 +2,25 @@ package com.smikhalev.sqlserverutils.importdata;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 
+import java.util.List;
+
 public class PacketImporter {
-
-    private TableValueConstructor constructor;
     private StatementExecutor executor;
+    private PacketInsertGenerator insertGenerator;
+    private ImportValueConverter converter;
 
-    public PacketImporter (TableValueConstructor constructor, StatementExecutor executor) {
-        this.constructor = constructor;
+    public PacketImporter(StatementExecutor executor, PacketInsertGenerator insertGenerator, ImportValueConverter converter){
         this.executor = executor;
+        this.insertGenerator = insertGenerator;
+        this.converter = converter;
     }
 
     public void importPacket(Packet packet) {
-        String select = constructor.construct(packet.getTable(), packet.getDataTable());
+        for (List<String> values : packet.getDataTable()) {
+            converter.convert(packet.getTable(), values);
+        }
 
-        String insert = String.format("insert into %s (%s) %s",
-                packet.getTable().getFullName(), packet.getTable().getColumns().generateFields(), select);
-
+        String insert = insertGenerator.generateInsert(packet);
         executor.executeScript(insert);
     }
 }

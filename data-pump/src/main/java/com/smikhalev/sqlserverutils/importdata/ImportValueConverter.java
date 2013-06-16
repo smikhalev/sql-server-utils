@@ -8,13 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ImportValueConverter {
-    public List<String> convert(Table table, List<String> values) {
+    public void convert(Table table, List<String> values) {
         for (int i = 0; i < table.getColumns().size(); i++) {
             DbType dbType = table.getColumns().get(i).getType();
             if (dbType.isStringType() || dbType.isTimeType()) {
                 values.set(i, "'" + values.get(i) + "'");
             }
         }
-        return values;
     }
 }

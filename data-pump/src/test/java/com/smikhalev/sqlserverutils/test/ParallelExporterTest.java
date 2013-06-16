@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class ParallelExporterTest extends BaseExportTest {
+public class ParallelExporterTest extends BaseExporterTest {
     @Autowired
     private ExportStrategySelector selector;
 
@@ -28,7 +28,6 @@ public class ParallelExporterTest extends BaseExportTest {
     private final int PERFORMANCE_EXPORT_SIZE = 10000;
 
     @Test // 47,5 sec - chunk size = 10
-    @Ignore
     public void testSimpleParallelIn10ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 10);
         performanceTest(exporter, 1000);

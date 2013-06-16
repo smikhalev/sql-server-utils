@@ -14,7 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 @ContextConfiguration(locations = {"classpath:test-spring-config.xml"})
-public class BaseExportTest extends AbstractTestNGSpringContextTests {
+public class BaseExporterTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private StatementExecutor executor;
