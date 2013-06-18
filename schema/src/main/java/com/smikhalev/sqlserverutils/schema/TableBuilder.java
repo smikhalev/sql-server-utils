@@ -2,6 +2,7 @@ package com.smikhalev.sqlserverutils.schema;
 
 import com.google.common.collect.Lists;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
+import com.smikhalev.sqlserverutils.schema.exception.SchemaBuilderException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +80,22 @@ public class TableBuilder {
         return this;
     }
 
+    public TableBuilder addForeignKey(String name, String columnName, Table targetTable) {
+        Column sourceColumn = table.getColumns().getByName(columnName);
+
+        if (sourceColumn == null)
+            throw new SchemaBuilderException("Column name is not found in " + table.getName());
+
+        Column targetColumn = targetTable.getColumns().getByName(columnName);
+
+        if (targetColumn == null)
+            throw new SchemaBuilderException("Column name is not found in " + targetTable.getName());
+
+        ForeignKey fk = new ForeignKey(name, table, sourceColumn, targetTable, targetColumn);
+        table.getForeignKeys().add(fk);
+
+        return this;
+    }
 
     private List<IndexColumn> convertIntoDefaultIndexKeyColumn(String[] columns) {
         List<IndexColumn> indexColumns = new ArrayList<>();

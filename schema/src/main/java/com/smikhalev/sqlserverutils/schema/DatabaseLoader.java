@@ -5,10 +5,14 @@ import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
+/*
+ * This class is load database schema using system sql server tables.
+ * It works mostly in row-by-row mode more like a search in depth.
+ * It is not effective and we real used it should be most probably refactored into
+ * a bulk mode.
+ */
 public class DatabaseLoader {
 
     private StatementExecutor executor;
@@ -21,6 +25,7 @@ public class DatabaseLoader {
         Database database = new Database();
 
         loadTables(database.getTables());
+        loadForeignKeys(database);
 
         return database;
     }
@@ -71,7 +76,7 @@ public class DatabaseLoader {
             int maxCharLength = (int) row.get("char_max_length");
 
             DbType dbType = DbType.valueOf(dataType.toUpperCase());
-            boolean isNull = isNullable.equals("YES") ? true : false;
+            boolean isNull = isNullable.equals("YES");
 
             Column column = maxCharLength == 0
                     ? new Column(columnName, dbType, isNull)
@@ -142,6 +147,58 @@ public class DatabaseLoader {
             {
                 ((NonClusteredIndex)index).getIncludedColumns().add(columnName);
             }
+        }
+    }
+
+    private void loadForeignKeys(Database database) {
+        String query = "select " +
+                "    fk.name as fk_name, " +
+                "    st.name as source_table_name, " +
+                "    sts.name as source_table_schema, " +
+                "    stc.name as source_column_name, " +
+                "    tt.name as target_table_name, " +
+                "    tts.name as target_table_schema, " +
+                "    ttc.name as target_column_name " +
+                "from sys.foreign_keys fk " +
+                "inner join sys.foreign_key_columns fkc " +
+                "    on fkc.constraint_object_id = fk.object_id " +
+                "inner join sys.tables st " +
+                "    on st.object_id = fkc.parent_object_id " +
+                "inner join sys.schemas sts " +
+                "     on sts.schema_id = st.schema_id " +
+                "inner join sys.columns stc " +
+                "    on stc.object_id = st.object_id " +
+                "    and stc.column_id = fkc.parent_column_id " +
+                "inner join sys.tables tt " +
+                "    on tt.object_id = fkc.referenced_object_id " +
+                "inner join sys.schemas tts " +
+                "     on tts.schema_id = tt.schema_id " +
+                "inner join sys.columns ttc " +
+                "    on ttc.object_id = tt.object_id " +
+                "    and ttc.column_id = fkc.referenced_column_id ";
+
+        DataTable dataTable = executor.executeAsDataTable(query);
+
+        for (DataRow row : dataTable.getRows()) {
+            String foreignKeyName = (String) row.get("fk_name");
+            String sourceTableName = (String) row.get("source_table_name");
+            String sourceSchemaName = (String) row.get("source_table_schema");
+            String sourceColumnName = (String) row.get("source_column_name");
+            String targetTableName = (String) row.get("target_table_name");
+            String targetSchemaName = (String) row.get("target_table_schema");
+            String targetColumnName = (String) row.get("target_column_name");
+
+            String sourceTableFullName = DbObject.buildFullName(sourceSchemaName, sourceTableName);
+            String targetTableFullName = DbObject.buildFullName(targetSchemaName, targetTableName);
+
+            Table sourceTable = database.getTables().get(sourceTableFullName);
+            Table targetTable = database.getTables().get(targetTableFullName);
+
+            Column sourceColumn = sourceTable.getColumns().getByName(sourceColumnName);
+            Column targetColumn = targetTable.getColumns().getByName(targetColumnName);
+
+            ForeignKey fk = new ForeignKey(foreignKeyName, sourceTable, sourceColumn, targetTable, targetColumn);
+            sourceTable.getForeignKeys().add(fk);
         }
     }
 }

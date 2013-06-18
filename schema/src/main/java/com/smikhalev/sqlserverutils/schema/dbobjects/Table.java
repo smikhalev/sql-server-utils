@@ -13,6 +13,7 @@ public class Table extends DbObject {
     private Columns columns = new Columns();
     private ClusteredIndex clusteredIndex;
     private List<NonClusteredIndex> nonClusteredIndexes = new ArrayList<>();
+    private List<ForeignKey> foreignKeys = new ArrayList<>();
 
     public Table(String name, String schema) {
         super(name, schema);
@@ -38,13 +39,27 @@ public class Table extends DbObject {
         return nonClusteredIndexes;
     }
 
+    public List<ForeignKey> getForeignKeys() {
+        return foreignKeys;
+    }
+
     @Override
     public String generateCreateScript() {
         String createTable = generateCreateTableScript();
         String createClusteredIndex = generateClusteredIndexScript();
         String createNonClusteredIndexes = generateNonClusteredScript();
+        String createForeignKeys = generateForeignKeys();
 
-        return createTable + createClusteredIndex + createNonClusteredIndexes;
+        return  createTable + createClusteredIndex + createNonClusteredIndexes + createForeignKeys;
+    }
+
+    private String generateForeignKeys() {
+        List<String> foreignKeyScripts = new ArrayList<>();
+
+        for(ForeignKey fk : foreignKeys) {
+            foreignKeyScripts.add(fk.generateCreateScript());
+        }
+        return Joiner.on(Constants.NEW_LINE).join(foreignKeyScripts);
     }
 
     private String generateClusteredIndexScript() {
@@ -79,7 +94,11 @@ public class Table extends DbObject {
 
     @Override
     public String generateDropScript() {
-        return String.format("drop table %s", getFullName());
+        return generateDropTable();
+    }
+
+    private String generateDropTable() {
+        return String.format(" drop table %s", getFullName());
     }
 
     @Override
@@ -96,6 +115,8 @@ public class Table extends DbObject {
             && columns.equals(table.getColumns())
             && ((clusteredIndex == null && table.getClusteredIndex() == null)
                 || clusteredIndex.equals(table.getClusteredIndex()))
-            && nonClusteredIndexes.equals(table.getNonClusteredIndexes());
+            && nonClusteredIndexes.equals(table.getNonClusteredIndexes())
+            && foreignKeys.equals(table.foreignKeys);
+
     }
 }

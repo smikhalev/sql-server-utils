@@ -2,6 +2,7 @@ package com.smikhalev.sqlserverutils.schema;
 
 import com.google.common.base.Joiner;
 import com.smikhalev.sqlserverutils.core.Constants;
+import com.smikhalev.sqlserverutils.schema.dbobjects.ForeignKey;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public class Database implements Scriptable {
 
     @Override
     public String generateDropScript() {
+        return generateDropForeignKeys() + Constants.NEW_LINE + generateDropTables();
+    }
+
+    private String generateDropTables() {
         ArrayList<String> tableDropScripts = new ArrayList<>();
 
         for(Table table : tables.values()) {
@@ -37,6 +42,19 @@ public class Database implements Scriptable {
 
         return Joiner.on(Constants.NEW_LINE).join(tableDropScripts);
     }
+
+    private String generateDropForeignKeys() {
+        List<String> dropForeignKeyScripts = new ArrayList<>();
+
+        for (Table table : tables.values()) {
+            for (ForeignKey foreignKey : table.getForeignKeys()) {
+                dropForeignKeyScripts.add(foreignKey.generateDropScript());
+            }
+        }
+
+        return Joiner.on(Constants.NEW_LINE).join(dropForeignKeyScripts);
+    }
+
 
     @Override
     public boolean equals(Object o) {
