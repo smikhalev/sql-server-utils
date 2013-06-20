@@ -24,6 +24,13 @@ public abstract class BaseImporter implements Importer {
     }
 
     public void importData(Database database, Reader reader) {
+        try(ImportContext context = new ImportContext(packetImporter.getExecutor())) {
+            context.disableForeignKeys(database);
+            importDataBody(database, reader);
+        }
+    }
+
+    private void importDataBody(Database database, Reader reader) {
         try (ICsvListReader listReader = new CsvListReader(reader, CsvPreference.STANDARD_PREFERENCE)) {
             List<String> lineValues;
 

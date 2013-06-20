@@ -2,11 +2,11 @@ package com.smikhalev.sqlserverutils.generator.columngenerator;
 
 import com.smikhalev.sqlserverutils.generator.ColumnGenerator;
 
-public class IntegerColumnGenerator implements ColumnGenerator {
+public class RandomIntegerColumnGenerator implements ColumnGenerator {
 
     private long typeSize;
 
-    public IntegerColumnGenerator(long typeSize) {
+    public RandomIntegerColumnGenerator(long typeSize) {
         this.typeSize = typeSize;
     }
 

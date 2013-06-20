@@ -5,6 +5,7 @@ import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseBuilder;
 import com.smikhalev.sqlserverutils.schema.TableBuilder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
+import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
@@ -47,6 +48,24 @@ public class ImporterTest extends BaseImporterTest {
                             .addNullColumn("datetime_column", DbType.DATETIME)
                             .build()
             ).build();
+
+        importDatabase(database, importer, 123);
+    }
+
+    @Test
+    public void testImportWithForeignKey() throws Exception {
+        Table mainTable = new TableBuilder("main_table")
+                .addNotNullColumn("id", DbType.INT)
+                .addUniqueNonClusteredIndex("unique", "id")
+                .build();
+        Table dependantTable = new TableBuilder("dependant_table")
+                .addNotNullColumn("id", DbType.INT)
+                .addForeignKey("fk_main_ref", "id", mainTable)
+                .build();
+        Database database = new DatabaseBuilder()
+                .addTable(mainTable)
+                .addTable(dependantTable)
+                .build();
 
         importDatabase(database, importer, 123);
     }

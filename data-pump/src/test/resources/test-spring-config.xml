@@ -14,6 +14,10 @@
         <constructor-arg ref="simpleConnectionProvider"/>
     </bean>
 
+    <bean id="databaseLoader" class="com.smikhalev.sqlserverutils.schema.DatabaseLoader">
+        <constructor-arg ref="statementExecutor"/>
+    </bean>
+
     <bean id="charColumnGenerator" class="com.smikhalev.sqlserverutils.generator.columngenerator.CharColumnGenerator"/>
     <bean id="dateTimeColumnGenerator" class="com.smikhalev.sqlserverutils.generator.columngenerator.DateColumnGenerator"/>
     <bean id="floatColumnGenerator" class="com.smikhalev.sqlserverutils.generator.columngenerator.FloatColumnGenerator"/>
@@ -24,27 +28,25 @@
                 key-type="com.smikhalev.sqlserverutils.schema.dbobjects.DbType"
                 value-type="com.smikhalev.sqlserverutils.generator.ColumnGenerator">
                 <entry key="BIGINT">
-                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.RandomIntegerColumnGenerator">
                         <constructor-arg value="9223372036854775807"/>
                     </bean>
                 </entry>
                 <entry key="INT">
-                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
-                        <constructor-arg value="2147483647"/>
-                    </bean>
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.SequenceIntegerColumnGenerator"/>
                 </entry>
                 <entry key="SMALLINT">
-                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.RandomIntegerColumnGenerator">
                         <constructor-arg value="32767"/>
                     </bean>
                 </entry>
                 <entry key="TINYINT">
-                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.RandomIntegerColumnGenerator">
                         <constructor-arg value="256"/>
                     </bean>
                 </entry>
                 <entry key="BIT">
-                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.IntegerColumnGenerator">
+                    <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.RandomIntegerColumnGenerator">
                         <constructor-arg value="2"/>
                     </bean>
                 </entry>
@@ -158,6 +160,10 @@
     </bean>
 
     <bean id="tableComparator" class="com.smikhalev.sqlserverutils.test.TableComparator">
+        <constructor-arg ref="statementExecutor"/>
+    </bean>
+
+    <bean id="importContext" class="com.smikhalev.sqlserverutils.importdata.importer.ImportContext">
         <constructor-arg ref="statementExecutor"/>
     </bean>
 </beans>

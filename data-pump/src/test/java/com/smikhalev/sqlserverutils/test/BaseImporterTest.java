@@ -9,6 +9,7 @@ import com.smikhalev.sqlserverutils.importdata.Importer;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseContext;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbObject;
+import com.smikhalev.sqlserverutils.schema.dbobjects.ForeignKey;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,6 +65,10 @@ public class BaseImporterTest extends AbstractTestNGSpringContextTests {
     private void renameDatabaseTables(Database database) {
         for(Table table : database.getTables().values()) {
             String newTableName = buildRenamedTableName(table);
+            for(ForeignKey fk : table.getForeignKeys()) {
+                executor.executeScript(fk.generateDropScript());
+            }
+
             String renameScript = String.format("sp_rename %s, %s", table.getName(), newTableName);
             executor.executeScript(renameScript);
         }

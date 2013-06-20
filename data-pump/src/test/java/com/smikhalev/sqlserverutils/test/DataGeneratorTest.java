@@ -112,14 +112,33 @@ public class DataGeneratorTest extends AbstractTestNGSpringContextTests {
                     .build()
             ).build();
         DataTable dataTable;
-        final int rowCount = 10000;
-        final int chunkSize = 100000;
+        final int rowCount = 10;
+        final int chunkSize = 3;
 
         dataTable = loadDataTable(database, rowCount, chunkSize);
 
         Assert.assertNotNull(dataTable);
         Assert.assertEquals(rowCount, dataTable.getRows().get(0).get("rows_count"));
     }
+
+    @Test
+    public void testIntGenerator() throws Exception {
+        Database database = new DatabaseBuilder()
+                .addTable(
+                        new TableBuilder("simple_table")
+                            .addNullColumn("int_column", DbType.INT)
+                            .build()
+                ).build();
+        DataTable dataTable;
+        final int rowCount = 10;
+        final int chunkSize = 3;
+
+        dataTable = loadDataTable(database, rowCount, chunkSize);
+
+        Assert.assertNotNull(dataTable);
+        Assert.assertEquals(rowCount, dataTable.getRows().get(0).get("rows_count"));
+    }
+
 
     private DataTable loadDataTable(Database database, int rowCount, int chunkSize) throws Exception {
         DataTable dataTable;

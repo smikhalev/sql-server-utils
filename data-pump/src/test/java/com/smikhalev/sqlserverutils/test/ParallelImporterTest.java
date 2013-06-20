@@ -2,6 +2,7 @@ package com.smikhalev.sqlserverutils.test;
 
 import com.smikhalev.sqlserverutils.importdata.Importer;
 import com.smikhalev.sqlserverutils.importdata.PacketImporter;
+import com.smikhalev.sqlserverutils.importdata.importer.ImportContext;
 import com.smikhalev.sqlserverutils.importdata.importer.ParallelImporter;
 import com.smikhalev.sqlserverutils.importdata.importer.SequentialImporter;
 import com.smikhalev.sqlserverutils.schema.Database;
@@ -15,6 +16,7 @@ public class ParallelImporterTest extends BaseImporterTest {
 
     @Autowired
     private PacketImporter packetImporter;
+
 
     @Test
     public void testSimpleParallelIn1ThreadImport() throws Exception {

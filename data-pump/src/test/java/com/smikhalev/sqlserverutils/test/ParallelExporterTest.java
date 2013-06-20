@@ -10,7 +10,6 @@ import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseBuilder;
 import com.smikhalev.sqlserverutils.schema.TableBuilder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
-import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -27,42 +26,37 @@ public class ParallelExporterTest extends BaseExporterTest {
 
     private final int PERFORMANCE_EXPORT_SIZE = 10000;
 
-    @Test // 47,5 sec - chunk size = 10
+    @Test(enabled=false) // 47,5 sec - chunk size = 10
     public void testSimpleParallelIn10ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 10);
         performanceTest(exporter, 1000);
     }
 
-    @Test   // 95,1 sec - chunk size = 10
-    @Ignore // just to minimize build time
+    @Test(enabled=false)   // 95,1 sec - chunk size = 10
     public void testNotParallelExport() throws Exception {
         Exporter exporter = new SequentialExporter(selector, valueEncoder, executor);
         performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
-    @Test   // 99.3 sec - chunk size = 10
-    @Ignore // just to minimize build time
+    @Test(enabled=false)   // 99.3 sec - chunk size = 10
     public void testParallelIn1ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 1);
         performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
-    @Test   // 66,7 sec - chunk size = 10
-    @Ignore // just to minimize build time
+    @Test(enabled=false)   // 66,7 sec - chunk size = 10
     public void testParallelIn2ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 2);
         performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
     @Test // 47,5 sec - chunk size = 10
-    @Ignore
     public void testParallelIn10ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 10);
         performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);
     }
 
-    @Test // 45,09 sec - chunk size = 10
-    @Ignore
+    @Test(enabled=false) // 45,09 sec - chunk size = 10
     public void testParallelIn50ThreadExport() throws Exception {
         Exporter exporter = new ParallelExporter(selector, valueEncoder, executor, 50);
         performanceTest(exporter, PERFORMANCE_EXPORT_SIZE);

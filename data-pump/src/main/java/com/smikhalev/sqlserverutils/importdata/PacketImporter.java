@@ -23,4 +23,8 @@ public class PacketImporter {
         String insert = insertGenerator.generateInsert(packet);
         executor.executeScript(insert);
     }
+
+    public StatementExecutor getExecutor() {
+        return executor;
+    }
 }

@@ -64,8 +64,15 @@ public class SimpleDataGenerator implements DataGenerator {
             valueScripts.add(valueScript);
         }
 
-        String selectScript = String.format("select top %s %s from sys.all_columns as s1, sys.all_columns as s2",
-                count, Joiner.on(",").join(valueScripts));
+        String query =
+            "select top %s %s" +
+            "from " +
+            "( " +
+            "    select row_number() over(order by s1.[object_id]) column_index " +
+            "    from sys.all_columns as s1, sys.all_columns as s2 " +
+            ") d ";
+
+        String selectScript = String.format(query, count, Joiner.on(",").join(valueScripts));
 
         return selectScript;
     }
