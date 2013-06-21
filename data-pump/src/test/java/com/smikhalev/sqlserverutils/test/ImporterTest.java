@@ -69,4 +69,18 @@ public class ImporterTest extends BaseImporterTest {
 
         importDatabase(database, importer, 123);
     }
+
+    @Test
+    public void testImportWithTrigger() throws Exception {
+        Database database = new DatabaseBuilder()
+            .addTable(
+                new TableBuilder("main_table")
+                .addNotNullColumn("id", DbType.INT)
+                .addEmptyTrigger("simple_trigger")
+                .build())
+            .build();
+
+        importDatabase(database, importer, 123);
+    }
+
 }

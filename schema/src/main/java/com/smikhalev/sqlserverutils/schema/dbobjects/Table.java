@@ -5,7 +5,6 @@ import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.schema.exception.GenerateScriptException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Table extends DbObject {
@@ -14,6 +13,7 @@ public class Table extends DbObject {
     private ClusteredIndex clusteredIndex;
     private List<NonClusteredIndex> nonClusteredIndexes = new ArrayList<>();
     private List<ForeignKey> foreignKeys = new ArrayList<>();
+    private List<Trigger> triggers = new ArrayList<>();
 
     public Table(String name, String schema) {
         super(name, schema);
@@ -43,14 +43,23 @@ public class Table extends DbObject {
         return foreignKeys;
     }
 
+    public List<Trigger> getTriggers() {
+        return triggers;
+    }
+
     @Override
     public String generateCreateScript() {
         String createTable = generateCreateTableScript();
         String createClusteredIndex = generateClusteredIndexScript();
         String createNonClusteredIndexes = generateNonClusteredScript();
         String createForeignKeys = generateForeignKeys();
+        String createTriggers = generateCreateTriggers();
 
-        return  createTable + createClusteredIndex + createNonClusteredIndexes + createForeignKeys;
+        return  createTable +
+                createClusteredIndex +
+                createNonClusteredIndexes +
+                createForeignKeys +
+                createTriggers;
     }
 
     private String generateForeignKeys() {
@@ -92,6 +101,16 @@ public class Table extends DbObject {
         return String.format("create table %s (%s)", getFullName(), Joiner.on(",").join(columnsWithTypes));
     }
 
+    private String generateCreateTriggers() {
+        List<String> triggerScripts = new ArrayList<>();
+
+        for(Trigger trigger : triggers) {
+            triggerScripts.add(trigger.generateCreateScript());
+        }
+
+        return Joiner.on(Constants.NEW_LINE).join(triggerScripts);
+    }
+
     @Override
     public String generateDropScript() {
         return generateDropTable();
@@ -116,7 +135,7 @@ public class Table extends DbObject {
             && ((clusteredIndex == null && table.getClusteredIndex() == null)
                 || clusteredIndex.equals(table.getClusteredIndex()))
             && nonClusteredIndexes.equals(table.getNonClusteredIndexes())
-            && foreignKeys.equals(table.foreignKeys);
-
+            && foreignKeys.equals(table.getForeignKeys())
+            && triggers.equals(table.getTriggers());
     }
 }

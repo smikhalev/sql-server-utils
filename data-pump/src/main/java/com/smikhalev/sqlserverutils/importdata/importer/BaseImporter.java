@@ -16,16 +16,18 @@ import java.util.Map;
 
 public abstract class BaseImporter implements Importer {
     private PacketImporter packetImporter;
+    private Iterable<RestorableAction> restorableActions;
     private int chunkSize;
 
-    public BaseImporter(PacketImporter packetImporter, int chunkSize) {
+    public BaseImporter(PacketImporter packetImporter, Iterable<RestorableAction> restorableAction, int chunkSize) {
         this.packetImporter = packetImporter;
+        this.restorableActions = restorableAction;
         this.chunkSize = chunkSize;
     }
 
     public void importData(Database database, Reader reader) {
-        try(ImportContext context = new ImportContext(packetImporter.getExecutor())) {
-            context.disableForeignKeys(database);
+        try(ImportContext context = new ImportContext(restorableActions)) {
+            context.prepare(database);
             importDataBody(database, reader);
         }
     }

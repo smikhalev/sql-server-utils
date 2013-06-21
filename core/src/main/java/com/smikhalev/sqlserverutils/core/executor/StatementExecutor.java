@@ -1,6 +1,7 @@
 package com.smikhalev.sqlserverutils.core.executor;
 
 import com.smikhalev.sqlserverutils.core.ConnectionProvider;
+import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.core.ResultSetProcessor;
 
 import java.sql.*;
@@ -34,6 +35,18 @@ public class StatementExecutor {
         try (Connection connection = getConnectionProvider().getConnection()) {
             Statement statement = connection.createStatement();
             statement.execute(script);
+        } catch (SQLException e) {
+            throw new StatementExecutorException(e.getMessage(), e);
+        }
+    }
+
+    public void executeBatch(String batch) {
+        try (Connection connection = getConnectionProvider().getConnection()) {
+            Statement statement = connection.createStatement();
+            String[] scripts = batch.split(Constants.GO);
+            for(String script : scripts) {
+                statement.execute(script);
+        }
         } catch (SQLException e) {
             throw new StatementExecutorException(e.getMessage(), e);
         }

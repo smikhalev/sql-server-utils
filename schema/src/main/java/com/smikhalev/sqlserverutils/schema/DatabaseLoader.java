@@ -26,6 +26,7 @@ public class DatabaseLoader {
 
         loadTables(database.getTables());
         loadForeignKeys(database);
+        loadTrigger(database);
 
         return database;
     }
@@ -199,6 +200,32 @@ public class DatabaseLoader {
 
             ForeignKey fk = new ForeignKey(foreignKeyName, sourceTable, sourceColumn, targetTable, targetColumn);
             sourceTable.getForeignKeys().add(fk);
+        }
+    }
+
+    public void loadTrigger(Database database) {
+        String query =
+            "select " +
+            "    tb.name as table_name, " +
+            "    s.name as schema_name, " +
+            "    tr.name as trigger_name " +
+            "from sys.triggers tr " +
+            "inner join sys.tables tb " +
+            "    on tr.parent_id = tb.object_id " +
+            "inner join sys.schemas s\n" +
+            "    on s.schema_id = tb.schema_id";
+
+        DataTable dataTable = executor.executeAsDataTable(query);
+
+        for (DataRow row : dataTable.getRows()) {
+            String tableName = (String) row.get("table_name");
+            String schemaName = (String) row.get("schema_name");
+            String triggerName = (String) row.get("trigger_name");
+
+            String tableFullName = DbObject.buildFullName(schemaName, tableName);
+            Table table = database.getTables().get(tableFullName);
+            Trigger trigger = new Trigger(triggerName, table.getSchema(), table, "");
+            table.getTriggers().add(trigger);
         }
     }
 }

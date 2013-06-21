@@ -156,6 +156,7 @@
 
     <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.importer.SequentialImporter">
         <constructor-arg ref="packetImporter"/>
+        <constructor-arg ref="restorableAction"/>
         <constructor-arg value="10"/>
     </bean>
 
@@ -163,8 +164,21 @@
         <constructor-arg ref="statementExecutor"/>
     </bean>
 
-    <bean id="importContext" class="com.smikhalev.sqlserverutils.importdata.importer.ImportContext">
-        <constructor-arg ref="statementExecutor"/>
+    <bean id="restorableAction" class="java.util.ArrayList" >
+        <constructor-arg>
+            <list>
+                <bean class="com.smikhalev.sqlserverutils.importdata.restoreaction.DisableForeignKeysRestorableAction">
+                    <constructor-arg ref="statementExecutor"/>
+                </bean>
+                <bean class="com.smikhalev.sqlserverutils.importdata.restoreaction.DisableTriggersRestorableAction">
+                    <constructor-arg ref="statementExecutor"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="importContext" class="com.smikhalev.sqlserverutils.importdata.ImportContext">
+        <constructor-arg ref="restorableAction"/>
     </bean>
 </beans>
 

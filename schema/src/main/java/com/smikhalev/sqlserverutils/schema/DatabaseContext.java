@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.schema;
 
+import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 
 public class DatabaseContext implements AutoCloseable {
@@ -19,7 +20,7 @@ public class DatabaseContext implements AutoCloseable {
 
     public void create() {
         String createScript = database.generateCreateScript();
-        executor.executeScript(createScript);
+        executor.executeBatch(createScript);
     }
 
     public void drop() {

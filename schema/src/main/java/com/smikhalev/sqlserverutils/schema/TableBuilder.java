@@ -97,6 +97,15 @@ public class TableBuilder {
         return this;
     }
 
+    public TableBuilder addEmptyTrigger(String name) {
+        String text = "set nocount on;";
+
+        Trigger trigger = new Trigger(name, null, table, text);
+        table.getTriggers().add(trigger);
+
+        return this;
+    }
+
     private List<IndexColumn> convertIntoDefaultIndexKeyColumn(String[] columns) {
         List<IndexColumn> indexColumns = new ArrayList<>();
 

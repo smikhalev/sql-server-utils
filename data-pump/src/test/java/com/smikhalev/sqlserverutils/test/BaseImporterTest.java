@@ -11,6 +11,7 @@ import com.smikhalev.sqlserverutils.schema.DatabaseContext;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbObject;
 import com.smikhalev.sqlserverutils.schema.dbobjects.ForeignKey;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
+import com.smikhalev.sqlserverutils.schema.dbobjects.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -67,6 +68,10 @@ public class BaseImporterTest extends AbstractTestNGSpringContextTests {
             String newTableName = buildRenamedTableName(table);
             for(ForeignKey fk : table.getForeignKeys()) {
                 executor.executeScript(fk.generateDropScript());
+            }
+
+            for(Trigger trigger : table.getTriggers()) {
+                executor.executeScript(trigger.generateDropScript());
             }
 
             String renameScript = String.format("sp_rename %s, %s", table.getName(), newTableName);

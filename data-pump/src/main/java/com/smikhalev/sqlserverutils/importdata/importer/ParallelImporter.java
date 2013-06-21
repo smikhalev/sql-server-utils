@@ -2,6 +2,7 @@ package com.smikhalev.sqlserverutils.importdata.importer;
 
 import com.smikhalev.sqlserverutils.importdata.Packet;
 import com.smikhalev.sqlserverutils.importdata.PacketImporter;
+import com.smikhalev.sqlserverutils.importdata.RestorableAction;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,8 +11,8 @@ public class ParallelImporter extends BaseImporter {
 
     private ExecutorService threadPool;
 
-    public ParallelImporter(PacketImporter packetImporter, int chunkSize, int threadCount) {
-        super(packetImporter, chunkSize);
+    public ParallelImporter(PacketImporter packetImporter, Iterable<RestorableAction> restorableActions, int chunkSize, int threadCount) {
+        super(packetImporter, restorableActions, chunkSize);
         threadPool = Executors.newFixedThreadPool(threadCount);
     }
 
