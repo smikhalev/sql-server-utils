@@ -167,23 +167,28 @@
     <bean id="restorableAction" class="java.util.ArrayList" >
         <constructor-arg>
             <list>
-                <bean class="com.smikhalev.sqlserverutils.importdata.restoreaction.DisableForeignKeysRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restoreaction.DisableForeignKeysRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.importdata.restoreaction.DisableTriggersRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restoreaction.DisableTriggersRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
             </list>
         </constructor-arg>
     </bean>
 
-    <bean id="importContext" class="com.smikhalev.sqlserverutils.importdata.ImportContext">
+    <bean id="importContext" class="com.smikhalev.sqlserverutils.RestorableContext">
         <constructor-arg ref="restorableAction"/>
     </bean>
 
     <bean id="importManager" class="com.smikhalev.sqlserverutils.importdata.ImportManager">
         <constructor-arg ref="importer"/>
         <constructor-arg ref="databaseLoader"/>
+    </bean>
+
+    <bean id="cleaner" class="com.smikhalev.sqlserverutils.cleardata.TruncateCleaner">
+        <constructor-arg ref="statementExecutor"/>
+        <constructor-arg ref="restorableAction"/>
     </bean>
 </beans>
 

@@ -1,12 +1,13 @@
-package com.smikhalev.sqlserverutils.importdata;
+package com.smikhalev.sqlserverutils;
 
+import com.smikhalev.sqlserverutils.importdata.RestorableAction;
 import com.smikhalev.sqlserverutils.schema.Database;
 
-public class ImportContext implements AutoCloseable {
+public class RestorableContext implements AutoCloseable {
 
     private Iterable<RestorableAction> restoreActions;
 
-    public ImportContext(Iterable<RestorableAction> restoreActions) {
+    public RestorableContext(Iterable<RestorableAction> restoreActions) {
         this.restoreActions = restoreActions;
     }
 

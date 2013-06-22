@@ -2,8 +2,6 @@ package com.smikhalev.sqlserverutils;
 
 import com.smikhalev.sqlserverutils.core.ApplicationException;
 import com.smikhalev.sqlserverutils.core.ConnectionProvider;
-import com.smikhalev.sqlserverutils.exportdata.ExportManager;
-import com.smikhalev.sqlserverutils.importdata.ImportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class Program {
@@ -12,10 +10,7 @@ public class Program {
     private ConnectionProvider connectionProvider;
 
     @Autowired
-    private ImportManager importManager;
-
-    @Autowired
-    private ExportManager exportManager;
+    private Facade facade;
 
     public static void main(String [] args) {
         if (args.length < 2) {
@@ -41,15 +36,18 @@ public class Program {
         switch (command){
             case "import":
                 System.out.println("Import started.");
-                program.importManager.doImport(filePath);
+                program.facade.doImport(filePath);
                 System.out.println("Import finished.");
                 break;
             case "export":
                 System.out.println("Export started.");
-                program.exportManager.doExport(filePath);
+                program.facade.doExport(filePath);
                 System.out.println("Export finished.");
                 break;
             case "clear":
+                System.out.println("Clear started.");
+                program.facade.doClear();
+                System.out.println("Clear finished.");
                 break;
             default:
                 System.out.println("Command is not supported.");
@@ -72,11 +70,7 @@ public class Program {
         this.connectionProvider = connectionProvider;
     }
 
-    public void setImportManager(ImportManager importManager) {
-        this.importManager = importManager;
-    }
-
-    public void setExportManager(ExportManager exportManager) {
-        this.exportManager = exportManager;
+    public void setFacade(Facade facade) {
+        this.facade = facade;
     }
 }

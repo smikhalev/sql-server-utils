@@ -1,7 +1,7 @@
 package com.smikhalev.sqlserverutils.test;
 
+import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.importdata.ImportContext;
 import com.smikhalev.sqlserverutils.schema.*;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
@@ -21,7 +21,7 @@ public class ImportContextTest extends AbstractTestNGSpringContextTests {
     private DatabaseLoader databaseLoader;
 
     @Autowired
-    private ImportContext importContext;
+    private RestorableContext restorableContext;
 
     @Test
     public void testImportContextDisableForeignKeys() throws Exception {
@@ -46,14 +46,14 @@ public class ImportContextTest extends AbstractTestNGSpringContextTests {
             Assert.assertNotNull(table);
             Assert.assertTrue(!table.getForeignKeys().isEmpty());
 
-            importContext.prepare(databaseWithForeignKeys);
+            restorableContext.prepare(databaseWithForeignKeys);
 
             Database databaseWithoutForeignKeys = databaseLoader.load();
             table = databaseWithoutForeignKeys.getTables().get("[dbo].[dependant_table]");
             Assert.assertNotNull(table);
             Assert.assertTrue(table.getForeignKeys().isEmpty());
 
-            importContext.restore();
+            restorableContext.restore();
 
             Database actualDatabase = databaseLoader.load();
             Assert.assertEquals(actualDatabase, expectedDatabase);

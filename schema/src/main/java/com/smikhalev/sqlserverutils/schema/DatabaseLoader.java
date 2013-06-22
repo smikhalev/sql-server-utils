@@ -31,7 +31,7 @@ public class DatabaseLoader {
         return database;
     }
 
-    public void loadTables(Map<String, Table> tables) {
+    private void loadTables(Map<String, Table> tables) {
         String query =
             "select" +
             "    object_id," +
@@ -58,7 +58,7 @@ public class DatabaseLoader {
         }
     }
 
-    public void loadColumns(Table table) {
+    private void loadColumns(Table table) {
         String query =
             "select " +
             "    column_name, " +
@@ -87,7 +87,7 @@ public class DatabaseLoader {
         }
     }
 
-    public void loadIndexes(int objectId, Table table) {
+    private void loadIndexes(int objectId, Table table) {
         String query =
             "select name, index_id, type, is_unique\n" +
             "from sys.indexes\n" +
@@ -203,7 +203,7 @@ public class DatabaseLoader {
         }
     }
 
-    public void loadTrigger(Database database) {
+    private void loadTrigger(Database database) {
         String query =
             "select " +
             "    tb.name as table_name, " +

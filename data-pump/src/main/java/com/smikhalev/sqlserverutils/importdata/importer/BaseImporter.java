@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.importdata.importer;
 
+import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.importdata.*;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbObject;
@@ -26,7 +27,7 @@ public abstract class BaseImporter implements Importer {
     }
 
     public void importData(Database database, Reader reader) {
-        try(ImportContext context = new ImportContext(restorableActions)) {
+        try(RestorableContext context = new RestorableContext(restorableActions)) {
             context.prepare(database);
             importDataBody(database, reader);
         }
