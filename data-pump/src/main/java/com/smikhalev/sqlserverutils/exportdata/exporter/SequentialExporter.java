@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.exportdata.exporter;
 
+import com.smikhalev.sqlserverutils.ProcessResult;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.*;
 import com.smikhalev.sqlserverutils.exportdata.resultsetprocessor.SequentialExportResultSetProcessor;
@@ -9,6 +10,8 @@ import java.io.Writer;
 import java.util.List;
 
 public class SequentialExporter extends BaseExporter {
+    private long processResult;
+
     public SequentialExporter(ExportStrategySelector exportStrategySelector,  ValueEncoder valueEncoder, StatementExecutor executor) {
         super(exportStrategySelector, valueEncoder, executor);
     }
@@ -20,6 +23,14 @@ public class SequentialExporter extends BaseExporter {
         for (String select : selects) {
             getExecutor().processResultSet(processor, select);
         }
+
+
+        processResult = processor.getLineExportedCount();
+    }
+
+    @Override
+    public long getResult() {
+        return processResult;
     }
 }
 

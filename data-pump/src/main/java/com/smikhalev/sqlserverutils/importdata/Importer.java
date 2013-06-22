@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.importdata;
 
+import com.smikhalev.sqlserverutils.ProcessResult;
 import com.smikhalev.sqlserverutils.schema.Database;
 
 import java.io.Reader;

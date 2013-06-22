@@ -41,6 +41,11 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
                         return 15;
                 }
             }
+
+            @Override
+            public long getDatabaseSize() {
+                return 1000;
+            }
         };
 
         IndexSizeProvider indexSizeProvider = new IndexSizeProvider() {

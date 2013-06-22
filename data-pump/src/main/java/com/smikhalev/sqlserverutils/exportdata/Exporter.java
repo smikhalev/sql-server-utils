@@ -6,4 +6,5 @@ import java.io.Writer;
 
 public interface Exporter {
     public void exportData(Database database, Writer writer);
+    public long getResult();
 }

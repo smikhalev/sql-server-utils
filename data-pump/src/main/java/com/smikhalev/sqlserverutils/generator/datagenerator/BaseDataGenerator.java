@@ -1,7 +1,10 @@
-package com.smikhalev.sqlserverutils.generator;
+package com.smikhalev.sqlserverutils.generator.datagenerator;
 
 import com.google.common.base.Joiner;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
+import com.smikhalev.sqlserverutils.generator.ColumnGenerator;
+import com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory;
+import com.smikhalev.sqlserverutils.generator.DataGenerator;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Column;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
@@ -16,13 +19,13 @@ import java.util.List;
  * insert into values script. In current implementation I use chunks to support inserting
  * a huge amount of data.
  */
-public class SimpleDataGenerator implements DataGenerator {
+public abstract class BaseDataGenerator implements DataGenerator {
 
     private ColumnGeneratorFactory columnGeneratorFactory;
     private StatementExecutor executor;
     private int chunkSize;
 
-    public SimpleDataGenerator(ColumnGeneratorFactory columnGeneratorFactory, StatementExecutor executor, int chunkSize) {
+    public BaseDataGenerator(ColumnGeneratorFactory columnGeneratorFactory, StatementExecutor executor, int chunkSize) {
         this.columnGeneratorFactory = columnGeneratorFactory;
         this.executor = executor;
         this.chunkSize = chunkSize;
@@ -36,15 +39,27 @@ public class SimpleDataGenerator implements DataGenerator {
                     : chunkSize;
             generateChunkData(database, dataSize);
         }
+
+        finishGenerateData();
     }
+
 
     private void generateChunkData(Database database, int count) {
         for(Table table : database.getTables().values()) {
-            executor.executeScript(generateDataScript(table, count));
+            String generateScript = generateDataScript(table, count);
+            generatePartData(generateScript);
         }
+
     }
 
-    public String generateDataScript(Table table, int count) {
+    protected void finishGenerateData() {};
+    protected abstract void generatePartData(String generateScript);
+
+    protected StatementExecutor getExecutor() {
+        return executor;
+    }
+
+    protected String generateDataScript(Table table, int count) {
         String insertHeader = generateHeader(table);
         String select = generateSelectScript(table, count);
         return insertHeader + select;

@@ -16,6 +16,7 @@ public abstract class BaseExportResultSetProcessor implements ResultSetProcessor
     private Table table;
     private Writer writer;
     private ValueEncoder valueEncoder;
+    private long lineExportedCount;
 
     public BaseExportResultSetProcessor(Table table, Writer writer, ValueEncoder valueEncoder){
         this.table = table;
@@ -49,6 +50,7 @@ public abstract class BaseExportResultSetProcessor implements ResultSetProcessor
             writeTableRowPrefix();
             writeRowData(results, metaData);
             writeNewLine();
+            lineExportedCount++;
         }
     }
 
@@ -76,5 +78,9 @@ public abstract class BaseExportResultSetProcessor implements ResultSetProcessor
     @Override
     public Object getResult() {
         return null;
+    }
+
+    public long getLineExportedCount() {
+        return lineExportedCount;
     }
 }

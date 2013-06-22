@@ -37,8 +37,10 @@ public class ParallelExporter extends BaseExporter {
         }
     }
 
-    public AtomicLong getOverallExportedCount() {
-        return overallExportedCount;
+    @Override
+    public long getResult() {
+        return overallExportedCount.longValue();
     }
 }
+
 

@@ -4,6 +4,7 @@ import com.smikhalev.sqlserverutils.core.executor.DataRow;
 import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
+import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbObject;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
@@ -20,19 +21,37 @@ public class SystemViewTableSizeProvider implements TableSizeProvider {
 
     private StatementExecutor executor;
     private HashMap<String, Long> tableSizes;
+    private Long databaseSize;
 
     public SystemViewTableSizeProvider(StatementExecutor executor) {
         this.executor = executor;
     }
 
+    @Override
     public long getSize(Table table) {
+        return getTableSizes().get(table.getFullName());
+    }
+
+    @Override
+    public synchronized long getDatabaseSize() {
+        if (databaseSize == null)
+            initDatabaseSize();
+
+        return databaseSize;
+    }
+
+    private void initDatabaseSize() {
+        databaseSize = new Long(0);
+
+        for(Long size : getTableSizes().values()){
+            databaseSize += size;
+        }
+    }
+
+    protected synchronized HashMap<String, Long> getTableSizes() {
         if (tableSizes == null)
             initTableSizes();
 
-        return tableSizes.get(table.getFullName());
-    }
-
-    protected HashMap<String, Long> getTableSizes() {
         return tableSizes;
     }
 

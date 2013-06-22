@@ -75,10 +75,11 @@
         <constructor-arg name="columnGenerators" ref="columnGenerator"/>
     </bean>
 
-    <bean id="dataGenerator" class="com.smikhalev.sqlserverutils.generator.SimpleDataGenerator">
+    <bean id="dataGenerator" class="com.smikhalev.sqlserverutils.generator.datagenerator.ParallelDataGenerator">
         <constructor-arg ref="columnGeneratorFactory"/>
         <constructor-arg ref="statementExecutor"/>
-        <constructor-arg value="1000000"/>
+        <constructor-arg name="chunkSize" value="100000"/>
+        <constructor-arg name="threadCount" value="10"/>
     </bean>
 
     <bean id="tableSizeProvider" class="com.smikhalev.sqlserverutils.test.sizeprovider.SystemViewTableSizeWithoutLazyLoadingProvider">
