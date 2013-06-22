@@ -6,7 +6,7 @@
 
     <bean id="simpleConnectionProvider" class="com.smikhalev.sqlserverutils.core.connection.SimpleConnectionProvider">
         <constructor-arg>
-            <value>jdbc:jtds:sqlserver://mikhalevpc/mini-pump;user=sa;password=sa2013;</value>
+            <value></value>
         </constructor-arg>
     </bean>
 
@@ -25,8 +25,8 @@
     <bean id="columnGenerator" class="java.util.EnumMap">
         <constructor-arg>
             <map
-                key-type="com.smikhalev.sqlserverutils.schema.dbobjects.DbType"
-                value-type="com.smikhalev.sqlserverutils.generator.ColumnGenerator">
+                    key-type="com.smikhalev.sqlserverutils.schema.dbobjects.DbType"
+                    value-type="com.smikhalev.sqlserverutils.generator.ColumnGenerator">
                 <entry key="BIGINT">
                     <bean class="com.smikhalev.sqlserverutils.generator.columngenerator.RandomIntegerColumnGenerator">
                         <constructor-arg value="9223372036854775807"/>
@@ -81,11 +81,11 @@
         <constructor-arg value="1000000"/>
     </bean>
 
-    <bean id="tableSizeProvider" class="com.smikhalev.sqlserverutils.test.sizeprovider.SystemViewTableSizeWithoutLazyLoadingProvider">
+    <bean id="tableSizeProvider" class="com.smikhalev.sqlserverutils.exportdata.sizeprovider.SystemViewTableSizeProvider">
         <constructor-arg ref="statementExecutor"/>
     </bean>
 
-    <bean id="indexSizeProvider" class="com.smikhalev.sqlserverutils.test.sizeprovider.SystemViewIndexSizeWithoutLazyLoadingProvider">
+    <bean id="indexSizeProvider" class="com.smikhalev.sqlserverutils.exportdata.sizeprovider.SystemViewIndexSizeProvider">
         <constructor-arg ref="statementExecutor"/>
     </bean>
 
@@ -127,17 +127,16 @@
 
     <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.encoder.SimpleValueEncoder"/>
 
-    <bean id="sequentialExporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.SequentialExporter">
-        <constructor-arg ref="strategySelector"/>
-        <constructor-arg ref="valueEncoder"/>
-        <constructor-arg ref="statementExecutor"/>
-    </bean>
-
-    <bean id="parallelExporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.ParallelExporter">
+    <bean id="exporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.ParallelExporter">
         <constructor-arg ref="strategySelector"/>
         <constructor-arg ref="valueEncoder"/>
         <constructor-arg ref="statementExecutor"/>
         <constructor-arg value="10"/>
+    </bean>
+
+    <bean id="exportManager" class="com.smikhalev.sqlserverutils.exportdata.ExportManager">
+        <constructor-arg ref="exporter"/>
+        <constructor-arg ref="databaseLoader"/>
     </bean>
 
     <bean id="packetInsertGenerator" class="com.smikhalev.sqlserverutils.importdata.PacketInsertGenerator">
@@ -145,7 +144,7 @@
             <bean class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
         </constructor-arg>
     </bean>
-    
+
     <bean id="packetImporter" class="com.smikhalev.sqlserverutils.importdata.PacketImporter">
         <constructor-arg ref="statementExecutor"/>
         <constructor-arg ref="packetInsertGenerator"/>
@@ -154,14 +153,16 @@
 
     <bean id="valueConverter" class="com.smikhalev.sqlserverutils.importdata.ImportValueConverter"/>
 
-    <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.importer.SequentialImporter">
+    <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.importer.ParallelImporter">
         <constructor-arg ref="packetImporter"/>
         <constructor-arg ref="restorableAction"/>
-        <constructor-arg value="10"/>
+        <constructor-arg name="chunkSize" value="10"/>
+        <constructor-arg name="threadCount" value="10"/>
     </bean>
 
-    <bean id="tableComparator" class="com.smikhalev.sqlserverutils.test.TableComparator">
-        <constructor-arg ref="statementExecutor"/>
+    <bean id="importManager" class="com.smikhalev.sqlserverutils.importdata.ImportManager">
+        <constructor-arg ref="importer"/>
+        <constructor-arg ref="databaseLoader"/>
     </bean>
 
     <bean id="restorableAction" class="java.util.ArrayList" >
@@ -179,11 +180,6 @@
 
     <bean id="importContext" class="com.smikhalev.sqlserverutils.importdata.ImportContext">
         <constructor-arg ref="restorableAction"/>
-    </bean>
-
-    <bean id="importManager" class="com.smikhalev.sqlserverutils.importdata.ImportManager">
-        <constructor-arg ref="importer"/>
-        <constructor-arg ref="databaseLoader"/>
     </bean>
 </beans>
 

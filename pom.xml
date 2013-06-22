@@ -20,6 +20,7 @@
         <module>schema</module>
         <module>data-pump</module>
         <module>core</module>
+        <module>data-pump-console</module>
     </modules>
 
     <dependencyManagement>

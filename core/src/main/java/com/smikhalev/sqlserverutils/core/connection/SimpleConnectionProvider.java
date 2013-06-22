@@ -18,4 +18,9 @@ public class SimpleConnectionProvider implements ConnectionProvider {
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(connectionString);
     }
+
+    @Override
+    public void setConnectionString(String connectionString) {
+        this.connectionString = connectionString;
+    }
 }
