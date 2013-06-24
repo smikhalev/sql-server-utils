@@ -1,10 +1,9 @@
 package com.smikhalev.sqlserverutils.exportdata;
 
+import com.smikhalev.sqlserverutils.exportdata.exporter.TableExportSelect;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
-import java.util.List;
-
 public interface ExportStrategy {
-    public List<String> generateExportSelects(Table table);
+    public TableExportSelect generateExportSelects(Table table);
     public boolean isApplicable(Table table);
 }

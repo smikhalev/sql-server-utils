@@ -3,6 +3,7 @@ package com.smikhalev.sqlserverutils.exportdata.strategy;
 import com.smikhalev.sqlserverutils.exportdata.IndexSizeProvider;
 import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
+import com.smikhalev.sqlserverutils.schema.dbobjects.SortType;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 public class UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy extends IndexChunkSubQueryStrategy {
@@ -23,10 +24,10 @@ public class UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy extends I
     }
 
     @Override
-    protected String generateInnerSelect(Table table, Index index, long offset) {
+    protected String generateInnerSelect(Table table, Index index, long offset, SortType sortType) {
         return generateInnerSelectFields(table.getClusteredIndex()) +
                generateFromClause(table) +
-               generateOrderByClause(index, offset);
+               generateOrderByClause(index, offset, sortType);
     }
 
     @Override

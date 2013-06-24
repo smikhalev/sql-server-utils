@@ -1,13 +1,11 @@
 package com.smikhalev.sqlserverutils.exportdata.exporter;
 
-import com.smikhalev.sqlserverutils.ProcessResult;
+import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.*;
 import com.smikhalev.sqlserverutils.exportdata.resultsetprocessor.SequentialExportResultSetProcessor;
-import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.io.Writer;
-import java.util.List;
 
 public class SequentialExporter extends BaseExporter {
     private long processResult;
@@ -17,13 +15,12 @@ public class SequentialExporter extends BaseExporter {
     }
 
     @Override
-    protected void exportTable(List<String> selects, Table table, Writer writer) {
-        SequentialExportResultSetProcessor processor = new SequentialExportResultSetProcessor(table, writer, getValueEncoder());
+    protected void exportTable(TableExportSelect tableExportSelect, Writer writer) {
+        SequentialExportResultSetProcessor processor = new SequentialExportResultSetProcessor(tableExportSelect.getTable(), writer, getValueEncoder());
 
-        for (String select : selects) {
+        for (String select : tableExportSelect.getExportSelects()) {
             getExecutor().processResultSet(processor, select);
         }
-
 
         processResult = processor.getLineExportedCount();
     }

@@ -2,9 +2,8 @@ package com.smikhalev.sqlserverutils.exportdata.strategy;
 
 import com.smikhalev.sqlserverutils.exportdata.ExportStrategy;
 import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
+import com.smikhalev.sqlserverutils.exportdata.exporter.TableExportSelect;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
-
-import java.util.List;
 
 public class TableSizeDependantStrategy implements ExportStrategy {
 
@@ -19,7 +18,7 @@ public class TableSizeDependantStrategy implements ExportStrategy {
     }
 
     @Override
-    public List<String> generateExportSelects(Table table) {
+    public TableExportSelect generateExportSelects(Table table) {
         return strategy.generateExportSelects(table);
     }
 

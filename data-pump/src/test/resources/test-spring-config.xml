@@ -168,10 +168,10 @@
     <bean id="restorableAction" class="java.util.ArrayList" >
         <constructor-arg>
             <list>
-                <bean class="com.smikhalev.sqlserverutils.restoreaction.DisableForeignKeysRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableForeignKeysRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.restoreaction.DisableTriggersRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableTriggersRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
             </list>

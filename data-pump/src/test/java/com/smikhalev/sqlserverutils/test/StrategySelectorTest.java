@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.test;
 
+import com.google.common.collect.Lists;
 import com.smikhalev.sqlserverutils.exportdata.ExportStrategy;
 import com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector;
 import com.smikhalev.sqlserverutils.exportdata.IndexSizeProvider;
@@ -16,7 +17,9 @@ import org.testng.annotations.Test;
 import org.testng.Assert;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 @ContextConfiguration(locations = {"classpath:test-spring-config.xml"})
 public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
@@ -103,7 +106,7 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
         ExportStrategy strategy = selector.select(table);
 
         Assert.assertTrue(strategy instanceof UniqueNonClusteredIndexChunkStrategy);
-        List<String> queries = strategy.generateExportSelects(table);
+        List<String> queries = Lists.newArrayList(strategy.generateExportSelects(table).getExportSelects());
         Assert.assertTrue(!queries.isEmpty());
     }
 
@@ -119,7 +122,7 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
         ExportStrategy strategy = selector.select(table);
 
         Assert.assertTrue(strategy instanceof UniqueNonClusteredIndexChunkStrategy);
-        List<String> queries = strategy.generateExportSelects(table);
+        List<String> queries = Lists.newArrayList(strategy.generateExportSelects(table).getExportSelects());
         Assert.assertTrue(!queries.isEmpty());
         Assert.assertTrue(queries.get(0).contains("order by [int_column]"));
     }
@@ -135,7 +138,7 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
         ExportStrategy strategy = selector.select(table);
 
         Assert.assertTrue(strategy instanceof UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy);
-        List<String> queries = strategy.generateExportSelects(table);
+        List<String> queries = Lists.newArrayList(strategy.generateExportSelects(table).getExportSelects());
         Assert.assertTrue(!queries.isEmpty());
     }
 
@@ -149,7 +152,7 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
         ExportStrategy strategy = selector.select(table);
 
         Assert.assertTrue(strategy instanceof ClusteredIndexChunkStrategy);
-        List<String> queries = strategy.generateExportSelects(table);
+        List<String> queries = Lists.newArrayList(strategy.generateExportSelects(table).getExportSelects());
         Assert.assertTrue(!queries.isEmpty());
     }
 
@@ -163,10 +166,9 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
         ExportStrategy strategy = selector.select(table);
 
         Assert.assertTrue(strategy instanceof NonClusteredIndexChunkStrategy);
-        List<String> queries = strategy.generateExportSelects(table);
+        List<String> queries = Lists.newArrayList(strategy.generateExportSelects(table).getExportSelects());
         Assert.assertTrue(!queries.isEmpty());
     }
-
 
     @Test
     public void testExportOfLastStrategy(){

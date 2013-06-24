@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.exportdata.exporter;
 
+import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.*;
 import com.smikhalev.sqlserverutils.schema.Database;
@@ -20,7 +21,7 @@ public abstract class BaseExporter implements Exporter {
         this.executor = executor;
     }
 
-    protected abstract void exportTable(List<String> selects, Table table, Writer writer);
+    protected abstract void exportTable(TableExportSelect tableExportSelect, Writer writer);
 
     protected void finalExport() {
     };
@@ -33,14 +34,33 @@ public abstract class BaseExporter implements Exporter {
         return executor;
     }
 
+    @Override
     public void exportData(Database database, Writer writer) {
+        List<TableExportSelect> tableExportSelects = new ArrayList<>();
         for (Table table : database.getTables().values()) {
             ExportStrategy exportStrategy = exportStrategySelector.select(table);
-            List<String> selects = exportStrategy.generateExportSelects(table);
-
-            exportTable(selects, table, writer);
+            tableExportSelects.add(exportStrategy.generateExportSelects(table));
         }
 
-        finalExport();
+        // First we start to export tables for which we don't need to create a copy tables
+        for (TableExportSelect tableExportSelect : tableExportSelects) {
+            if (tableExportSelect.getRestorableAction().isEmpty())
+            {
+                exportTable(tableExportSelect, writer);
+            }
+        }
+
+        // Open restorable context for those tables where we need to create a copy
+        try(RestorableContext context = new RestorableContext()) {
+            for (TableExportSelect tableExportSelect : tableExportSelects) {
+                if (!tableExportSelect.getRestorableAction().isEmpty())
+                {
+                    context.prepare(tableExportSelect.getRestorableAction(), database);
+                    exportTable(tableExportSelect, writer);
+                }
+            }
+
+            finalExport();
+        }
     }
 }

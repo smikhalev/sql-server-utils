@@ -26,8 +26,8 @@ public abstract class IndexChunkSubQueryStrategy extends IndexChunkStrategy {
     }
 
     @Override
-    protected String generateExportSelect(Table table, Index index, long offset) {
-        String innerSelect = generateInnerSelect(table, index, offset);
+    protected String generateExportSelect(Table table, Index index, long offset, SortType sortType) {
+        String innerSelect = generateInnerSelect(table, index, offset, sortType);
         String mainSelect = generateMainSelect(table, index, innerSelect);
         return mainSelect;
     }
@@ -50,10 +50,10 @@ public abstract class IndexChunkSubQueryStrategy extends IndexChunkStrategy {
         generateMainFromClause(table, index, innerSelect);
     }
 
-    protected String generateInnerSelect(Table table, Index index, long offset) {
+    protected String generateInnerSelect(Table table, Index index, long offset, SortType sortType) {
         return generateInnerSelectFields(index) +
             generateFromClause(table) +
-            generateOrderByClause(index, offset);
+            generateOrderByClause(index, offset, sortType);
     }
 
     protected String generateMainFromClause(Table table, Index index, String innerSelect) {

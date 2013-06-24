@@ -1,4 +1,4 @@
-package com.smikhalev.sqlserverutils.restoreaction;
+package com.smikhalev.sqlserverutils.restorableaction;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.importdata.RestorableAction;
@@ -6,7 +6,6 @@ import com.smikhalev.sqlserverutils.importdata.RestorableAction;
 import java.util.Stack;
 
 public abstract class BaseRestorableAction implements RestorableAction {
-
     private StatementExecutor executor;
     private Stack<String> restoreScripts = new Stack<>();
 

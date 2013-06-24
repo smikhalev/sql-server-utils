@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.exportdata;
 
+import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.schema.Database;
 
 import java.io.Writer;

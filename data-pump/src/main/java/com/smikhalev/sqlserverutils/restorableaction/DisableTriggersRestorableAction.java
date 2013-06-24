@@ -1,4 +1,4 @@
-package com.smikhalev.sqlserverutils.restoreaction;
+package com.smikhalev.sqlserverutils.restorableaction;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.schema.Database;

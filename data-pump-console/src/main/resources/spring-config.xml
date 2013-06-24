@@ -34,30 +34,24 @@
                         <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.FullExportStrategy"/>
                     </constructor-arg>
                     <constructor-arg ref="tableSizeProvider"/>
-                    <constructor-arg name="tableSizeLimit" value="100000"/>
-                </bean>
-                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.UniqueNonClusteredIndexChunkStrategy">
-                    <constructor-arg ref="tableSizeProvider"/>
-                    <constructor-arg ref="indexSizeProvider"/>
-                    <constructor-arg name="chunkSize" value="10000"/>
-                </bean>
-                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy">
-                    <constructor-arg ref="tableSizeProvider"/>
-                    <constructor-arg ref="indexSizeProvider"/>
-                    <constructor-arg name="chunkSize" value="10000"/>
+                    <constructor-arg name="tableSizeLimit" value="500000"/>
                 </bean>
                 <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.ClusteredIndexChunkStrategy">
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg ref="indexSizeProvider"/>
-                    <constructor-arg name="chunkSize" value="10000"/>
+                    <constructor-arg name="chunkSize" value="100000"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.NonClusteredIndexChunkStrategy">
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.UniqueNonClusteredCompositeChunkStrategy">
                     <constructor-arg ref="tableSizeProvider"/>
                     <constructor-arg ref="indexSizeProvider"/>
-                    <constructor-arg name="chunkSize" value="10000"/>
+                    <constructor-arg name="chunkSize" value="500000"/>
                 </bean>
-
-                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.FullExportStrategy"/>
+                <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.CreateUniqueNonClusteredIndexChunkStrategy">
+                    <constructor-arg ref="tableSizeProvider"/>
+                    <constructor-arg ref="indexSizeProvider"/>
+                    <constructor-arg ref="statementExecutor"/>
+                    <constructor-arg value="500000"/>
+                </bean>
             </list>
         </constructor-arg>
     </bean>
@@ -106,10 +100,10 @@
     <bean id="restorableAction" class="java.util.ArrayList" >
         <constructor-arg>
             <list>
-                <bean class="com.smikhalev.sqlserverutils.restoreaction.DisableForeignKeysRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableForeignKeysRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.restoreaction.DisableTriggersRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableTriggersRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
             </list>
@@ -128,12 +122,6 @@
     <bean id="clearManager" class="com.smikhalev.sqlserverutils.cleardata.CleanManager">
         <constructor-arg ref="cleaner"/>
         <constructor-arg ref="databaseLoader"/>
-    </bean>
-
-    <bean id="facade" class="com.smikhalev.sqlserverutils.Facade">
-        <constructor-arg ref="exportManager"/>
-        <constructor-arg ref="importManager"/>
-        <constructor-arg ref="clearManager"/>
     </bean>
 </beans>
 

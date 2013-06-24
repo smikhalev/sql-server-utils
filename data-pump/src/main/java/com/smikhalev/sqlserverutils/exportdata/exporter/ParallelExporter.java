@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.exportdata.exporter;
 
+import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.resultsetprocessor.ParallelExportResultSetProcessor;
 import com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector;
@@ -22,9 +23,9 @@ public class ParallelExporter extends BaseExporter {
     }
 
     @Override
-    protected void exportTable(List<String> selects, Table table, Writer writer) {
-        for (String select : selects) {
-            ParallelExportResultSetProcessor processor = new ParallelExportResultSetProcessor(table, writer, getValueEncoder());
+    protected void exportTable(TableExportSelect tableExportSelect, Writer writer) {
+        for (String select : tableExportSelect.getExportSelects()) {
+            ParallelExportResultSetProcessor processor = new ParallelExportResultSetProcessor(tableExportSelect.getTable(), writer, getValueEncoder());
             Runnable exportWorker = new ExportWorker(processor, getExecutor(), select, overallExportedCount);
             threadPool.execute(exportWorker);
         }

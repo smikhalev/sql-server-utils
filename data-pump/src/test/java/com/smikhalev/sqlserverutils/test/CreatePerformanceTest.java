@@ -21,31 +21,25 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private DataGenerator generator;
 
-    private int TABLE_SIZE = 1 * 1000 * 1000;
+    private int TABLE_SIZE = 3 * 1000 * 1000;
 
-    @Test//(enabled = false) 154 sec
+    @Test//(enabled = false) 349 sec
     public void createPerformanceDatabase() throws Exception {
-        Table nonClusteredUniqueTable = createTypicalTable("non_clustered_unique_table")
-                .addUniqueNonClusteredIndex("non_clustered_unique_index", "nvarchar_column")
-                .build();
-
-        Table nonClusteredTable = createTypicalTable("non_clustered_table")
-                .addNonClusteredIndex("non_clustered_index", "varchar_column")
-                .build();
-
-        Table clusteredUniqueTable = createTypicalTable("clustered_unique_table")
-                .setUniqueClusteredIndex("clustered_unique_index", "nvarchar_column")
-                .build();
-
         Table clusteredTable = createTypicalTable("clustered_table")
                 .setClusteredIndex("clustered_index", "bigint_column")
                 .build();
 
+        Table nonClusteredUniqueTable = createTypicalTable("non_clustered_unique_table")
+                .addUniqueNonClusteredIndex("non_clustered_unique_index", "varchar_column")
+                .build();
+
+        Table heapTable = createTypicalTable("heap_table")
+                .build();
+
         Database database = new DatabaseBuilder()
                 .addTable(clusteredTable)
-                .addTable(clusteredUniqueTable)
-                .addTable(nonClusteredTable)
                 .addTable(nonClusteredUniqueTable)
+                .addTable(heapTable)
                 .build();
 
         DatabaseContext dbContext = new DatabaseContext(database, executor);
@@ -56,15 +50,9 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
     private TableBuilder createTypicalTable(String tableName){
         return new TableBuilder(tableName)
                 .addNullColumn("bit_column", DbType.BIT)
-                .addNullColumn("tyinyint_column", DbType.TINYINT)
-                .addNullColumn("smallint_column", DbType.SMALLINT)
                 .addNullColumn("bigint_column", DbType.BIGINT)
                 .addNullColumn("float_column", DbType.FLOAT)
-                .addNullColumn("real_column", DbType.REAL)
-                .addNullColumn("nvarchar_column", DbType.NVARCHAR, 50)
-                .addNullColumn("varchar_column", DbType.VARCHAR, 25)
-                .addNullColumn("date_column", DbType.DATE)
-                .addNullColumn("time_column", DbType.TIME)
-                .addNullColumn("datetime_column", DbType.DATETIME);
+                .addNullColumn("varchar_column", DbType.VARCHAR, 50)
+                .addNullColumn("date_column", DbType.DATE);
     }
 }
