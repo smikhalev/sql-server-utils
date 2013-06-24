@@ -39,7 +39,7 @@ public class Program {
             processCommand(program, command, filePath);
         }
         catch (ApplicationException | InterruptedException e) {
-            System.out.println("Exception:" + e.getMessage() + e.getStackTrace());
+            System.out.println("Exception:" + e.getMessage() + e.getStackTrace().toString());
         }
     }
 
@@ -47,15 +47,13 @@ public class Program {
         switch (command){
             case "import":
                 System.out.println("Import started.");
+                startStatusThread(program.importManager);
                 program.importManager.doImport(filePath);
-                System.out.println("Import finished.");
                 break;
             case "export":
                 System.out.println("Export started.");
-
                 startStatusThread(program.exportManager);
                 program.exportManager.doExport(filePath);
-
                 break;
             case "clear":
                 System.out.println("Clear started.");
@@ -67,22 +65,28 @@ public class Program {
         }
     }
 
-    public static void startStatusThread(final ExportManager exportManager) {
+    public static void startStatusThread(final BaseWorkerManager workerManager) {
         Runnable statusThreadRunnable = new Runnable() {
             @Override
             public void run() {
                 try {
-
-                    ProcessResult result = exportManager.getCurrentStatus();
+                    ProcessResult result = workerManager.getCurrentStatus();
                     int sleepTimes = 0;
+
+                    while(!result.isStarted()) {
+                        Thread.sleep(STATUS_THREAD_SLEEP_TIME);
+                        sleepTimes++;
+                        result = workerManager.getCurrentStatus();
+                        System.out.println(sleepTimes + ") Starting" );
+                    }
+
                     while(!result.isFinished()) {
                         Thread.sleep(STATUS_THREAD_SLEEP_TIME);
                         sleepTimes++;
-                        result = exportManager.getCurrentStatus();
+                        result = workerManager.getCurrentStatus();
 
-                        System.out.println(sleepTimes + ")" + result.getMessage());
+                        System.out.println(sleepTimes + ") " + result.getMessage());
                     }
-
                 } catch (InterruptedException e) {
                     throw new ApplicationException(e.getMessage(), e.getCause());
                 }
@@ -90,12 +94,10 @@ public class Program {
         };
 
         Thread statusThread = new Thread(statusThreadRunnable);
-
         statusThread.start();
     }
 
-    private static void substituteDefaultConnectionString(String arg, Program program) {
-        String connectionString = arg;
+    private static void substituteDefaultConnectionString(String connectionString, Program program) {
         program.connectionProvider.setConnectionString(connectionString);
     }
 

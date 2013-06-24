@@ -88,8 +88,8 @@
     <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.importer.ParallelImporter">
         <constructor-arg ref="packetImporter"/>
         <constructor-arg ref="restorableAction"/>
-        <constructor-arg name="chunkSize" value="10"/>
-        <constructor-arg name="threadCount" value="10"/>
+        <constructor-arg name="chunkSize" value="100"/>
+        <constructor-arg name="threadCount" value="20"/>
     </bean>
 
     <bean id="importManager" class="com.smikhalev.sqlserverutils.importdata.ImportManager">
@@ -124,5 +124,3 @@
         <constructor-arg ref="databaseLoader"/>
     </bean>
 </beans>
-
-

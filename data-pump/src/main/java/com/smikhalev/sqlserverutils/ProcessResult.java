@@ -13,6 +13,10 @@ public class ProcessResult {
         return allRows;
     }
 
+    public boolean isStarted() {
+        return allRows >= processedRows;
+    }
+
     public boolean isFinished() {
         return allRows == processedRows;
     }

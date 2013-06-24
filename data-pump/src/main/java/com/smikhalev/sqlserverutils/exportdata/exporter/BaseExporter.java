@@ -24,7 +24,7 @@ public abstract class BaseExporter implements Exporter {
     protected abstract void exportTable(TableExportSelect tableExportSelect, Writer writer);
 
     protected void finalExport() {
-    };
+    }
 
     protected ValueEncoder getValueEncoder() {
         return valueEncoder;
@@ -44,17 +44,15 @@ public abstract class BaseExporter implements Exporter {
 
         // First we start to export tables for which we don't need to create a copy tables
         for (TableExportSelect tableExportSelect : tableExportSelects) {
-            if (tableExportSelect.getRestorableAction().isEmpty())
-            {
+            if (tableExportSelect.getRestorableAction().isEmpty()) {
                 exportTable(tableExportSelect, writer);
             }
         }
 
         // Open restorable context for those tables where we need to create a copy
-        try(RestorableContext context = new RestorableContext()) {
+        try (RestorableContext context = new RestorableContext()) {
             for (TableExportSelect tableExportSelect : tableExportSelects) {
-                if (!tableExportSelect.getRestorableAction().isEmpty())
-                {
+                if (!tableExportSelect.getRestorableAction().isEmpty()) {
                     context.prepare(tableExportSelect.getRestorableAction(), database);
                     exportTable(tableExportSelect, writer);
                 }

@@ -6,6 +6,8 @@ import com.smikhalev.sqlserverutils.importdata.RestorableAction;
 
 public class SequentialImporter extends BaseImporter {
 
+    private long overallImportedCount = 0;
+
     public SequentialImporter(PacketImporter packetImporter, Iterable<RestorableAction> restorableActions, int chunkSize) {
         super(packetImporter, restorableActions, chunkSize);
     }
@@ -13,5 +15,11 @@ public class SequentialImporter extends BaseImporter {
     @Override
     protected void importPacket(Packet packet) {
         getPacketImporter().importPacket(packet);
+        overallImportedCount += packet.size();
+    }
+
+    @Override
+    public long getResult() {
+        return overallImportedCount;
     }
 }

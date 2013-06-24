@@ -6,9 +6,11 @@ import com.smikhalev.sqlserverutils.importdata.RestorableAction;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelImporter extends BaseImporter {
 
+    private AtomicLong overallImportedCount = new AtomicLong(0);
     private ExecutorService threadPool;
 
     public ParallelImporter(PacketImporter packetImporter, Iterable<RestorableAction> restorableActions, int chunkSize, int threadCount) {
@@ -18,7 +20,7 @@ public class ParallelImporter extends BaseImporter {
 
     @Override
     protected void importPacket(Packet packet) {
-        ImportWorker worker = new ImportWorker(getPacketImporter(), packet);
+        ImportWorker worker = new ImportWorker(getPacketImporter(), packet, overallImportedCount);
         threadPool.execute(worker);
     }
 
@@ -28,5 +30,10 @@ public class ParallelImporter extends BaseImporter {
 
         while (!threadPool.isTerminated()) {
         }
+    }
+
+    @Override
+    public long getResult() {
+        return overallImportedCount.longValue();
     }
 }
