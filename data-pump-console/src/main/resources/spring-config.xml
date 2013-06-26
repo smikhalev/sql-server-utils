@@ -26,7 +26,7 @@
         <constructor-arg ref="statementExecutor"/>
     </bean>
 
-    <bean id="strategySelector" class="com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector">
+    <bean id="exportStrategySelector" class="com.smikhalev.sqlserverutils.exportdata.ExportStrategySelector">
         <constructor-arg>
             <list>
                 <bean class="com.smikhalev.sqlserverutils.exportdata.strategy.TableSizeDependantStrategy">
@@ -59,7 +59,7 @@
     <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.encoder.SimpleValueEncoder"/>
 
     <bean id="exporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.ParallelExporter">
-        <constructor-arg ref="strategySelector"/>
+        <constructor-arg ref="exportStrategySelector"/>
         <constructor-arg ref="valueEncoder"/>
         <constructor-arg ref="statementExecutor"/>
         <constructor-arg name="threadCount" value="20"/>
@@ -71,25 +71,36 @@
         <constructor-arg ref="tableSizeProvider"/>
     </bean>
 
-    <bean id="packetInsertGenerator" class="com.smikhalev.sqlserverutils.importdata.PacketInsertGenerator">
-        <constructor-arg>
-            <bean class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
-        </constructor-arg>
-    </bean>
-
     <bean id="packetImporter" class="com.smikhalev.sqlserverutils.importdata.PacketImporter">
         <constructor-arg ref="statementExecutor"/>
-        <constructor-arg ref="packetInsertGenerator"/>
-        <constructor-arg ref="valueConverter"/>
     </bean>
 
     <bean id="valueConverter" class="com.smikhalev.sqlserverutils.importdata.ImportValueConverter"/>
 
+    <bean id="tableValueConstructor" class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
+
+    <bean id="importStrategySelector" class="com.smikhalev.sqlserverutils.importdata.ImportStrategySelector">
+        <constructor-arg>
+            <list>
+                <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertImportStrategy">
+                    <constructor-arg ref="tableValueConstructor"/>
+                </bean>
+                <bean class="com.smikhalev.sqlserverutils.importdata.strategy.PtheudoTempTableImportStrategy">
+                    <constructor-arg ref="tableValueConstructor"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="csvLineParser" class="com.smikhalev.sqlserverutils.importdata.importer.CsvLineParser"/>
+
     <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.importer.ParallelImporter">
         <constructor-arg ref="packetImporter"/>
+        <constructor-arg ref="importStrategySelector"/>
         <constructor-arg ref="restorableAction"/>
-        <constructor-arg name="chunkSize" value="100"/>
-        <constructor-arg name="threadCount" value="20"/>
+        <constructor-arg ref="csvLineParser"/>
+        <constructor-arg name="chunkSize" value="800"/>
+        <constructor-arg name="threadCount" value="400"/>
     </bean>
 
     <bean id="importManager" class="com.smikhalev.sqlserverutils.importdata.ImportManager">
@@ -100,10 +111,10 @@
     <bean id="restorableAction" class="java.util.ArrayList" >
         <constructor-arg>
             <list>
-                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableForeignKeysRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableTriggersRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
-                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableTriggersRestorableAction">
+                <bean class="com.smikhalev.sqlserverutils.restorableaction.DisableForeignKeysRestorableAction">
                     <constructor-arg ref="statementExecutor"/>
                 </bean>
             </list>

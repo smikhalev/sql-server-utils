@@ -1,29 +1,65 @@
 package com.smikhalev.sqlserverutils.importdata;
 
-import com.google.common.base.Joiner;
-import com.smikhalev.sqlserverutils.core.executor.DataRow;
-import com.smikhalev.sqlserverutils.core.executor.DataTable;
-import com.smikhalev.sqlserverutils.schema.dbobjects.Column;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TableValueConstructor {
+
     public String construct(Table table, List<List<String>> dataTable) {
-        String valueScript = constructValues(dataTable);
-        return String.format("select %s from (values %s) q(%s)",
-                table.getColumns().generateFields(), valueScript, table.getColumns().generateFields());
+        int stringBuilderEstimateLength = estimateLength(dataTable);
+        StringBuilder stringBuilder = new StringBuilder(stringBuilderEstimateLength);
+
+        stringBuilder.append("select ");
+        stringBuilder.append(table.getColumns().generateFields());
+        stringBuilder.append(" from (values ");
+        appendValues(dataTable, stringBuilder);
+        stringBuilder.append(") q( ");
+        stringBuilder.append(table.getColumns().generateFields());
+        stringBuilder.append(")");
+
+        return stringBuilder.toString();
     }
 
-    private String constructValues(List<List<String>> dataTable) {
-        List<String> values = new ArrayList<>();
+    private void appendValues(List<List<String>> dataTable, StringBuilder stringBuilder) {
+        for(int i = 0; i < dataTable.size(); i++) {
+            if (i != 0)
+                stringBuilder.append(",");
 
-        for(List<String> row : dataTable) {
-            String rowValues = Joiner.on(",").join(row);
-            values.add("(" + rowValues + ")");
+            stringBuilder.append("(");
+            for(int j = 0; j < dataTable.get(i).size(); j++) {
+                if (j != 0)
+                    stringBuilder.append(",");
+
+                stringBuilder.append(dataTable.get(i).get(j));
+            }
+            stringBuilder.append(")");
+        }
+    }
+
+    private int estimateLength(List<List<String>> dataTable) {
+        int size = 0;
+
+        if (dataTable.size() > 0 && dataTable.get(0).size() > 0) {
+            int rowSize = 0;
+
+            final int COMMA_SIZE = 1;
+            final int BRACKET_SIZE = 2;
+
+            for (String value : dataTable.get(0)) {
+                rowSize += value.length() + COMMA_SIZE;
+            }
+
+            rowSize += BRACKET_SIZE;
+
+            size = rowSize * dataTable.size();
+
+            // This is average increment just to be sure that this size will be enough
+            size += size / 15;
         }
 
-        return Joiner.on(",").join(values);
+        return size;
     }
+
+
 }

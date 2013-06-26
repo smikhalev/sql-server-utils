@@ -1,20 +1,18 @@
 package com.smikhalev.sqlserverutils.importdata.importer;
 
-import com.smikhalev.sqlserverutils.importdata.Packet;
-import com.smikhalev.sqlserverutils.importdata.PacketImporter;
-import com.smikhalev.sqlserverutils.importdata.RestorableAction;
+import com.smikhalev.sqlserverutils.importdata.*;
 
 public class SequentialImporter extends BaseImporter {
 
     private long overallImportedCount = 0;
 
-    public SequentialImporter(PacketImporter packetImporter, Iterable<RestorableAction> restorableActions, int chunkSize) {
-        super(packetImporter, restorableActions, chunkSize);
+    public SequentialImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser, int chunkSize) {
+        super(packetImporter, selector, restorableActions, csvLineParser, chunkSize);
     }
 
     @Override
-    protected void importPacket(Packet packet) {
-        getPacketImporter().importPacket(packet);
+    protected void importPacket(Packet packet, ImportStrategy importStrategy) {
+        getPacketImporter().importPacket(packet, importStrategy);
         overallImportedCount += packet.size();
     }
 

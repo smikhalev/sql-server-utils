@@ -1,27 +1,37 @@
 package com.smikhalev.sqlserverutils.importdata.importer;
 
-import com.smikhalev.sqlserverutils.importdata.Packet;
-import com.smikhalev.sqlserverutils.importdata.PacketImporter;
-import com.smikhalev.sqlserverutils.importdata.RestorableAction;
+import com.smikhalev.sqlserverutils.importdata.*;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelImporter extends BaseImporter {
 
     private AtomicLong overallImportedCount = new AtomicLong(0);
-    private ExecutorService threadPool;
+    private ThreadPoolExecutor threadPool;
 
-    public ParallelImporter(PacketImporter packetImporter, Iterable<RestorableAction> restorableActions, int chunkSize, int threadCount) {
-        super(packetImporter, restorableActions, chunkSize);
-        threadPool = Executors.newFixedThreadPool(threadCount);
+    public ParallelImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser, int chunkSize, int threadCount) {
+        super(packetImporter, selector, restorableActions, csvLineParser, chunkSize);
+        threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
     }
 
     @Override
-    protected void importPacket(Packet packet) {
-        ImportWorker worker = new ImportWorker(getPacketImporter(), packet, overallImportedCount);
+    protected void importPacket(Packet packet, ImportStrategy importStrategy) {
+        ImportWorker worker = new ImportWorker(getPacketImporter(), packet, importStrategy, overallImportedCount);
         threadPool.execute(worker);
+
+        waitForContinueImportProcess();
+    }
+
+    private void waitForContinueImportProcess() {
+        while(!threadPool.getQueue().isEmpty()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new ImportException(e.getMessage(), e.getCause());
+            }
+        }
     }
 
     @Override

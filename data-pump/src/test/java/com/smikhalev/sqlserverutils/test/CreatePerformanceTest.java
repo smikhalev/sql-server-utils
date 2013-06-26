@@ -37,8 +37,8 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
                 .build();
 
         Database database = new DatabaseBuilder()
-                .addTable(clusteredTable)
-                .addTable(nonClusteredUniqueTable)
+                //.addTable(clusteredTable)
+                //.addTable(nonClusteredUniqueTable)
                 .addTable(heapTable)
                 .build();
 

@@ -1,8 +1,10 @@
 package com.smikhalev.sqlserverutils.test;
 
+import com.smikhalev.sqlserverutils.importdata.ImportStrategySelector;
 import com.smikhalev.sqlserverutils.importdata.Importer;
 import com.smikhalev.sqlserverutils.importdata.PacketImporter;
 import com.smikhalev.sqlserverutils.importdata.RestorableAction;
+import com.smikhalev.sqlserverutils.importdata.importer.CsvLineParser;
 import com.smikhalev.sqlserverutils.importdata.importer.ParallelImporter;
 import com.smikhalev.sqlserverutils.importdata.importer.SequentialImporter;
 import com.smikhalev.sqlserverutils.schema.Database;
@@ -20,22 +22,28 @@ public class ParallelImporterTest extends BaseImporterTest {
     @Autowired
     private Iterable<RestorableAction> restorableActions;
 
+    @Autowired
+    private ImportStrategySelector strategySelector;
+
+    @Autowired
+    private CsvLineParser csvLineParser;
+
 
     @Test
     public void testSimpleParallelIn1ThreadImport() throws Exception {
-        Importer importer = new ParallelImporter(packetImporter, restorableActions, 10, 1);
+        Importer importer = new ParallelImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 10, 1);
         test(importer);
     }
 
     @Test
     public void testSimpleParallelIn10ThreadImport() throws Exception {
-        Importer importer = new ParallelImporter(packetImporter, restorableActions, 10, 10);
+        Importer importer = new ParallelImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 10, 10);
         test(importer);
     }
 
     @Test
     public void testSimpleNonParallelImport() throws Exception {
-        Importer importer = new SequentialImporter(packetImporter, restorableActions, 10);
+        Importer importer = new SequentialImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 10);
         test(importer);
     }
 

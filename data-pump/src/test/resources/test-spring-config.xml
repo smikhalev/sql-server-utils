@@ -141,23 +141,29 @@
         <constructor-arg value="10"/>
     </bean>
 
-    <bean id="packetInsertGenerator" class="com.smikhalev.sqlserverutils.importdata.PacketInsertGenerator">
-        <constructor-arg>
-            <bean class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
-        </constructor-arg>
-    </bean>
-    
     <bean id="packetImporter" class="com.smikhalev.sqlserverutils.importdata.PacketImporter">
         <constructor-arg ref="statementExecutor"/>
-        <constructor-arg ref="packetInsertGenerator"/>
-        <constructor-arg ref="valueConverter"/>
     </bean>
 
-    <bean id="valueConverter" class="com.smikhalev.sqlserverutils.importdata.ImportValueConverter"/>
+    <bean id="tableValueConstructor" class="com.smikhalev.sqlserverutils.importdata.TableValueConstructor"/>
+
+    <bean id="importStrategySelector" class="com.smikhalev.sqlserverutils.importdata.ImportStrategySelector">
+        <constructor-arg>
+            <list>
+                <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertImportStrategy">
+                    <constructor-arg ref="tableValueConstructor"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="csvLineParser" class="com.smikhalev.sqlserverutils.importdata.importer.CsvLineParser"/>
 
     <bean id="importer" class="com.smikhalev.sqlserverutils.importdata.importer.SequentialImporter">
         <constructor-arg ref="packetImporter"/>
+        <constructor-arg ref="importStrategySelector"/>
         <constructor-arg ref="restorableAction"/>
+        <constructor-arg ref="csvLineParser"/>
         <constructor-arg value="10"/>
     </bean>
 
