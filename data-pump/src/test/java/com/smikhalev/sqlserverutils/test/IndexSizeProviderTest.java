@@ -2,7 +2,6 @@ package com.smikhalev.sqlserverutils.test;
 
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.IndexSizeProvider;
-import com.smikhalev.sqlserverutils.generator.datagenerator.BaseDataGenerator;
 import com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory;
 import com.smikhalev.sqlserverutils.generator.DataGenerator;
 import com.smikhalev.sqlserverutils.generator.datagenerator.SequentialDataGenerator;
@@ -46,18 +45,17 @@ public class IndexSizeProviderTest extends AbstractTestNGSpringContextTests {
             DataGenerator generator = new SequentialDataGenerator(columnGeneratorFactory, executor, chunkSize);
             generator.generateData(database, 1230);
 
-            return indexSizeProvider.getSize(database.getTables().get("[dbo].[simple_table]").getClusteredIndex());
+            return indexSizeProvider.getSize(database.getTableByFullName("[dbo].[simple_table]").getClusteredIndex());
         }
     }
 
     private Database buildSimpleDatabase() {
-        Database database = new DatabaseBuilder()
+        return new DatabaseBuilder()
             .addTable(
                     new TableBuilder("simple_table")
                             .addNullColumn("bigint_column", DbType.BIGINT)
                             .setClusteredIndex("clustered", "bigint_column")
                             .build()
             ).build();
-        return database;
     }
 }

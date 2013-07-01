@@ -17,9 +17,7 @@ import org.testng.annotations.Test;
 import org.testng.Assert;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 @ContextConfiguration(locations = {"classpath:test-spring-config.xml"})
 public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
@@ -32,7 +30,7 @@ public class StrategySelectorTest extends AbstractTestNGSpringContextTests {
 
         TableSizeProvider tableSizeProvider = new TableSizeProvider() {
             @Override
-            public long getSize(Table table) {
+            public int getSize(Table table) {
                 switch (table.getFullName()) {
                     case "[dbo].[small_table]":
                         return 5;

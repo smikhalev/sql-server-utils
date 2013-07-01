@@ -75,11 +75,10 @@
         <constructor-arg name="columnGenerators" ref="columnGenerator"/>
     </bean>
 
-    <bean id="dataGenerator" class="com.smikhalev.sqlserverutils.generator.datagenerator.ParallelDataGenerator">
+    <bean id="dataGenerator" class="com.smikhalev.sqlserverutils.generator.datagenerator.SequentialDataGenerator">
         <constructor-arg ref="columnGeneratorFactory"/>
         <constructor-arg ref="statementExecutor"/>
         <constructor-arg name="chunkSize" value="100000"/>
-        <constructor-arg name="threadCount" value="10"/>
     </bean>
 
     <bean id="tableSizeProvider" class="com.smikhalev.sqlserverutils.test.sizeprovider.SystemViewTableSizeWithoutLazyLoadingProvider">
@@ -152,6 +151,7 @@
             <list>
                 <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertImportStrategy">
                     <constructor-arg ref="tableValueConstructor"/>
+                    <constructor-arg name="size" value="10"/>
                 </bean>
             </list>
         </constructor-arg>
@@ -164,7 +164,6 @@
         <constructor-arg ref="importStrategySelector"/>
         <constructor-arg ref="restorableAction"/>
         <constructor-arg ref="csvLineParser"/>
-        <constructor-arg value="10"/>
     </bean>
 
     <bean id="tableComparator" class="com.smikhalev.sqlserverutils.test.TableComparator">

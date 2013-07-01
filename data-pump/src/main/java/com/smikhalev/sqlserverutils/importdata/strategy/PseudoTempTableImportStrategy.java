@@ -4,9 +4,9 @@ import com.smikhalev.sqlserverutils.importdata.Packet;
 import com.smikhalev.sqlserverutils.importdata.TableValueConstructor;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
-public class PtheudoTempTableImportStrategy extends BaseImportStrategy {
-    public PtheudoTempTableImportStrategy(TableValueConstructor constructor) {
-        super(constructor);
+public class PseudoTempTableImportStrategy extends BaseImportStrategy {
+    public PseudoTempTableImportStrategy(TableValueConstructor constructor, int size) {
+        super(constructor, size);
     }
 
     @Override

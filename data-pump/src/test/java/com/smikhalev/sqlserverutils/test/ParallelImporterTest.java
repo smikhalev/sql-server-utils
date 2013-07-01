@@ -31,19 +31,19 @@ public class ParallelImporterTest extends BaseImporterTest {
 
     @Test
     public void testSimpleParallelIn1ThreadImport() throws Exception {
-        Importer importer = new ParallelImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 10, 1);
+        Importer importer = new ParallelImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 1);
         test(importer);
     }
 
     @Test
     public void testSimpleParallelIn10ThreadImport() throws Exception {
-        Importer importer = new ParallelImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 10, 10);
+        Importer importer = new ParallelImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 10);
         test(importer);
     }
 
     @Test
     public void testSimpleNonParallelImport() throws Exception {
-        Importer importer = new SequentialImporter(packetImporter, strategySelector, restorableActions, csvLineParser, 10);
+        Importer importer = new SequentialImporter(packetImporter, strategySelector, restorableActions, csvLineParser);
         test(importer);
     }
 

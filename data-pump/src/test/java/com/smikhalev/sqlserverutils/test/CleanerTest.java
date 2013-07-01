@@ -92,7 +92,7 @@ public class CleanerTest extends AbstractTestNGSpringContextTests {
     }
 
     private void assertAllTableAreEmpty(Database database) {
-        for (Table table: database.getTables().values()) {
+        for (Table table: database.getTables()) {
             long size = tableSizeProvider.getSize(table);
 
             Assert.assertEquals(size, 0);

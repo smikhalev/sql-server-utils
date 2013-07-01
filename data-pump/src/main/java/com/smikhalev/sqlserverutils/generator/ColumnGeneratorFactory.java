@@ -25,8 +25,6 @@ public class ColumnGeneratorFactory {
             generator = new SubstringColumnGenerator(generator, charColumn.getMaxCharLength());
         }
 
-
-
         return generator;
     }
 }

@@ -2,7 +2,6 @@ package com.smikhalev.sqlserverutils.test;
 
 import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
-import com.smikhalev.sqlserverutils.generator.datagenerator.BaseDataGenerator;
 import com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory;
 import com.smikhalev.sqlserverutils.generator.DataGenerator;
 import com.smikhalev.sqlserverutils.generator.datagenerator.SequentialDataGenerator;
@@ -149,20 +148,19 @@ public class DataGeneratorTest extends AbstractTestNGSpringContextTests {
             DataGenerator generator = new SequentialDataGenerator(columnGeneratorFactory, executor, chunkSize);
             generator.generateData(database, rowCount);
 
-            String query = String.format("select count(*) as rows_count from %s", database.getTables().get("[dbo].[simple_table]").getFullName());
+            String query = String.format("select count(*) as rows_count from [dbo].[simple_table]");
             dataTable = executor.executeAsDataTable(query);
         }
         return dataTable;
     }
 
     private Database buildSimpleDatabase() {
-        Database database = new DatabaseBuilder()
+        return new DatabaseBuilder()
                 .addTable(
                         new TableBuilder("simple_table")
                                 .addNullColumn("bigint_column", DbType.BIGINT)
                                 .build()
                 ).build();
-        return database;
     }
 }
 

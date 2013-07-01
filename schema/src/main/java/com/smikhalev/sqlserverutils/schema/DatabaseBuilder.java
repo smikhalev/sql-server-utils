@@ -8,7 +8,7 @@ public class DatabaseBuilder {
 
     public DatabaseBuilder addTable(Table table)
     {
-        database.getTables().put(table.getFullName(), table);
+        database.getTables().add(table);
         return this;
     }
 

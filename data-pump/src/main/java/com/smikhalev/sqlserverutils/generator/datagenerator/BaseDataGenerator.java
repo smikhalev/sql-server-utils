@@ -12,15 +12,7 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * This class is based on fake query from sys.all_columns.
- * That really means that it can't generate and insert more rows than in sys.all_columns.
- * It is not good but faster then recursive query, cross joining and better than generating a huge
- * insert into values script. In current implementation I use chunks to support inserting
- * a huge amount of data.
- */
 public abstract class BaseDataGenerator implements DataGenerator {
-
     private ColumnGeneratorFactory columnGeneratorFactory;
     private StatementExecutor executor;
     private int chunkSize;
@@ -32,36 +24,38 @@ public abstract class BaseDataGenerator implements DataGenerator {
     }
 
     public void generateData(Database database, int count) {
-        for(int i = 0; i < count; i = i + chunkSize)
+        startGenerateData();
+
+        for(int offset = 0; offset < count; offset = offset + chunkSize)
         {
-            int dataSize = i + chunkSize > count
-                    ? count - i
+            int dataSize = offset + chunkSize > count
+                    ? count - offset
                     : chunkSize;
-            generateChunkData(database, dataSize);
+            generateChunkData(database, offset, dataSize);
         }
 
         finishGenerateData();
     }
 
-
-    private void generateChunkData(Database database, int count) {
-        for(Table table : database.getTables().values()) {
-            String generateScript = generateDataScript(table, count);
+    private void generateChunkData(Database database, int offset, int count) {
+        for(Table table : database.getTables()) {
+            String generateScript = generateDataScript(table, offset, count);
             generatePartData(generateScript);
         }
-
     }
 
+    protected void startGenerateData() {};
     protected void finishGenerateData() {};
+
     protected abstract void generatePartData(String generateScript);
 
     protected StatementExecutor getExecutor() {
         return executor;
     }
 
-    protected String generateDataScript(Table table, int count) {
+    protected String generateDataScript(Table table, int offset, int count) {
         String insertHeader = generateHeader(table);
-        String select = generateSelectScript(table, count);
+        String select = generateSelectScript(table, offset, count);
         return insertHeader + select;
     }
 
@@ -69,7 +63,7 @@ public abstract class BaseDataGenerator implements DataGenerator {
         return String.format("insert into %s (%s) ", table.getFullName(), table.getColumns().generateFields());
     }
 
-    private String generateSelectScript(Table table, int count) {
+    private String generateSelectScript(Table table, int offset, int count) {
         List<String> valueScripts = new ArrayList<>();
 
         for(Column column : table.getColumns()) {
@@ -83,12 +77,10 @@ public abstract class BaseDataGenerator implements DataGenerator {
             "select top %s %s" +
             "from " +
             "( " +
-            "    select row_number() over(order by s1.[object_id]) column_index " +
+            "    select (row_number() over(order by s1.[object_id])) + %s as column_index " +
             "    from sys.all_columns as s1, sys.all_columns as s2 " +
             ") d ";
 
-        String selectScript = String.format(query, count, Joiner.on(",").join(valueScripts));
-
-        return selectScript;
+        return String.format(query, count, Joiner.on(",").join(valueScripts), offset);
     }
 }

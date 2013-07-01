@@ -1,4 +1,3 @@
-import com.smikhalev.sqlserverutils.core.executor.StatementExecutorException;
 import com.smikhalev.sqlserverutils.schema.*;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Column;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
@@ -157,6 +156,6 @@ public class TableColumnsTest extends BaseDatabaseContextTest {
     }
 
     private Table getTable(Database expectedDatabase) {
-        return expectedDatabase.getTables().get("[dbo].[first_table]");
+        return expectedDatabase.getTableByFullName("[dbo].[first_table]");
     }
 }

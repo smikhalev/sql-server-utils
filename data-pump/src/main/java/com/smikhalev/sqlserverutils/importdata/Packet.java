@@ -10,10 +10,12 @@ public class Packet {
     private Table table;
     private long uniqueId;
     private List<List<String>> dataTable = new ArrayList<>();
+    private int size;
 
-    public Packet(Table table, long uniqueId) {
+    public Packet(Table table, long uniqueId, int size) {
         this.table = table;
         this.uniqueId = uniqueId;
+        this.size = size;
     }
 
     public void add(List<String> row) {
@@ -33,8 +35,10 @@ public class Packet {
     }
 
     public int size() {
-        return dataTable.size();
+        return size;
     }
 
-
+    public boolean isFull() {
+        return dataTable.size() == size;
+    }
 }

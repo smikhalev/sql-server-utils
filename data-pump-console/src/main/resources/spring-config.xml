@@ -84,9 +84,7 @@
             <list>
                 <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertImportStrategy">
                     <constructor-arg ref="tableValueConstructor"/>
-                </bean>
-                <bean class="com.smikhalev.sqlserverutils.importdata.strategy.PtheudoTempTableImportStrategy">
-                    <constructor-arg ref="tableValueConstructor"/>
+                    <constructor-arg name="size" value="100"/>
                 </bean>
             </list>
         </constructor-arg>
@@ -99,7 +97,6 @@
         <constructor-arg ref="importStrategySelector"/>
         <constructor-arg ref="restorableAction"/>
         <constructor-arg ref="csvLineParser"/>
-        <constructor-arg name="chunkSize" value="800"/>
         <constructor-arg name="threadCount" value="400"/>
     </bean>
 

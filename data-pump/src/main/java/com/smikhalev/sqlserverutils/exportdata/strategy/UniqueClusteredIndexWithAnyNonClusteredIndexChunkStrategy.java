@@ -24,10 +24,10 @@ public class UniqueClusteredIndexWithAnyNonClusteredIndexChunkStrategy extends I
     }
 
     @Override
-    protected String generateInnerSelect(Table table, Index index, long offset, SortType sortType) {
+    protected String generateInnerSelect(Table table, Index index, int offset, int pageSize, SortType sortType) {
         return generateInnerSelectFields(table.getClusteredIndex()) +
                generateFromClause(table) +
-               generateOrderByClause(index, offset, sortType);
+               generateOrderByClause(index, offset, pageSize, sortType);
     }
 
     @Override

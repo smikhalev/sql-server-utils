@@ -16,5 +16,4 @@ public class SystemViewIndexSizeWithoutLazyLoadingProvider extends SystemViewInd
         String key = buildKey(index.getSchema(), index.getTable().getName(), index.getName());
         return getIndexSizes().get(key);
     }
-
 }

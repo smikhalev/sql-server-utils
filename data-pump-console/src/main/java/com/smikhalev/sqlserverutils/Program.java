@@ -7,7 +7,13 @@ import com.smikhalev.sqlserverutils.exportdata.ExportManager;
 import com.smikhalev.sqlserverutils.importdata.ImportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
+
 public class Program {
+
+    public static final String IMPORT = "import";
+    public static final String EXPORT = "export";
+    public static final String CLEAR = "clear";
 
     @Autowired
     private ConnectionProvider connectionProvider;
@@ -24,38 +30,56 @@ public class Program {
     private static final int STATUS_THREAD_SLEEP_TIME = 1 * 1000;
 
     public static void main(String [] args) {
-        if (args.length < 2) {
-            System.out.println("There is not enough arguments.");
-            System.out.println("dpump <command> <connection-string>");
+        if (!validateArgs(args))
             return;
-        }
 
         Program program = injectDependencies();
         substituteDefaultConnectionString(args[1], program);
 
         try {
-            String filePath = "c:\\sqlserverutils.data";
-            String command = args[0];
-            processCommand(program, command, filePath);
+            processCommand(program, args);
         }
         catch (ApplicationException | InterruptedException e) {
-            System.out.println("Exception:" + e.getMessage() + e.getStackTrace().toString());
+            System.out.println("Exception:" + e.getMessage() + Arrays.toString(e.getStackTrace()));
         }
     }
 
-    private static void processCommand(Program program, String command, String filePath) throws InterruptedException {
-        switch (command){
-            case "import":
+    private static boolean validateArgs(String[] args) {
+        if (args.length < 2 && args.length > 3) {
+            return fail();
+        }
+
+        if (args.length == 2 && !args[0].equals(CLEAR)) {
+            return fail();
+        }
+
+        if (args.length == 3 && !(args[0].equals(IMPORT)) || args[0].equals(EXPORT)) {
+            return fail();
+        }
+
+        return true;
+    }
+
+
+    private static boolean fail() {
+        System.out.println("There is not enough arguments.");
+        System.out.println("dpump command connection-string [file]");
+        return false;
+    }
+
+    private static void processCommand(Program program, String[] args) throws InterruptedException {
+        switch (args[0]){
+            case IMPORT:
                 System.out.println("Import started.");
                 startStatusThread(program.importManager);
-                program.importManager.doImport(filePath);
+                program.importManager.doImport(args[2]);
                 break;
-            case "export":
+            case EXPORT:
                 System.out.println("Export started.");
                 startStatusThread(program.exportManager);
-                program.exportManager.doExport(filePath);
+                program.exportManager.doExport(args[2]);
                 break;
-            case "clear":
+            case CLEAR:
                 System.out.println("Clear started.");
                 program.cleanManager.doClear();
                 System.out.println("Clear finished.");

@@ -1,4 +1,3 @@
-import com.smikhalev.sqlserverutils.core.ConnectionProvider;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.DatabaseLoader;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
@@ -12,9 +11,6 @@ import org.testng.annotations.Test;
 public class DatabaseLoaderTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    private ConnectionProvider connectionProvider;
-
-    @Autowired
     private DatabaseLoader databaseLoader;
 
     @Test
@@ -22,7 +18,7 @@ public class DatabaseLoaderTest extends AbstractTestNGSpringContextTests {
         Database database = databaseLoader.load();
         Assert.assertTrue(database != null);
 
-        for (Table table : database.getTables().values())
+        for (Table table : database.getTables())
         {
             String createScript = table.generateCreateScript();
 

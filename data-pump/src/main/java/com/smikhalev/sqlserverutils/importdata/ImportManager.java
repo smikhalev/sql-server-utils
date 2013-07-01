@@ -17,6 +17,7 @@ public class ImportManager extends BaseWorkerManager {
     }
 
     public void doImport(String filePath) throws ApplicationException {
+        initStartTime();
         Database database = getDatabaseLoader().load();
         allRowsInFile = -1;
 

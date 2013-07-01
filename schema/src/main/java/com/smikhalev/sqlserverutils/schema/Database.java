@@ -5,23 +5,29 @@ import com.smikhalev.sqlserverutils.core.Constants;
 import com.smikhalev.sqlserverutils.schema.dbobjects.ForeignKey;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Database implements Scriptable {
-    private Map<String, Table> tables = new HashMap<>();
+    private List<Table> tables = new ArrayList<>();
 
-    public Map<String, Table> getTables() {
+    public List<Table> getTables() {
         return tables;
+    }
+
+    public Table getTableByFullName(String fullName) {
+        for(Table table : tables) {
+            if (table.getFullName().equals(fullName))
+                return table;
+        }
+
+        return null;
     }
 
     @Override
     public String generateCreateScript() {
-        ArrayList<String> tableCreateScripts = new ArrayList<>();
+        List<String> tableCreateScripts = new LinkedList<>();
 
-        for(Table table : tables.values()) {
+        for(Table table : tables) {
             tableCreateScripts.add(table.generateCreateScript());
         }
 
@@ -36,7 +42,7 @@ public class Database implements Scriptable {
     private String generateDropTables() {
         ArrayList<String> tableDropScripts = new ArrayList<>();
 
-        for(Table table : tables.values()) {
+        for(Table table : tables) {
             tableDropScripts.add(table.generateDropScript());
         }
 
@@ -46,7 +52,7 @@ public class Database implements Scriptable {
     private String generateDropForeignKeys() {
         List<String> dropForeignKeyScripts = new ArrayList<>();
 
-        for (Table table : tables.values()) {
+        for (Table table : tables) {
             for (ForeignKey foreignKey : table.getForeignKeys()) {
                 dropForeignKeyScripts.add(foreignKey.generateDropScript());
             }

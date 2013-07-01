@@ -11,11 +11,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelExporter extends BaseExporter {
+    private int threadCount;
     private ExecutorService threadPool;
     private AtomicLong overallExportedCount = new AtomicLong(0);
 
     public ParallelExporter(ExportStrategySelector exportStrategySelector, ValueEncoder valueEncoder, StatementExecutor executor, int threadCount) {
         super(exportStrategySelector, valueEncoder, executor);
+        this.threadCount = threadCount;
+    }
+
+    @Override
+    protected void startExport() {
         threadPool = Executors.newFixedThreadPool(threadCount);
     }
 
@@ -29,7 +35,7 @@ public class ParallelExporter extends BaseExporter {
     }
 
     @Override
-    protected void finalExport() {
+    protected void finishExport() {
         threadPool.shutdown();
         while (!threadPool.isTerminated()) {
         }

@@ -21,24 +21,26 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private DataGenerator generator;
 
-    private int TABLE_SIZE = 3 * 1000 * 1000;
+    private int TABLE_SIZE = 1 * 1000 * 1000;
 
-    @Test//(enabled = false) 349 sec
+    @Test(enabled = false)
     public void createPerformanceDatabase() throws Exception {
         Table clusteredTable = createTypicalTable("clustered_table")
-                .setClusteredIndex("clustered_index", "bigint_column")
+                .setUniqueClusteredIndex("clustered_index", "int_column")
                 .build();
 
         Table nonClusteredUniqueTable = createTypicalTable("non_clustered_unique_table")
-                .addUniqueNonClusteredIndex("non_clustered_unique_index", "varchar_column")
+                .addUniqueNonClusteredIndex("non_clustered_unique_index", "int_column")
+                .addForeignKey("foreign_key_to_clustered_table", "int_column", clusteredTable)
                 .build();
 
         Table heapTable = createTypicalTable("heap_table")
+                .addEmptyTrigger("trigger_on_heap_table")
                 .build();
 
         Database database = new DatabaseBuilder()
-                //.addTable(clusteredTable)
-                //.addTable(nonClusteredUniqueTable)
+                .addTable(clusteredTable)
+                .addTable(nonClusteredUniqueTable)
                 .addTable(heapTable)
                 .build();
 
@@ -50,7 +52,7 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
     private TableBuilder createTypicalTable(String tableName){
         return new TableBuilder(tableName)
                 .addNullColumn("bit_column", DbType.BIT)
-                .addNullColumn("bigint_column", DbType.BIGINT)
+                .addNullColumn("int_column", DbType.INT)
                 .addNullColumn("float_column", DbType.FLOAT)
                 .addNullColumn("varchar_column", DbType.VARCHAR, 50)
                 .addNullColumn("date_column", DbType.DATE);

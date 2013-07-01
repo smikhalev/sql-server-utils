@@ -21,11 +21,11 @@ public class UniqueNonClusteredCompositeChunkStrategy extends IndexChunkStrategy
     }
 
     @Override
-    protected String generateExportSelect(Table table, Index index, long offset, SortType sortType) {
+    protected String generateExportSelect(Table table, Index index, int offset, int pageSize, SortType sortType) {
         if (offset == 0)
-            return nonClusteredIndexStrategy.generateExportSelect(table, index, offset, sortType);
+            return nonClusteredIndexStrategy.generateExportSelect(table, index, offset, pageSize, sortType);
 
-        return uniqueNonClusteredIndexStrategy.generateExportSelect(table, index, offset, sortType);
+        return uniqueNonClusteredIndexStrategy.generateExportSelect(table, index, offset, pageSize, sortType);
     }
 
     @Override

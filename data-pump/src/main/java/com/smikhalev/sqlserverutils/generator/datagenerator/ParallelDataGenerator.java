@@ -7,14 +7,24 @@ import com.smikhalev.sqlserverutils.generator.ColumnGeneratorFactory;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/*
+ * This class can generate data in parallel using thread pool.
+ * But it should be used only from one thread so it is not thread safe since it save state.
+ * Also for dependant tables (with foreign keys you have to use sequential data generator)
+  */
 public class ParallelDataGenerator extends BaseDataGenerator {
 
+    private int threadCount;
     private ExecutorService threadPool;
 
     public ParallelDataGenerator(ColumnGeneratorFactory columnGeneratorFactory, StatementExecutor executor, int chunkSize, int threadCount) {
         super(columnGeneratorFactory, executor, chunkSize);
-        threadPool = Executors.newFixedThreadPool(threadCount);
+        this.threadCount = threadCount;
+    }
 
+    @Override
+    protected void startGenerateData() {
+        threadPool = Executors.newFixedThreadPool(threadCount);
     }
 
     @Override

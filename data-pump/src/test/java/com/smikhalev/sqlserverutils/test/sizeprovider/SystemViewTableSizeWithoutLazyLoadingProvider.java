@@ -9,7 +9,7 @@ public class SystemViewTableSizeWithoutLazyLoadingProvider extends SystemViewTab
         super(executor);
     }
 
-    public long getSize(Table table) {
+    public int getSize(Table table) {
         initTableSizes();
 
         return getTableSizes().get(table.getFullName());

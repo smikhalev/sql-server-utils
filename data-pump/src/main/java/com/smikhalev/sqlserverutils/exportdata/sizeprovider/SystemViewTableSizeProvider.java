@@ -4,7 +4,6 @@ import com.smikhalev.sqlserverutils.core.executor.DataRow;
 import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
-import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbObject;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
@@ -20,37 +19,48 @@ import java.util.HashMap;
 public class SystemViewTableSizeProvider implements TableSizeProvider {
 
     private StatementExecutor executor;
-    private HashMap<String, Long> tableSizes;
-    private Long databaseSize;
+    private volatile HashMap<String, Integer> tableSizes;
+    private volatile Long databaseSize;
 
     public SystemViewTableSizeProvider(StatementExecutor executor) {
         this.executor = executor;
     }
 
     @Override
-    public long getSize(Table table) {
+    public int getSize(Table table) {
         return getTableSizes().get(table.getFullName());
     }
 
     @Override
-    public synchronized long getDatabaseSize() {
-        if (databaseSize == null)
-            initDatabaseSize();
-
+    public long getDatabaseSize() {
+        if (databaseSize == null) {
+            synchronized (this){
+                if (databaseSize == null) {
+                    initDatabaseSize();
+                }
+            }
+        }
         return databaseSize;
     }
 
     private void initDatabaseSize() {
-        databaseSize = new Long(0);
+        if (databaseSize != null)
+            return;
 
-        for(Long size : getTableSizes().values()){
+        databaseSize = (long) 0;
+
+        for(Integer size : getTableSizes().values()){
             databaseSize += size;
         }
     }
 
-    protected synchronized HashMap<String, Long> getTableSizes() {
-        if (tableSizes == null)
-            initTableSizes();
+    protected HashMap<String, Integer> getTableSizes() {
+        if (tableSizes == null){
+            synchronized (this){
+                if (tableSizes == null)
+                    initTableSizes();
+            }
+        }
 
         return tableSizes;
     }
@@ -62,7 +72,7 @@ public class SystemViewTableSizeProvider implements TableSizeProvider {
         for(DataRow row : table.getRows()) {
             String schemaName = (String) row.get("schema_name");
             String tableName = (String) row.get("table_name");
-            Long tableSize = (Long) row.get("row_count");
+            Integer tableSize = (Integer) row.get("row_count");
 
             String key = DbObject.buildFullName(schemaName, tableName);
 
@@ -75,13 +85,13 @@ public class SystemViewTableSizeProvider implements TableSizeProvider {
             "select " +
             "    s.name as schema_name," +
             "    t.name as table_name," +
-            "    sum(p.rows) as row_count\n" +
+            "    cast(sum(p.rows) as int) as row_count\n" +
             "from sys.tables t\n" +
             "inner join sys.schemas s\n" +
             "    on t.schema_id = s.schema_id\n" +
             "inner join sys.partitions p\n" +
             "    on t.object_id = p.object_id\n" +
-            "where index_id < 2" +
+            "where index_id < 2\n" +
             "group by s.name, t.name";
 
         return executor.executeAsDataTable(query);

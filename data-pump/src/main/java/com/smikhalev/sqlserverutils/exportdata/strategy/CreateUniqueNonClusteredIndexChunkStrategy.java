@@ -29,9 +29,9 @@ public class CreateUniqueNonClusteredIndexChunkStrategy extends UniqueNonCluster
     }
 
     @Override
-    protected String generateExportSelect(Table table, Index index, long offset, SortType sortType) {
+    protected String generateExportSelect(Table table, Index index, int offset, int pageSize, SortType sortType) {
         ClonedTable clonedTable = new ClonedTable(table);
-        return super.generateExportSelect(clonedTable, index, offset, sortType);
+        return super.generateExportSelect(clonedTable, index, offset, pageSize, sortType);
     }
 
     @Override

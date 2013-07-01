@@ -23,8 +23,9 @@ public abstract class BaseExporter implements Exporter {
 
     protected abstract void exportTable(TableExportSelect tableExportSelect, Writer writer);
 
-    protected void finalExport() {
-    }
+    protected void startExport() {}
+
+    protected void finishExport() {}
 
     protected ValueEncoder getValueEncoder() {
         return valueEncoder;
@@ -36,13 +37,16 @@ public abstract class BaseExporter implements Exporter {
 
     @Override
     public void exportData(Database database, Writer writer) {
+        startExport();
+
         List<TableExportSelect> tableExportSelects = new ArrayList<>();
-        for (Table table : database.getTables().values()) {
+        for (Table table : database.getTables()) {
             ExportStrategy exportStrategy = exportStrategySelector.select(table);
             tableExportSelects.add(exportStrategy.generateExportSelects(table));
         }
 
         // First we start to export tables for which we don't need to create a copy tables
+        // It gives us performance boost since copying is blocking operation in current implementation
         for (TableExportSelect tableExportSelect : tableExportSelects) {
             if (tableExportSelect.getRestorableAction().isEmpty()) {
                 exportTable(tableExportSelect, writer);
@@ -58,7 +62,7 @@ public abstract class BaseExporter implements Exporter {
                 }
             }
 
-            finalExport();
+            finishExport();
         }
     }
 }

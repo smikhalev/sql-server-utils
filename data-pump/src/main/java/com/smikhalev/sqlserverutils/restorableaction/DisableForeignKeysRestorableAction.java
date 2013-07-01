@@ -12,7 +12,7 @@ public class DisableForeignKeysRestorableAction extends BaseRestorableAction {
 
     @Override
     public void act(Database database) {
-        for(Table table : database.getTables().values()) {
+        for(Table table : database.getTables()) {
             for(ForeignKey fk : table.getForeignKeys()) {
                 executeScript(fk.generateDropScript());
                 addRestoreScript(fk.generateCreateScript());

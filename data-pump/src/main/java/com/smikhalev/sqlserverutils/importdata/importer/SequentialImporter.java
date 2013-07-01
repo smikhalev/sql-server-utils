@@ -6,8 +6,8 @@ public class SequentialImporter extends BaseImporter {
 
     private long overallImportedCount = 0;
 
-    public SequentialImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser, int chunkSize) {
-        super(packetImporter, selector, restorableActions, csvLineParser, chunkSize);
+    public SequentialImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser) {
+        super(packetImporter, selector, restorableActions, csvLineParser);
     }
 
     @Override

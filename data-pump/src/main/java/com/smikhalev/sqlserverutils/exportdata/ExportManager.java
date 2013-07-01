@@ -20,6 +20,7 @@ public class ExportManager extends BaseWorkerManager {
     }
 
     public void doExport(String filePath) {
+        initStartTime();
         Database database = getDatabaseLoader().load();
         allRowsCount = -1;
 

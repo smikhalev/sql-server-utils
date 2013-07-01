@@ -10,17 +10,21 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
 import java.util.HashMap;
 
 public class SystemViewIndexSizeProvider implements IndexSizeProvider {
-
     private StatementExecutor executor;
-    private HashMap<String, Long> indexSizes;
+    private volatile HashMap<String, Long> indexSizes;
 
     public SystemViewIndexSizeProvider(StatementExecutor executor) {
         this.executor = executor;
     }
 
     public long getSize(Index index) {
-        if (indexSizes == null)
-            initIndexSizes();
+        if (indexSizes == null){
+            synchronized (this){
+                if (indexSizes == null) {
+                    initIndexSizes();
+                }
+            }
+        }
 
         String key = buildKey(index.getSchema(), index.getTable().getName(), index.getName());
         return indexSizes.get(key);

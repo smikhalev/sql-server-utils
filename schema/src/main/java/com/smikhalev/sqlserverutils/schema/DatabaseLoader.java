@@ -5,7 +5,7 @@ import com.smikhalev.sqlserverutils.core.executor.DataTable;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
 
-import java.util.Map;
+import java.util.List;
 
 /*
  * This class is load database schema using system sql server tables.
@@ -31,7 +31,7 @@ public class DatabaseLoader {
         return database;
     }
 
-    private void loadTables(Map<String, Table> tables) {
+    private void loadTables(List<Table> tables) {
         String query =
             "select" +
             "    object_id," +
@@ -53,8 +53,7 @@ public class DatabaseLoader {
             loadColumns(table);
             loadIndexes(objectId, table);
 
-            String key = DbObject.buildFullName(schemaName, tableName);
-            tables.put(key, table);
+            tables.add(table);
         }
     }
 
@@ -192,8 +191,8 @@ public class DatabaseLoader {
             String sourceTableFullName = DbObject.buildFullName(sourceSchemaName, sourceTableName);
             String targetTableFullName = DbObject.buildFullName(targetSchemaName, targetTableName);
 
-            Table sourceTable = database.getTables().get(sourceTableFullName);
-            Table targetTable = database.getTables().get(targetTableFullName);
+            Table sourceTable = database.getTableByFullName(sourceTableFullName);
+            Table targetTable = database.getTableByFullName(targetTableFullName);
 
             Column sourceColumn = sourceTable.getColumns().getByName(sourceColumnName);
             Column targetColumn = targetTable.getColumns().getByName(targetColumnName);
@@ -223,7 +222,7 @@ public class DatabaseLoader {
             String triggerName = (String) row.get("trigger_name");
 
             String tableFullName = DbObject.buildFullName(schemaName, tableName);
-            Table table = database.getTables().get(tableFullName);
+            Table table = database.getTableByFullName(tableFullName);
             Trigger trigger = new Trigger(triggerName, table.getSchema(), table, "");
             table.getTriggers().add(trigger);
         }

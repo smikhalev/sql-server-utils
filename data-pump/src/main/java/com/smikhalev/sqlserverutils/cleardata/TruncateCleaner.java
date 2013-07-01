@@ -21,7 +21,7 @@ public class TruncateCleaner implements Cleaner {
         try(RestorableContext context = new RestorableContext(restorableActions)) {
             context.prepare(database);
 
-            for(Table table : database.getTables().values()) {
+            for(Table table : database.getTables()) {
                 String truncateTableScript = String.format("truncate table %s", table.getFullName());
                 executor.executeScript(truncateTableScript);
             }

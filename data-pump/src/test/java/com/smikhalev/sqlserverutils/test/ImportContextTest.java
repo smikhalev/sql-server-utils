@@ -42,14 +42,14 @@ public class ImportContextTest extends AbstractTestNGSpringContextTests {
             dbContext.create();
             Database databaseWithForeignKeys = databaseLoader.load();
 
-            Table table = databaseWithForeignKeys.getTables().get("[dbo].[dependant_table]");
+            Table table = databaseWithForeignKeys.getTableByFullName("[dbo].[dependant_table]");
             Assert.assertNotNull(table);
             Assert.assertTrue(!table.getForeignKeys().isEmpty());
 
             restorableContext.prepare(databaseWithForeignKeys);
 
             Database databaseWithoutForeignKeys = databaseLoader.load();
-            table = databaseWithoutForeignKeys.getTables().get("[dbo].[dependant_table]");
+            table = databaseWithoutForeignKeys.getTableByFullName("[dbo].[dependant_table]");
             Assert.assertNotNull(table);
             Assert.assertTrue(table.getForeignKeys().isEmpty());
 

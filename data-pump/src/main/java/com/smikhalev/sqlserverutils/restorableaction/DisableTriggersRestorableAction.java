@@ -12,7 +12,7 @@ public class DisableTriggersRestorableAction extends BaseRestorableAction {
 
     @Override
     public void act(Database database) {
-        for (Table table : database.getTables().values()) {
+        for (Table table : database.getTables()) {
             for(Trigger trigger : table.getTriggers()) {
                 executeScript(trigger.generateDisableScript());
                 addRestoreScript(trigger.generateEnableScript());

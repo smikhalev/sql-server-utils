@@ -8,11 +8,17 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelImporter extends BaseImporter {
 
-    private AtomicLong overallImportedCount = new AtomicLong(0);
+    private final int threadCount;
     private ThreadPoolExecutor threadPool;
+    private AtomicLong overallImportedCount = new AtomicLong(0);
 
-    public ParallelImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser, int chunkSize, int threadCount) {
-        super(packetImporter, selector, restorableActions, csvLineParser, chunkSize);
+    public ParallelImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser, int threadCount) {
+        super(packetImporter, selector, restorableActions, csvLineParser);
+        this.threadCount = threadCount;
+    }
+
+    @Override
+    protected void startImport() {
         threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
     }
 

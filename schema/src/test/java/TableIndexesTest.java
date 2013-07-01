@@ -192,7 +192,7 @@ public class TableIndexesTest extends BaseDatabaseContextTest {
     }
 
     private Table getTable(Database actualDatabase) {
-        return actualDatabase.getTables().get("[dbo].[simple_table]");
+        return actualDatabase.getTableByFullName("[dbo].[simple_table]");
     }
 
     private Database buildTypicalDatabase() {

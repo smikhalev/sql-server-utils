@@ -64,7 +64,7 @@ public class BaseImporterTest extends AbstractTestNGSpringContextTests {
     }
 
     private void renameDatabaseTables(Database database) {
-        for(Table table : database.getTables().values()) {
+        for(Table table : database.getTables()) {
             String newTableName = buildRenamedTableName(table);
             for(ForeignKey fk : table.getForeignKeys()) {
                 executor.executeScript(fk.generateDropScript());
@@ -82,14 +82,14 @@ public class BaseImporterTest extends AbstractTestNGSpringContextTests {
     private void addRenamedTablesToDatabase(Database database) {
         List<String> newTables = new ArrayList<>();
 
-        for(Table table : database.getTables().values()) {
+        for(Table table : database.getTables()) {
             String newTableName = buildRenamedTableName(table);
             newTables.add(newTableName);
         }
 
         for(String newTableName : newTables) {
             Table table = new Table(newTableName, null);
-            database.getTables().put(table.getFullName(), table);
+            database.getTables().add(table);
         }
     }
 
@@ -98,10 +98,10 @@ public class BaseImporterTest extends AbstractTestNGSpringContextTests {
     }
 
     private void compareImportTables(Database database) {
-        for(Table table : database.getTables().values()) {
+        for(Table table : database.getTables()) {
             if (!table.getName().startsWith("renamed")) {
-                String key = DbObject.buildFullName(table.getSchema(), buildRenamedTableName(table));
-                Table targetTable = database.getTables().get(key);
+                String fullName = DbObject.buildFullName(table.getSchema(), buildRenamedTableName(table));
+                Table targetTable = database.getTableByFullName(fullName);
                 Assert.assertNotNull(targetTable);
 
                 DataTable compareResult = comparator.compare(table, targetTable);

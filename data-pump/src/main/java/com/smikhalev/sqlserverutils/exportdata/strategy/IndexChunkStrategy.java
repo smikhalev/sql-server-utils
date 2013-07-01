@@ -30,24 +30,28 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
     public TableExportSelect generateExportSelects(Table table) {
         List<String> selects = new ArrayList<>();
 
-        long tableSize = tableSizeProvider.getSize(table);
+        int tableSize = tableSizeProvider.getSize(table);
 
         Index index = getIndex(table);
 
-        long leftSize = tableSize / 2;
-        long rightSize = tableSize - leftSize;
+        int leftSize = tableSize / 2;
+        int rightSize = tableSize - leftSize;
 
-        for(long offset = 0; offset < leftSize; offset = offset + chunkSize) {
-            String select = generateExportSelect(table, index, offset, SortType.ASC);
-            selects.add(select);
-        }
-
-        for(long offset = 0; offset < rightSize; offset = offset + chunkSize) {
-            String select = generateExportSelect(table, index, offset, SortType.DESC);
-            selects.add(select);
-        }
+        generateExportSelectFromOneSide(table, selects, index, leftSize, SortType.ASC);
+        generateExportSelectFromOneSide(table, selects, index, rightSize, SortType.DESC);
 
         return new TableExportSelect(table, selects, generateRestorableAction(table));
+    }
+
+    private void generateExportSelectFromOneSide(Table table, List<String> selects, Index index, int size, SortType sortType) {
+        int pageSize = chunkSize;
+        for(int offset = 0; offset < size; offset = offset + chunkSize) {
+            if (offset + chunkSize > size)
+                pageSize = size - offset;
+
+            String select = generateExportSelect(table, index, offset, pageSize, sortType);
+            selects.add(select);
+        }
     }
 
     protected List<RestorableAction> generateRestorableAction(Table table) {
@@ -58,13 +62,13 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
         return indexSizeProvider;
     }
 
-    protected String generateExportSelect(Table table, Index index, long offset, SortType sortType) {
+    protected String generateExportSelect(Table table, Index index, int offset, int pageSize, SortType sortType) {
         return generateSelectClause(table)
              + generateFromClause(table)
-             + generateOrderByClause(index, offset, sortType);
+             + generateOrderByClause(index, offset, pageSize, sortType);
     }
 
-    protected String generateOrderByClause(Index index, long offset, SortType sortType) {
+    protected String generateOrderByClause(Index index, int offset, int pageSize, SortType sortType) {
         String order;
         if (sortType == SortType.ASC) {
             order = Joiner.on(",").join(index.getKeyColumns());
@@ -81,7 +85,7 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
             order = Joiner.on(",").join(orderByFields);
         }
 
-        return String.format(" order by %s offset %s rows fetch next %s rows only", order, offset, chunkSize);
+        return String.format(" order by %s offset %s rows fetch next %s rows only", order, offset, pageSize);
     }
 
     protected Index findSmallestNonClusteredIndex(Table table)  {
