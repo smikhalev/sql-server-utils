@@ -5,7 +5,7 @@ import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
 
 public class CloneTableRestorableAction extends BaseRestorableAction {
-    private Table table;
+    private final Table table;
 
     public CloneTableRestorableAction(StatementExecutor executor, Table table) {
         super(executor);

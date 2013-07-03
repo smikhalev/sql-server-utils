@@ -8,7 +8,7 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 import java.util.*;
 
 public class Database implements Scriptable {
-    private List<Table> tables = new ArrayList<>();
+    private final List<Table> tables = new ArrayList<>();
 
     public List<Table> getTables() {
         return tables;

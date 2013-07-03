@@ -25,8 +25,8 @@ public enum DbType {
         DATETIME
     }
 
-    private String sqlType;
-    private DbSubType subType;
+    private final String sqlType;
+    private final DbSubType subType;
 
     DbType(String sqlType, DbSubType subType) {
         this.sqlType = sqlType;

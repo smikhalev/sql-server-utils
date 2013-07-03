@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class DatabaseLoader {
 
-    private StatementExecutor executor;
+    private final StatementExecutor executor;
 
     public DatabaseLoader(StatementExecutor executor) {
         this.executor = executor;

@@ -6,7 +6,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ApplicationContextLoader {
 
-    protected ConfigurableApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     protected void loadApplicationContext(String... configLocations) {
         applicationContext = new ClassPathXmlApplicationContext(configLocations);

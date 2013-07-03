@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
   */
 public class ParallelDataGenerator extends BaseDataGenerator {
 
-    private int threadCount;
+    private final int threadCount;
     private ExecutorService threadPool;
 
     public ParallelDataGenerator(ColumnGeneratorFactory columnGeneratorFactory, StatementExecutor executor, int chunkSize, int threadCount) {

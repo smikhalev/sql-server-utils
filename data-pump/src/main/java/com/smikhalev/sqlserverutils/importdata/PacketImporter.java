@@ -5,7 +5,7 @@ import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import java.util.List;
 
 public class PacketImporter {
-    private StatementExecutor executor;
+    private final StatementExecutor executor;
 
     public PacketImporter(StatementExecutor executor){
         this.executor = executor;

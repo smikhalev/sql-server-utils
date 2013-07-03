@@ -1,6 +1,5 @@
 package com.smikhalev.sqlserverutils.exportdata.exporter;
 
-import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.*;
 import com.smikhalev.sqlserverutils.exportdata.resultsetprocessor.SequentialExportResultSetProcessor;
@@ -15,10 +14,10 @@ public class SequentialExporter extends BaseExporter {
     }
 
     @Override
-    protected void exportTable(TableExportSelect tableExportSelect, Writer writer) {
-        SequentialExportResultSetProcessor processor = new SequentialExportResultSetProcessor(tableExportSelect.getTable(), writer, getValueEncoder());
+    protected void exportTable(ExportSelect exportSelect, Writer writer) {
+        SequentialExportResultSetProcessor processor = new SequentialExportResultSetProcessor(exportSelect.getTable(), writer, getValueEncoder());
 
-        for (String select : tableExportSelect.getExportSelects()) {
+        for (String select : exportSelect.getExportSelects()) {
             getExecutor().processResultSet(processor, select);
         }
 

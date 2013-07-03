@@ -11,9 +11,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelExporter extends BaseExporter {
-    private int threadCount;
+    private final int threadCount;
     private ExecutorService threadPool;
-    private AtomicLong overallExportedCount = new AtomicLong(0);
+    private final AtomicLong overallExportedCount = new AtomicLong(0);
 
     public ParallelExporter(ExportStrategySelector exportStrategySelector, ValueEncoder valueEncoder, StatementExecutor executor, int threadCount) {
         super(exportStrategySelector, valueEncoder, executor);
@@ -26,9 +26,9 @@ public class ParallelExporter extends BaseExporter {
     }
 
     @Override
-    protected void exportTable(TableExportSelect tableExportSelect, Writer writer) {
-        for (String select : tableExportSelect.getExportSelects()) {
-            ParallelExportResultSetProcessor processor = new ParallelExportResultSetProcessor(tableExportSelect.getTable(), writer, getValueEncoder());
+    protected void exportTable(ExportSelect exportSelect, Writer writer) {
+        for (String select : exportSelect.getExportSelects()) {
+            ParallelExportResultSetProcessor processor = new ParallelExportResultSetProcessor(exportSelect.getTable(), writer, getValueEncoder());
             Runnable exportWorker = new ExportWorker(processor, getExecutor(), select, overallExportedCount);
             threadPool.execute(exportWorker);
         }

@@ -4,8 +4,8 @@ import com.smikhalev.sqlserverutils.generator.ColumnGenerator;
 
 public class SubstringColumnGenerator implements ColumnGenerator {
 
-    private ColumnGenerator columnGenerator;
-    private int size;
+    private final ColumnGenerator columnGenerator;
+    private final int size;
 
     public SubstringColumnGenerator(ColumnGenerator columnGenerator, int size) {
         this.columnGenerator = columnGenerator;

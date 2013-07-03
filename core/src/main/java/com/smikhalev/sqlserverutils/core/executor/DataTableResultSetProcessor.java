@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class DataTableResultSetProcessor implements ResultSetProcessor<DataTable> {
 
-    private DataTable dataTable = new DataTable();
+    private final DataTable dataTable = new DataTable();
 
     @Override
     public void process(ResultSet resultSet) throws SQLException {

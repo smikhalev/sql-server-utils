@@ -4,11 +4,11 @@ import com.smikhalev.sqlserverutils.exportdata.ValueEncoder;
 import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 
 public class SimpleValueEncoder implements ValueEncoder {
-    private StringTypeValueEncoder stringValueEncoder = new StringTypeValueEncoder();
-    private DateTypeValueEncoder dateTypeValueEncoder = new DateTypeValueEncoder();
-    private IntegerTypeValueEncoder intValueEncoder = new IntegerTypeValueEncoder();
-    private FloatTypeValueEncoder floatValueEncoder = new FloatTypeValueEncoder();
-    private BitTypeValueEncoder bitTypeValueEncoder = new BitTypeValueEncoder();
+    private final StringTypeValueEncoder stringValueEncoder = new StringTypeValueEncoder();
+    private final DateTypeValueEncoder dateTypeValueEncoder = new DateTypeValueEncoder();
+    private final IntegerTypeValueEncoder intValueEncoder = new IntegerTypeValueEncoder();
+    private final FloatTypeValueEncoder floatValueEncoder = new FloatTypeValueEncoder();
+    private final BitTypeValueEncoder bitTypeValueEncoder = new BitTypeValueEncoder();
 
     public String encode(DbType type, Object value) {
         if (type == DbType.BIT)

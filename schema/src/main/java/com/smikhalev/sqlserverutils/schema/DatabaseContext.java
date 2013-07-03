@@ -5,8 +5,8 @@ import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 
 public class DatabaseContext implements AutoCloseable {
 
-    private StatementExecutor executor;
-    private Database database;
+    private final StatementExecutor executor;
+    private final Database database;
 
     public DatabaseContext(Database database, StatementExecutor executor) {
         this.executor = executor;

@@ -8,7 +8,7 @@ import com.smikhalev.sqlserverutils.schema.DatabaseLoader;
 import java.io.*;
 
 public class ImportManager extends BaseWorkerManager {
-    private Importer importer;
+    private final Importer importer;
     private long allRowsInFile = -1;
 
     public ImportManager(Importer importer, DatabaseLoader databaseLoader) {

@@ -8,10 +8,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ImportWorker implements Runnable {
 
-    private PacketImporter packetImporter;
-    private Packet packet;
-    private ImportStrategy importStrategy;
-    private AtomicLong overallImportedCount;
+    private final PacketImporter packetImporter;
+    private final Packet packet;
+    private final ImportStrategy importStrategy;
+    private final AtomicLong overallImportedCount;
 
     public ImportWorker(PacketImporter packetImporter, Packet packet, ImportStrategy importStrategy, AtomicLong overallImportedCount) {
         this.packetImporter = packetImporter;

@@ -7,10 +7,10 @@ import java.util.List;
 
 public class Packet {
 
-    private Table table;
-    private long uniqueId;
-    private List<List<String>> dataTable = new ArrayList<>();
-    private int size;
+    private final Table table;
+    private final long uniqueId;
+    private final List<List<String>> dataTable = new ArrayList<>();
+    private final int size;
 
     public Packet(Table table, long uniqueId, int size) {
         this.table = table;
@@ -35,7 +35,7 @@ public class Packet {
     }
 
     public int size() {
-        return size;
+        return dataTable.size();
     }
 
     public boolean isFull() {

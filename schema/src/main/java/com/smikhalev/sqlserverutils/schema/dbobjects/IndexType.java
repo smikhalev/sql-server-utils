@@ -4,7 +4,7 @@ public enum IndexType {
     CLUSTERED("clustered"),
     NON_CLUSTERED("nonclustered");
 
-    private String name;
+    private final String name;
 
     IndexType(String name) {
         this.name = name;

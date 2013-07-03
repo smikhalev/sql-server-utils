@@ -9,9 +9,9 @@ import java.util.List;
 
 public abstract class Index extends DbObject {
 
-    private Table table;
-    private List<IndexColumn> keyColumns = new ArrayList<>();
-    private boolean isUnique;
+    private final Table table;
+    private final List<IndexColumn> keyColumns = new ArrayList<>();
+    private final boolean isUnique;
 
     public Index(String name, Table table, boolean isUnique) {
         super(name, null);
@@ -31,7 +31,7 @@ public abstract class Index extends DbObject {
         return isUnique;
     }
 
-    public abstract IndexType getIndexType();
+    protected abstract IndexType getIndexType();
 
     @Override
     public String generateCreateScript() {

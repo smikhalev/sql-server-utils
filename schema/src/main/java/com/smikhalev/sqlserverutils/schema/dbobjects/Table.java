@@ -9,11 +9,11 @@ import java.util.List;
 
 public class Table extends DbObject {
 
-    private Columns columns = new Columns();
     private ClusteredIndex clusteredIndex;
-    private List<NonClusteredIndex> nonClusteredIndexes = new ArrayList<>();
-    private List<ForeignKey> foreignKeys = new ArrayList<>();
-    private List<Trigger> triggers = new ArrayList<>();
+    private final Columns columns = new Columns();
+    private final List<NonClusteredIndex> nonClusteredIndexes = new ArrayList<>();
+    private final List<ForeignKey> foreignKeys = new ArrayList<>();
+    private final List<Trigger> triggers = new ArrayList<>();
 
     public Table(String name, String schema) {
         super(name, schema);

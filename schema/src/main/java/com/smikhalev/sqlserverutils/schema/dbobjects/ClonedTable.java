@@ -8,8 +8,8 @@ import java.util.List;
 
 public class ClonedTable extends Table {
 
-    private Table table;
-    private NonClusteredIndex nonClusteredIndex;
+    private final Table table;
+    private final NonClusteredIndex nonClusteredIndex;
 
     private final static String ID_COLUMN_NAME = "__id__";
     private final static String TABLE_PREFIX = "__cloned_";

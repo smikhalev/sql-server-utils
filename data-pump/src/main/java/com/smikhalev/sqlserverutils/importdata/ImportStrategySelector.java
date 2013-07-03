@@ -7,7 +7,7 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 import java.util.List;
 
 public class ImportStrategySelector {
-    private List<ImportStrategy> strategies;
+    private final List<ImportStrategy> strategies;
 
     public ImportStrategySelector(List<ImportStrategy> strategies) {
         this.strategies = strategies;

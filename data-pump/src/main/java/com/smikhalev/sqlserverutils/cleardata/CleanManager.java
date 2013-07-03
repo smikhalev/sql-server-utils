@@ -5,8 +5,8 @@ import com.smikhalev.sqlserverutils.schema.DatabaseLoader;
 
 public class CleanManager {
 
-    private Cleaner cleaner;
-    private DatabaseLoader databaseLoader;
+    private final Cleaner cleaner;
+    private final DatabaseLoader databaseLoader;
 
     public CleanManager(Cleaner cleaner, DatabaseLoader databaseLoader) {
         this.cleaner = cleaner;

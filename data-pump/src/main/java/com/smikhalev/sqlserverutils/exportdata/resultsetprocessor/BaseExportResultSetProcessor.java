@@ -13,9 +13,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public abstract class BaseExportResultSetProcessor implements ResultSetProcessor {
-    private Table table;
-    private Writer writer;
-    private ValueEncoder valueEncoder;
+    private final Table table;
+    private final Writer writer;
+    private final ValueEncoder valueEncoder;
     private long lineExportedCount;
 
     public BaseExportResultSetProcessor(Table table, Writer writer, ValueEncoder valueEncoder){
@@ -67,7 +67,7 @@ public abstract class BaseExportResultSetProcessor implements ResultSetProcessor
         }
     }
 
-    private void writeTableRowPrefix() throws SQLException, IOException {
+    private void writeTableRowPrefix() throws IOException {
         writeValue(table.getSchema());
         writeSeparator();
 

@@ -1,4 +1,4 @@
-package com.smikhalev.sqlserverutils.importdata;
+package com.smikhalev.sqlserverutils;
 
 import com.smikhalev.sqlserverutils.schema.Database;
 

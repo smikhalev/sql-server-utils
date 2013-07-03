@@ -4,8 +4,8 @@ import com.smikhalev.sqlserverutils.generator.ColumnGenerator;
 
 public class CastColumnGenerator implements ColumnGenerator {
 
-    private ColumnGenerator generator;
-    private String type;
+    private final ColumnGenerator generator;
+    private final String type;
 
     public CastColumnGenerator(ColumnGenerator generator, String type) {
         this.generator = generator;

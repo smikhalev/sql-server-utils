@@ -3,14 +3,16 @@ package com.smikhalev.sqlserverutils;
 import java.util.Date;
 
 public class ProcessResult {
-    private long allRows;
-    private long processedRows;
-    private long startTime;
+    private final long allRows;
+    private final long processedRows;
+    private final long startTime;
+    private final boolean isFinished;
 
-    public ProcessResult(long allRows, long processedRows, long startTime) {
+    public ProcessResult(long allRows, long processedRows, long startTime, boolean isFinished) {
         this.allRows = allRows;
         this.processedRows = processedRows;
         this.startTime = startTime;
+        this.isFinished = isFinished;
     }
 
     public long getAllRows() {
@@ -22,7 +24,7 @@ public class ProcessResult {
     }
 
     public boolean isFinished() {
-        return allRows == processedRows;
+        return isFinished;
     }
 
     public long getProcessedRows() {

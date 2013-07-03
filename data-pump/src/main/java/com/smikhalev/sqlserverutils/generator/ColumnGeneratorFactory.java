@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class ColumnGeneratorFactory {
 
-    private Map<DbType, ColumnGenerator> columnGenerators;
+    private final Map<DbType, ColumnGenerator> columnGenerators;
 
     public ColumnGeneratorFactory(Map<DbType, ColumnGenerator> columnGenerators) {
         this.columnGenerators = columnGenerators;

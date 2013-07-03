@@ -6,7 +6,6 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 public class BulkInsertImportStrategy extends BaseImportStrategy {
 
-
     public BulkInsertImportStrategy(TableValueConstructor constructor, int size) {
         super(constructor, size);
     }
@@ -15,7 +14,8 @@ public class BulkInsertImportStrategy extends BaseImportStrategy {
     public String generateImportInsert(Packet packet) {
         String fields = packet.getTable().getColumns().generateFields();
 
-        return String.format("insert into %s (%s) %s ",
+        // with(tablockx) is to get minimal logging
+        return String.format("insert into %s with(tablockx) (%s) %s ",
                 packet.getTable().getFullName(), fields, generateSelect(packet));
     }
 

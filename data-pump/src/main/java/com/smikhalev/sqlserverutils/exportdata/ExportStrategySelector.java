@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ExportStrategySelector {
 
-    private List<ExportStrategy> strategies;
+    private final List<ExportStrategy> strategies;
 
     public ExportStrategySelector(List<ExportStrategy> strategies) {
         this.strategies = strategies;

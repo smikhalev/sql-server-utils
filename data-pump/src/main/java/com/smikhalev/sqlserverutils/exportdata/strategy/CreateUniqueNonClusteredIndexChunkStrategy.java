@@ -3,8 +3,7 @@ package com.smikhalev.sqlserverutils.exportdata.strategy;
 import com.smikhalev.sqlserverutils.core.executor.StatementExecutor;
 import com.smikhalev.sqlserverutils.exportdata.IndexSizeProvider;
 import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
-import com.smikhalev.sqlserverutils.exportdata.exporter.TableExportSelect;
-import com.smikhalev.sqlserverutils.importdata.RestorableAction;
+import com.smikhalev.sqlserverutils.RestorableAction;
 import com.smikhalev.sqlserverutils.restorableaction.CloneTableRestorableAction;
 import com.smikhalev.sqlserverutils.schema.dbobjects.ClonedTable;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
@@ -16,16 +15,11 @@ import java.util.List;
 
 public class CreateUniqueNonClusteredIndexChunkStrategy extends UniqueNonClusteredCompositeChunkStrategy {
 
-    private StatementExecutor executor;
+    private final StatementExecutor executor;
 
     public CreateUniqueNonClusteredIndexChunkStrategy(TableSizeProvider tableSizeProvider, IndexSizeProvider indexSizeProvider, StatementExecutor executor, int chunkSize) {
         super(tableSizeProvider, indexSizeProvider, chunkSize);
         this.executor = executor;
-    }
-
-    @Override
-    public TableExportSelect generateExportSelects(Table table) {
-        return super.generateExportSelects(table);
     }
 
     @Override
@@ -46,7 +40,7 @@ public class CreateUniqueNonClusteredIndexChunkStrategy extends UniqueNonCluster
     }
 
     @Override
-    protected List<RestorableAction> generateRestorableAction(Table table) {
+    public List<RestorableAction> getRestorableActions(Table table) {
         RestorableAction cloneTableRestorableAction = new CloneTableRestorableAction(executor, table);
         return Arrays.asList(cloneTableRestorableAction);
     }

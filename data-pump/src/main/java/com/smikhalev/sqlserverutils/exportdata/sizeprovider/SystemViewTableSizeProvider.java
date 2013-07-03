@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class SystemViewTableSizeProvider implements TableSizeProvider {
 
-    private StatementExecutor executor;
+    private final StatementExecutor executor;
     private volatile HashMap<String, Integer> tableSizes;
     private volatile Long databaseSize;
 

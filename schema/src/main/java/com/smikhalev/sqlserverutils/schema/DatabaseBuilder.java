@@ -4,7 +4,7 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 public class DatabaseBuilder {
 
-    private Database database = new Database();
+    private final Database database = new Database();
 
     public DatabaseBuilder addTable(Table table)
     {

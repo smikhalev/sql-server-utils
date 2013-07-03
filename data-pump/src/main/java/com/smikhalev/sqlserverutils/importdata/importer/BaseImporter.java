@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.importdata.importer;
 
+import com.smikhalev.sqlserverutils.RestorableAction;
 import com.smikhalev.sqlserverutils.RestorableContext;
 import com.smikhalev.sqlserverutils.importdata.*;
 import com.smikhalev.sqlserverutils.schema.Database;
@@ -9,17 +10,16 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class BaseImporter implements Importer {
-    private PacketImporter packetImporter;
-    private Iterable<RestorableAction> restorableActions;
-    private ImportStrategySelector strategySelector;
-    private CsvLineParser csvLineParser;
+    private final PacketImporter packetImporter;
+    private final List<RestorableAction> restorableActions;
+    private final ImportStrategySelector strategySelector;
+    private final CsvLineParser csvLineParser;
+    private boolean isFinished = false;
 
-    public BaseImporter(PacketImporter packetImporter, ImportStrategySelector strategySelector, Iterable<RestorableAction> restorableAction, CsvLineParser csvLineParser) {
+    public BaseImporter(PacketImporter packetImporter, ImportStrategySelector strategySelector, List<RestorableAction> restorableAction, CsvLineParser csvLineParser) {
         this.packetImporter = packetImporter;
         this.strategySelector = strategySelector;
         this.restorableActions = restorableAction;
@@ -29,20 +29,21 @@ public abstract class BaseImporter implements Importer {
     public void importData(Database database, Reader reader) {
         try (RestorableContext context = new RestorableContext(restorableActions)) {
             context.prepare(database);
-            importDataBody(database, reader);
+            importDataBody(database, context, reader);
         }
     }
 
-    private void importDataBody(Database database, Reader reader) {
+    private void importDataBody(Database database, RestorableContext context, Reader reader) {
         startImport();
 
         try (BufferedReader bufferedReader = new BufferedReader(reader)) {
             String line;
             Map<String, Packet> packets = new HashMap<>();
+            Set<String> processingTables = new TreeSet<>();
             long uniquePacketId = 0;
             while ((line = bufferedReader.readLine()) != null) {
                 List<String> lineValues = csvLineParser.parse(line);
-                Packet packet = loadPackets(database, packets, lineValues, uniquePacketId);
+                Packet packet = loadPackets(database, packets, lineValues, uniquePacketId, context, processingTables);
 
                 if (packet.getUniqueId() > uniquePacketId) {
                     uniquePacketId = packet.getUniqueId();
@@ -60,6 +61,7 @@ public abstract class BaseImporter implements Importer {
         }
 
         finishImport();
+        isFinished = true;
     }
 
     protected void startImport() {
@@ -86,19 +88,30 @@ public abstract class BaseImporter implements Importer {
         return packetImporter;
     }
 
-    private Packet loadPackets(Database database, Map<String, Packet> packets, List<String> lineValues, long uniquePacketId) {
+    private Packet loadPackets(Database database, Map<String, Packet> packets, List<String> lineValues, long uniquePacketId, RestorableContext context, Set<String> processingTables) {
         String tableFullName = DbObject.buildFullName(lineValues.get(0), lineValues.get(1));
 
         if (!packets.containsKey(tableFullName)) {
             Table table = database.getTableByFullName(tableFullName);
             uniquePacketId++;
             ImportStrategy strategy = strategySelector.select(table);
+
+            if (!processingTables.contains(tableFullName)){
+                context.prepare(strategy.getRestorableAction(table), database);
+                processingTables.add(tableFullName);
+            }
+
             Packet packet = new Packet(table, uniquePacketId, strategy.getSize());
             packets.put(tableFullName, packet);
         }
 
         Packet packet = packets.get(tableFullName);
-        packet.add(lineValues.subList(2, lineValues.size()));
+        packet.add(lineValues);
         return packet;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return isFinished;
     }
 }

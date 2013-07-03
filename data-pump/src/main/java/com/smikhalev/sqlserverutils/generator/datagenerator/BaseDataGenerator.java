@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseDataGenerator implements DataGenerator {
-    private ColumnGeneratorFactory columnGeneratorFactory;
-    private StatementExecutor executor;
-    private int chunkSize;
+    private final ColumnGeneratorFactory columnGeneratorFactory;
+    private final StatementExecutor executor;
+    private final int chunkSize;
 
     public BaseDataGenerator(ColumnGeneratorFactory columnGeneratorFactory, StatementExecutor executor, int chunkSize) {
         this.columnGeneratorFactory = columnGeneratorFactory;
@@ -44,8 +44,8 @@ public abstract class BaseDataGenerator implements DataGenerator {
         }
     }
 
-    protected void startGenerateData() {};
-    protected void finishGenerateData() {};
+    protected void startGenerateData() {}
+    protected void finishGenerateData() {}
 
     protected abstract void generatePartData(String generateScript);
 

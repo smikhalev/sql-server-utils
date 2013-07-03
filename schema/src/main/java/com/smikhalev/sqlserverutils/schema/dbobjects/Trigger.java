@@ -4,8 +4,8 @@ import com.smikhalev.sqlserverutils.core.Constants;
 
 public class Trigger extends DbObject {
 
-    private Table table;
-    private String text;
+    private final Table table;
+    private final String text;
 
     public Trigger(String name, String schema, Table table, String text) {
         super(name, schema);
@@ -15,8 +15,8 @@ public class Trigger extends DbObject {
 
     @Override
     public String generateCreateScript() {
-        return String.format("%screate trigger %s on %s after insert,delete,update as begin %s end",
-                Constants.GO, getFullName(), table.getFullName(), text);
+        return String.format("%screate trigger %s on %s after insert,delete,update as begin %s end%s",
+                Constants.GO, getFullName(), table.getFullName(), text, Constants.GO);
     }
 
     @Override

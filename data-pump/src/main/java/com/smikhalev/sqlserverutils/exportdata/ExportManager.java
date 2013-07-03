@@ -9,8 +9,8 @@ import com.smikhalev.sqlserverutils.schema.DatabaseLoader;
 import java.io.*;
 
 public class ExportManager extends BaseWorkerManager {
-    private Exporter exporter;
-    private TableSizeProvider tableSizeProvider;
+    private final Exporter exporter;
+    private final TableSizeProvider tableSizeProvider;
     private long allRowsCount = -1;
 
     public ExportManager(Exporter exporter, DatabaseLoader databaseLoader, TableSizeProvider tableSizeProvider) {
@@ -25,7 +25,7 @@ public class ExportManager extends BaseWorkerManager {
         allRowsCount = -1;
 
         try(Writer writer = new FileWriter(filePath)){
-            String linesCountLine = new Long(getAllRowsCount()).toString() + Constants.NEW_LINE;
+            String linesCountLine = Long.toString(getAllRowsCount()) + Constants.NEW_LINE;
             writer.write(linesCountLine);
             exporter.exportData(database, writer);
         }

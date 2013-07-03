@@ -7,10 +7,10 @@ package com.smikhalev.sqlserverutils.schema.dbobjects;
  */
 public class ForeignKey extends DbObject {
 
-    private Table sourceTable;
-    private Column sourceColumn;
-    private Table targetTable;
-    private Column targetColumn;
+    private final Table sourceTable;
+    private final Column sourceColumn;
+    private final Table targetTable;
+    private final Column targetColumn;
 
     public ForeignKey(String name, Table sourceTable, Column sourceColumn, Table targetTable, Column targetColumn) {
         super(name, sourceTable.getSchema());

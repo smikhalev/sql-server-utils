@@ -11,9 +11,9 @@ import java.util.Arrays;
 
 public class Program {
 
-    public static final String IMPORT = "import";
-    public static final String EXPORT = "export";
-    public static final String CLEAR = "clear";
+    private static final String IMPORT = "import";
+    private static final String EXPORT = "export";
+    private static final String CLEAR = "clear";
 
     @Autowired
     private ConnectionProvider connectionProvider;
@@ -39,7 +39,7 @@ public class Program {
         try {
             processCommand(program, args);
         }
-        catch (ApplicationException | InterruptedException e) {
+        catch (ApplicationException e) {
             System.out.println("Exception:" + e.getMessage() + Arrays.toString(e.getStackTrace()));
         }
     }
@@ -53,7 +53,7 @@ public class Program {
             return fail();
         }
 
-        if (args.length == 3 && !(args[0].equals(IMPORT)) || args[0].equals(EXPORT)) {
+        if (args.length == 3 && !(args[0].equals(IMPORT) || args[0].equals(EXPORT))) {
             return fail();
         }
 
@@ -67,7 +67,7 @@ public class Program {
         return false;
     }
 
-    private static void processCommand(Program program, String[] args) throws InterruptedException {
+    private static void processCommand(Program program, String[] args) {
         switch (args[0]){
             case IMPORT:
                 System.out.println("Import started.");
@@ -89,7 +89,7 @@ public class Program {
         }
     }
 
-    public static void startStatusThread(final BaseWorkerManager workerManager) {
+    private static void startStatusThread(final BaseWorkerManager workerManager) {
         Runnable statusThreadRunnable = new Runnable() {
             @Override
             public void run() {

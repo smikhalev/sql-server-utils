@@ -10,7 +10,7 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Index;
 import java.util.HashMap;
 
 public class SystemViewIndexSizeProvider implements IndexSizeProvider {
-    private StatementExecutor executor;
+    private final StatementExecutor executor;
     private volatile HashMap<String, Long> indexSizes;
 
     public SystemViewIndexSizeProvider(StatementExecutor executor) {

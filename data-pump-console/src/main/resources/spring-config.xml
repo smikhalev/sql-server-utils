@@ -4,10 +4,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="simpleConnectionProvider" class="com.smikhalev.sqlserverutils.core.connection.SimpleConnectionProvider">
-        <constructor-arg>
-            <value></value>
-        </constructor-arg>
+    <bean id="simpleConnectionProvider" class="com.smikhalev.sqlserverutils.core.connection.C3P0ConnectionProvider">
+        <constructor-arg name="minPoolSize" value="50"/>
+        <constructor-arg name="acquireIncrement" value="50"/>
+        <constructor-arg name="maxPoolSize" value="300"/>
     </bean>
 
     <bean id="statementExecutor" class="com.smikhalev.sqlserverutils.core.executor.StatementExecutor">
@@ -82,6 +82,17 @@
     <bean id="importStrategySelector" class="com.smikhalev.sqlserverutils.importdata.ImportStrategySelector">
         <constructor-arg>
             <list>
+                <bean class="com.smikhalev.sqlserverutils.importdata.strategy.TableSizeDependantStrategy">
+                    <constructor-arg>
+                        <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertDropNonClusteredIndexes">
+                            <constructor-arg ref="tableValueConstructor"/>
+                            <constructor-arg ref="statementExecutor"/>
+                            <constructor-arg name="size" value="100"/>
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg ref="tableSizeProvider"/>
+                    <constructor-arg name="tableSizeLimit" value="10000"/>
+                </bean>
                 <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertImportStrategy">
                     <constructor-arg ref="tableValueConstructor"/>
                     <constructor-arg name="size" value="100"/>
@@ -97,7 +108,7 @@
         <constructor-arg ref="importStrategySelector"/>
         <constructor-arg ref="restorableAction"/>
         <constructor-arg ref="csvLineParser"/>
-        <constructor-arg name="threadCount" value="400"/>
+        <constructor-arg name="threadCount" value="100"/>
     </bean>
 
     <bean id="importManager" class="com.smikhalev.sqlserverutils.importdata.ImportManager">

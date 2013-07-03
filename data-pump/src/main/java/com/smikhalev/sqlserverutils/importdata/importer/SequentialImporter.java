@@ -1,12 +1,15 @@
 package com.smikhalev.sqlserverutils.importdata.importer;
 
+import com.smikhalev.sqlserverutils.RestorableAction;
 import com.smikhalev.sqlserverutils.importdata.*;
+
+import java.util.List;
 
 public class SequentialImporter extends BaseImporter {
 
     private long overallImportedCount = 0;
 
-    public SequentialImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser) {
+    public SequentialImporter(PacketImporter packetImporter, ImportStrategySelector selector, List<RestorableAction> restorableActions, CsvLineParser csvLineParser) {
         super(packetImporter, selector, restorableActions, csvLineParser);
     }
 

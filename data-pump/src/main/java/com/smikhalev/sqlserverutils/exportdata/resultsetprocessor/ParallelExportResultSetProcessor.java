@@ -13,7 +13,7 @@ import java.io.Writer;
  */
 public class ParallelExportResultSetProcessor extends BaseExportResultSetProcessor {
 
-    private StringBuffer line = new StringBuffer();
+    private final StringBuffer line = new StringBuffer();
 
     public ParallelExportResultSetProcessor(Table table, Writer writer, ValueEncoder valueEncoder) {
         super(table, writer, valueEncoder);

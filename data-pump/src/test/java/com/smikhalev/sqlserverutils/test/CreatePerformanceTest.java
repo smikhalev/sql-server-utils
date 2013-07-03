@@ -21,7 +21,7 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private DataGenerator generator;
 
-    private int TABLE_SIZE = 1 * 1000 * 1000;
+    private static final int TABLE_SIZE = 1 * 1000 * 1000;
 
     @Test(enabled = false)
     public void createPerformanceDatabase() throws Exception {
@@ -34,6 +34,19 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
                 .addForeignKey("foreign_key_to_clustered_table", "int_column", clusteredTable)
                 .build();
 
+        Table clusteredWithNonClusteredIndexesTable = createTypicalTable("clustered_table_with_non_clustered_indexes")
+                .setUniqueClusteredIndex("clustered_index", "varchar_column")
+                .addNonClusteredIndex("non_clustered_index", "float_column")
+                .addNonClusteredIndex("non_clustered_index2", "float_column", "bit_column")
+                .addForeignKey("foreign_key_to_non_clustered_unique", "int_column", nonClusteredUniqueTable)
+                .addEmptyTrigger("empty_trigger")
+                .build();
+
+        Table nonClusteredTable = createTypicalTable("non_clustered_table")
+                .addNonClusteredIndex("non_clustered_unique_index", "int_column", "date_column")
+                .addForeignKey("foreign_key_to_clustered_table2", "int_column", clusteredTable)
+                .build();
+
         Table heapTable = createTypicalTable("heap_table")
                 .addEmptyTrigger("trigger_on_heap_table")
                 .build();
@@ -41,6 +54,8 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
         Database database = new DatabaseBuilder()
                 .addTable(clusteredTable)
                 .addTable(nonClusteredUniqueTable)
+                .addTable(clusteredWithNonClusteredIndexesTable)
+                .addTable(nonClusteredTable)
                 .addTable(heapTable)
                 .build();
 

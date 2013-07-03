@@ -3,7 +3,7 @@ package com.smikhalev.sqlserverutils.test;
 import com.smikhalev.sqlserverutils.importdata.ImportStrategySelector;
 import com.smikhalev.sqlserverutils.importdata.Importer;
 import com.smikhalev.sqlserverutils.importdata.PacketImporter;
-import com.smikhalev.sqlserverutils.importdata.RestorableAction;
+import com.smikhalev.sqlserverutils.RestorableAction;
 import com.smikhalev.sqlserverutils.importdata.importer.CsvLineParser;
 import com.smikhalev.sqlserverutils.importdata.importer.ParallelImporter;
 import com.smikhalev.sqlserverutils.importdata.importer.SequentialImporter;
@@ -14,13 +14,15 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 public class ParallelImporterTest extends BaseImporterTest {
 
     @Autowired
     private PacketImporter packetImporter;
 
     @Autowired
-    private Iterable<RestorableAction> restorableActions;
+    private List<RestorableAction> restorableActions;
 
     @Autowired
     private ImportStrategySelector strategySelector;

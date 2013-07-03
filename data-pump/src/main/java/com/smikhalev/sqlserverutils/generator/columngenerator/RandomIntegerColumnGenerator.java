@@ -4,7 +4,7 @@ import com.smikhalev.sqlserverutils.generator.ColumnGenerator;
 
 public class RandomIntegerColumnGenerator implements ColumnGenerator {
 
-    private long typeSize;
+    private final long typeSize;
 
     public RandomIntegerColumnGenerator(long typeSize) {
         this.typeSize = typeSize;

@@ -1,22 +1,19 @@
 package com.smikhalev.sqlserverutils;
 
-import com.google.common.collect.Lists;
-import com.smikhalev.sqlserverutils.importdata.RestorableAction;
 import com.smikhalev.sqlserverutils.schema.Database;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class RestorableContext implements AutoCloseable {
 
-    private List<RestorableAction> restorableActions;
+    private final Stack<RestorableAction> restorableActions = new Stack<>();
 
     public RestorableContext() {
-        this.restorableActions = new ArrayList<>();
     }
 
-    public RestorableContext(Iterable<RestorableAction> restorableActions) {
-        this.restorableActions = Lists.newArrayList(restorableActions);
+    public RestorableContext(List<RestorableAction> restorableActions) {
+        this.restorableActions.addAll(restorableActions);
     }
 
     public void prepare(Database database) {
@@ -34,7 +31,8 @@ public class RestorableContext implements AutoCloseable {
     }
 
     public void restore(){
-        for(RestorableAction action : restorableActions) {
+        while(!restorableActions.isEmpty()){
+            RestorableAction action = restorableActions.pop();
             action.restore();
         }
     }

@@ -8,7 +8,7 @@ import java.sql.*;
 
 public class StatementExecutor {
 
-    private ConnectionProvider connectionProvider;
+    private final ConnectionProvider connectionProvider;
 
     static {
         initSqlServerDriver();
@@ -67,7 +67,7 @@ public class StatementExecutor {
     }
 
     private PreparedStatement prepareStatement(String query, Connection connection, Object[] parameters) throws SQLException {
-        PreparedStatement statement = null;
+        PreparedStatement statement;
         statement = connection.prepareStatement(query);
         for (int i = 0; i < parameters.length; i++) {
             statement.setObject(i + 1, parameters[i]);

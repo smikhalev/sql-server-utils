@@ -2,7 +2,7 @@ package com.smikhalev.sqlserverutils.schema.dbobjects;
 
 public class CharColumn extends Column {
 
-    private int maxCharLength;
+    private final int maxCharLength;
 
     public CharColumn(String name, DbType type, boolean isNull, int maxCharLength) {
         super(name, type, isNull);

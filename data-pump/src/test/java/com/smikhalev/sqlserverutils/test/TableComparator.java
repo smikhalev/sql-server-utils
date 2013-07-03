@@ -6,9 +6,9 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 public class TableComparator {
 
-    private StatementExecutor executor;
+    private final StatementExecutor executor;
 
-    private String compareQueryTemplate =
+    private static final String COMPARE_QUERY_TEMPLATE =
             ";with source " +
             "as " +
             "( " +
@@ -34,7 +34,7 @@ public class TableComparator {
     }
 
     public DataTable compare(Table source, Table target) {
-        String compareQuery = String.format(compareQueryTemplate,
+        String compareQuery = String.format(COMPARE_QUERY_TEMPLATE,
                 source.getColumns().generateFields(), source.getFullName(),
                 source.getColumns().generateFields(), target.getFullName());
 

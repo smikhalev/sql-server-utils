@@ -11,8 +11,8 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
  * with unique non clustered strategy.
  */
 public class UniqueNonClusteredCompositeChunkStrategy extends IndexChunkStrategy {
-    private NonClusteredIndexChunkStrategy nonClusteredIndexStrategy;
-    private UniqueNonClusteredIndexChunkStrategy uniqueNonClusteredIndexStrategy;
+    private final NonClusteredIndexChunkStrategy nonClusteredIndexStrategy;
+    private final UniqueNonClusteredIndexChunkStrategy uniqueNonClusteredIndexStrategy;
 
     public UniqueNonClusteredCompositeChunkStrategy(TableSizeProvider tableSizeProvider, IndexSizeProvider indexSizeProvider, int chunkSize) {
         super(tableSizeProvider, indexSizeProvider, chunkSize);

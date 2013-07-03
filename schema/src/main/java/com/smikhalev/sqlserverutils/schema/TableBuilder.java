@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TableBuilder {
 
-    private Table table;
+    private final Table table;
 
     public TableBuilder(String name) {
         table = new Table(name, null);

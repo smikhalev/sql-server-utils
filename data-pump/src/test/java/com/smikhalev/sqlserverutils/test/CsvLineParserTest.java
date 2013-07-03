@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CsvLineParserTest {
 
-    private CsvLineParser parser = new CsvLineParser();
+    private final CsvLineParser parser = new CsvLineParser();
 
     @Test
     public void oneSymbolTest() {

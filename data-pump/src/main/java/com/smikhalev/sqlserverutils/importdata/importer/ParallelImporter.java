@@ -1,7 +1,9 @@
 package com.smikhalev.sqlserverutils.importdata.importer;
 
+import com.smikhalev.sqlserverutils.RestorableAction;
 import com.smikhalev.sqlserverutils.importdata.*;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
@@ -10,9 +12,9 @@ public class ParallelImporter extends BaseImporter {
 
     private final int threadCount;
     private ThreadPoolExecutor threadPool;
-    private AtomicLong overallImportedCount = new AtomicLong(0);
+    private final AtomicLong overallImportedCount = new AtomicLong(0);
 
-    public ParallelImporter(PacketImporter packetImporter, ImportStrategySelector selector, Iterable<RestorableAction> restorableActions, CsvLineParser csvLineParser, int threadCount) {
+    public ParallelImporter(PacketImporter packetImporter, ImportStrategySelector selector, List<RestorableAction> restorableActions, CsvLineParser csvLineParser, int threadCount) {
         super(packetImporter, selector, restorableActions, csvLineParser);
         this.threadCount = threadCount;
     }
@@ -31,9 +33,9 @@ public class ParallelImporter extends BaseImporter {
     }
 
     private void waitForContinueImportProcess() {
-        while(!threadPool.getQueue().isEmpty()) {
+        while(threadPool.getQueue().size() > threadCount) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 throw new ImportException(e.getMessage(), e.getCause());
             }

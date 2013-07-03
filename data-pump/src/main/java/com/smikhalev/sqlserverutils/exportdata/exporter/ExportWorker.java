@@ -6,10 +6,10 @@ import com.smikhalev.sqlserverutils.exportdata.resultsetprocessor.ParallelExport
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ExportWorker implements Runnable {
-    private ParallelExportResultSetProcessor processor;
-    private StatementExecutor executor;
-    private String exportSelect;
-    private AtomicLong overallExportedCount;
+    private final ParallelExportResultSetProcessor processor;
+    private final StatementExecutor executor;
+    private final String exportSelect;
+    private final AtomicLong overallExportedCount;
 
     public ExportWorker(ParallelExportResultSetProcessor processor, StatementExecutor executor, String exportSelect, AtomicLong overallExportedCount) {
         this.processor = processor;

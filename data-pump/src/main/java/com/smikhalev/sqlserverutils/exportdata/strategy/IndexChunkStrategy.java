@@ -4,17 +4,16 @@ import com.google.common.base.Joiner;
 import com.smikhalev.sqlserverutils.exportdata.BaseExportStrategy;
 import com.smikhalev.sqlserverutils.exportdata.IndexSizeProvider;
 import com.smikhalev.sqlserverutils.exportdata.TableSizeProvider;
-import com.smikhalev.sqlserverutils.exportdata.exporter.TableExportSelect;
-import com.smikhalev.sqlserverutils.importdata.RestorableAction;
+import com.smikhalev.sqlserverutils.exportdata.exporter.ExportSelect;
 import com.smikhalev.sqlserverutils.schema.dbobjects.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class IndexChunkStrategy extends BaseExportStrategy {
-    private int chunkSize;
-    private TableSizeProvider tableSizeProvider;
-    private IndexSizeProvider indexSizeProvider;
+    private final int chunkSize;
+    private final TableSizeProvider tableSizeProvider;
+    private final IndexSizeProvider indexSizeProvider;
 
     public IndexChunkStrategy(TableSizeProvider tableSizeProvider, IndexSizeProvider indexSizeProvider, int chunkSize) {
         this.tableSizeProvider = tableSizeProvider;
@@ -27,7 +26,7 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
     public abstract boolean isApplicable(Table table);
 
     @Override
-    public TableExportSelect generateExportSelects(Table table) {
+    public ExportSelect generateExportSelects(Table table) {
         List<String> selects = new ArrayList<>();
 
         int tableSize = tableSizeProvider.getSize(table);
@@ -40,7 +39,7 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
         generateExportSelectFromOneSide(table, selects, index, leftSize, SortType.ASC);
         generateExportSelectFromOneSide(table, selects, index, rightSize, SortType.DESC);
 
-        return new TableExportSelect(table, selects, generateRestorableAction(table));
+        return new ExportSelect(table, selects);
     }
 
     private void generateExportSelectFromOneSide(Table table, List<String> selects, Index index, int size, SortType sortType) {
@@ -52,10 +51,6 @@ public abstract class IndexChunkStrategy extends BaseExportStrategy {
             String select = generateExportSelect(table, index, offset, pageSize, sortType);
             selects.add(select);
         }
-    }
-
-    protected List<RestorableAction> generateRestorableAction(Table table) {
-        return new ArrayList<>();
     }
 
     protected IndexSizeProvider getIndexSizeProvider() {
