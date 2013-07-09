@@ -6,7 +6,6 @@ import com.smikhalev.sqlserverutils.exportdata.*;
 import com.smikhalev.sqlserverutils.RestorableAction;
 import com.smikhalev.sqlserverutils.schema.Database;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
-import javafx.util.Pair;
 
 import java.io.Writer;
 import java.util.ArrayList;
@@ -42,28 +41,28 @@ public abstract class BaseExporter implements Exporter {
     public void exportData(Database database, Writer writer) {
         startExport();
 
-        List<Pair<ExportSelect, List<RestorableAction>>> pairs = new ArrayList<>();
+        List<ExportSelectData> exportSelects = new ArrayList<>();
         for (Table table : database.getTables()) {
             ExportStrategy exportStrategy = exportStrategySelector.select(table);
             ExportSelect exportSelect = exportStrategy.generateExportSelects(table);
             List<RestorableAction> restorableActions = exportStrategy.getRestorableActions(table);
-            pairs.add(new Pair(exportSelect, restorableActions));
+            exportSelects.add(new ExportSelectData(exportSelect, restorableActions));
         }
 
         // First we start to export tables for which we don't need to create a copy tables
         // It gives us performance boost since copying is blocking operation in current implementation
-        for (Pair<ExportSelect, List<RestorableAction>> pair : pairs) {
-            if (pair.getValue().isEmpty()) {
-                exportTable(pair.getKey(), writer);
+        for (ExportSelectData exportSelect : exportSelects) {
+            if (exportSelect.getRestorableActions().isEmpty()) {
+                exportTable(exportSelect.getExportSelect(), writer);
             }
         }
 
         // Open restorable context for those tables where we need to create a copy
         try (RestorableContext context = new RestorableContext()) {
-            for (Pair<ExportSelect, List<RestorableAction>> pair : pairs) {
-                if (!pair.getValue().isEmpty()) {
-                    context.prepare(pair.getValue(), database);
-                    exportTable(pair.getKey(), writer);
+            for (ExportSelectData exportSelect : exportSelects) {
+                if (!exportSelect.getRestorableActions().isEmpty()) {
+                    context.prepare(exportSelect.getRestorableActions(), database);
+                    exportTable(exportSelect.getExportSelect(), writer);
                 }
             }
 
@@ -76,5 +75,23 @@ public abstract class BaseExporter implements Exporter {
     @Override
     public boolean isFinished() {
         return isFinished;
+    }
+
+    private class ExportSelectData {
+        private ExportSelect exportSelect;
+        private List<RestorableAction> restorableActions;
+
+        public ExportSelectData(ExportSelect exportSelect, List<RestorableAction> restorableActions) {
+            this.exportSelect = exportSelect;
+            this.restorableActions = restorableActions;
+        }
+
+        private ExportSelect getExportSelect() {
+            return exportSelect;
+        }
+
+        private List<RestorableAction> getRestorableActions() {
+            return restorableActions;
+        }
     }
 }

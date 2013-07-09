@@ -84,7 +84,7 @@
             <list>
                 <bean class="com.smikhalev.sqlserverutils.importdata.strategy.TableSizeDependantStrategy">
                     <constructor-arg>
-                        <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertDropNonClusteredIndexes">
+                        <bean class="com.smikhalev.sqlserverutils.importdata.strategy.BulkInsertDropIndexesImportStrategy">
                             <constructor-arg ref="tableValueConstructor"/>
                             <constructor-arg ref="statementExecutor"/>
                             <constructor-arg name="size" value="100"/>
