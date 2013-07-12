@@ -14,6 +14,7 @@ import com.smikhalev.sqlserverutils.schema.dbobjects.DbType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 public class ParallelImporterTest extends BaseImporterTest {
@@ -21,7 +22,7 @@ public class ParallelImporterTest extends BaseImporterTest {
     @Autowired
     private PacketImporter packetImporter;
 
-    @Autowired
+    @Resource(name = "restorableAction")
     private List<RestorableAction> restorableActions;
 
     @Autowired

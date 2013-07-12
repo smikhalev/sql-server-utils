@@ -58,13 +58,14 @@ public class DatabaseLoader {
     }
 
     private void loadColumns(Table table) {
+        // TODO: It is better to use new dynamic management views than INFORMATION_SCHEMA
         String query =
             "select " +
             "    column_name, " +
             "    data_type, " +
             "    is_nullable, " +
             "    coalesce(character_maximum_length, 0) as char_max_length\n" +
-            "from information_schema.columns \n" +
+            "from INFORMATION_SCHEMA.COLUMNS \n" +
             "where table_name=? and table_schema=?";
 
         DataTable dataTable = executor.executeAsDataTable(query, table.getName(), table.getSchema());
