@@ -31,6 +31,8 @@ public abstract class BaseImporter implements Importer {
             context.prepare(database);
             importDataBody(database, context, reader);
         }
+
+        isFinished = true;
     }
 
     private void importDataBody(Database database, RestorableContext context, Reader reader) {
@@ -61,7 +63,6 @@ public abstract class BaseImporter implements Importer {
         }
 
         finishImport();
-        isFinished = true;
     }
 
     protected void startImport() {

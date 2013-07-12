@@ -27,7 +27,12 @@ public class ImportManager extends BaseWorkerManager {
             importer.importData(database, reader);
 
         } catch (IOException e) {
+            fail();
             throw new ApplicationException(e.getMessage(), e.getCause());
+        }
+        catch (Exception e) {
+            fail();
+            throw e;
         }
     }
 

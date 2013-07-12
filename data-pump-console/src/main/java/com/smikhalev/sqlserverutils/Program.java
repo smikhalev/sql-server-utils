@@ -29,7 +29,7 @@ public class Program {
 
     private static final int STATUS_THREAD_SLEEP_TIME = 1 * 1000;
 
-    public static void main(String [] args) {
+    public static void main(String[] args) {
         if (!validateArgs(args))
             return;
 
@@ -45,7 +45,7 @@ public class Program {
     }
 
     private static boolean validateArgs(String[] args) {
-        if (args.length < 2 && args.length > 3) {
+        if (args.length < 2 || args.length > 3) {
             return fail();
         }
 
@@ -60,9 +60,8 @@ public class Program {
         return true;
     }
 
-
     private static boolean fail() {
-        System.out.println("There is not enough arguments.");
+        System.out.println("There is wrong quantity of argument.");
         System.out.println("dpump command connection-string [file]");
         return false;
     }
@@ -97,14 +96,14 @@ public class Program {
                     ProcessResult result = workerManager.getCurrentStatus();
                     int sleepTimes = 0;
 
-                    while(!result.isStarted()) {
+                    while (!result.isStarted() && !result.isFailed()) {
                         Thread.sleep(STATUS_THREAD_SLEEP_TIME);
                         sleepTimes++;
                         result = workerManager.getCurrentStatus();
-                        System.out.println(sleepTimes + ") Starting" );
+                        System.out.println(sleepTimes + ") Starting");
                     }
 
-                    while(!result.isFinished()) {
+                    while (!result.isFinished() && !result.isFailed()) {
                         Thread.sleep(STATUS_THREAD_SLEEP_TIME);
                         sleepTimes++;
                         result = workerManager.getCurrentStatus();

@@ -7,12 +7,14 @@ public class ProcessResult {
     private final long processedRows;
     private final long startTime;
     private final boolean isFinished;
+    private final boolean isFailed;
 
-    public ProcessResult(long allRows, long processedRows, long startTime, boolean isFinished) {
+    public ProcessResult(long allRows, long processedRows, long startTime, boolean isFinished, boolean isFailed) {
         this.allRows = allRows;
         this.processedRows = processedRows;
         this.startTime = startTime;
         this.isFinished = isFinished;
+        this.isFailed = isFailed;
     }
 
     public long getAllRows() {
@@ -25,6 +27,10 @@ public class ProcessResult {
 
     public boolean isFinished() {
         return isFinished;
+    }
+
+    public boolean isFailed() {
+        return isFailed;
     }
 
     public long getProcessedRows() {

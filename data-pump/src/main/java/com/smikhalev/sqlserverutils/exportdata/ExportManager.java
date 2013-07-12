@@ -30,7 +30,12 @@ public class ExportManager extends BaseWorkerManager {
             exporter.exportData(database, writer);
         }
         catch (IOException e){
+            fail();
             throw new ApplicationException(e.getMessage(), e.getCause());
+        }
+        catch (Exception e) {
+            fail();
+            throw e;
         }
     }
 
