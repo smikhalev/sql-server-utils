@@ -55,4 +55,41 @@ public class CsvLineParserTest {
         Assert.assertEquals(values.get(1), "1\"23");
         Assert.assertEquals(values.get(2), "sdfj3");
     }
+
+    @Test
+    public void nullValuesTest() {
+        String inputLine = ",";
+        List<String> values = parser.parse(inputLine);
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertEquals(values.get(0), null);
+        Assert.assertEquals(values.get(1), null);
+    }
+
+    @Test
+    public void nullValuesTest02() {
+        String inputLine = ",a,";
+        List<String> values = parser.parse(inputLine);
+        Assert.assertEquals(values.size(), 3);
+        Assert.assertEquals(values.get(0), null);
+        Assert.assertEquals(values.get(1), "a");
+        Assert.assertEquals(values.get(2), null);
+    }
+
+    @Test
+    public void nullValuesTest03() {
+        String inputLine = "a,";
+        List<String> values = parser.parse(inputLine);
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertEquals(values.get(0), "a");
+        Assert.assertEquals(values.get(1), null);
+    }
+
+    @Test
+    public void nullValuesTest04() {
+        String inputLine = ",a";
+        List<String> values = parser.parse(inputLine);
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertEquals(values.get(0), null);
+        Assert.assertEquals(values.get(1), "a");
+    }
 }

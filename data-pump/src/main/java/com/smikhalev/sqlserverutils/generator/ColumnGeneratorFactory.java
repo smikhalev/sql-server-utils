@@ -1,5 +1,6 @@
 package com.smikhalev.sqlserverutils.generator;
 
+import com.smikhalev.sqlserverutils.generator.columngenerator.NullColumnGenerator;
 import com.smikhalev.sqlserverutils.generator.columngenerator.SubstringColumnGenerator;
 import com.smikhalev.sqlserverutils.schema.dbobjects.CharColumn;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Column;
@@ -23,6 +24,10 @@ public class ColumnGeneratorFactory {
         {
             CharColumn charColumn = (CharColumn) column;
             generator = new SubstringColumnGenerator(generator, charColumn.getMaxCharLength());
+        }
+
+        if (column.isNull()) {
+            return new NullColumnGenerator(generator);
         }
 
         return generator;

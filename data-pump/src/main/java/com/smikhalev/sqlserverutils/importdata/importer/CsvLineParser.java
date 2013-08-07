@@ -5,7 +5,7 @@ import java.util.List;
 
 /*
  * This implementation should be faster any universal third party parser
- * and faster then regexp. Since it is not universal.
+ * and faster then regexp. Since it is not universal and specific for SQL.
  */
 public class CsvLineParser {
 
@@ -27,10 +27,9 @@ public class CsvLineParser {
                 case START:
                     state = processCommaState(state, valueBuilder, currentChar);
                 break;
-                case COMMA:
-                    results.add(valueBuilder.toString());
-                    valueBuilder.setLength(0);
 
+                case COMMA:
+                    addNewValue(results, valueBuilder);
                     state = processCommaState(state, valueBuilder, currentChar);
                 break;
 
@@ -47,8 +46,23 @@ public class CsvLineParser {
                 break;
             }
         }
-        results.add(valueBuilder.toString());
+        addNewValue(results, valueBuilder);
+
+        if (state == States.COMMA)
+            results.add(null);
+
         return results;
+    }
+
+    private void addNewValue(List<String> results, StringBuilder valueBuilder) {
+        String newValue = valueBuilder.toString();
+        if (newValue.isEmpty()) {
+            results.add(null);
+        }
+        else {
+            results.add(newValue);
+            valueBuilder.setLength(0);
+        }
     }
 
     private States processQuoteInStringField(States state, StringBuilder valueBuilder, char currentChar) {
@@ -86,7 +100,10 @@ public class CsvLineParser {
     }
 
     private States processCommaState(States state, StringBuilder valueBuilder, char currentChar) {
-        if(currentChar == '"') {
+        if (currentChar == ',') {
+            state = States.COMMA;
+        }
+        else if (currentChar == '"') {
             state = States.STRING_FIELD;
         }
         else {

@@ -67,9 +67,9 @@ public class CreatePerformanceTest extends AbstractTestNGSpringContextTests {
     private TableBuilder createTypicalTable(String tableName){
         return new TableBuilder(tableName)
                 .addNullColumn("bit_column", DbType.BIT)
-                .addNullColumn("int_column", DbType.INT)
+                .addNotNullColumn("int_column", DbType.INT)
                 .addNullColumn("float_column", DbType.FLOAT)
-                .addNullColumn("varchar_column", DbType.VARCHAR, 50)
+                .addNotNullColumn("varchar_column", DbType.VARCHAR, 50)
                 .addNullColumn("date_column", DbType.DATE);
     }
 }

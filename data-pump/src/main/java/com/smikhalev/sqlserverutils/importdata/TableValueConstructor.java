@@ -31,7 +31,13 @@ public class TableValueConstructor {
                 if (j != 2)
                     stringBuilder.append(",");
 
-                stringBuilder.append(dataTable.get(i).get(j));
+                String value = dataTable.get(i).get(j);
+                if (value == null) {
+                    stringBuilder.append("null");
+                }
+                else {
+                    stringBuilder.append(value);
+                }
             }
             stringBuilder.append(")");
         }
@@ -46,8 +52,9 @@ public class TableValueConstructor {
             final int COMMA_SIZE = 1;
             final int BRACKET_SIZE = 2;
 
-            for (String value : dataTable.get(0)) {
-                rowSize += value.length() + COMMA_SIZE;
+            for (int i = 2; i < dataTable.get(0).size(); i++) {
+                int valueLength = estimateValueLength(dataTable, i);
+                rowSize += valueLength + COMMA_SIZE;
             }
 
             rowSize += BRACKET_SIZE;
@@ -61,5 +68,19 @@ public class TableValueConstructor {
         return size;
     }
 
+    private int estimateValueLength(List<List<String>> dataTable, int i) {
+        final int ROUGH_NULL_COLUMN_SIZE = 10;
+        int valueLength;
 
+        String value = dataTable.get(0).get(i);
+        if (value == null) {
+            // It is very rough estimate but for not char column should be fine in most cases
+            valueLength = ROUGH_NULL_COLUMN_SIZE;
+        }
+        else {
+            valueLength = value.length();
+        }
+
+        return valueLength;
+    }
 }

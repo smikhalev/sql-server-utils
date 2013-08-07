@@ -36,8 +36,8 @@ public class SequentialExporterTest extends BaseExporterTest {
     public void testUniqueNonClusteredIndexExport() throws Exception {
         Database database = new DatabaseBuilder()
             .addTable(new TableBuilder("middle_table")
-                .addNullColumn("bigint_column", DbType.BIGINT)
-                .addNullColumn("int_column", DbType.INT)
+                .addNotNullColumn("bigint_column", DbType.BIGINT)
+                .addNotNullColumn("int_column", DbType.INT)
                 .addNullColumn("bit_column", DbType.BIT)
                 .addUniqueNonClusteredIndex("small_unique_non_clustered", "int_column")
                 .addUniqueNonClusteredIndex("unique_non_clustered", "bigint_column")
@@ -55,7 +55,7 @@ public class SequentialExporterTest extends BaseExporterTest {
     public void testUniqueClusteredIndexWithNonClusteredExport() throws Exception {
         Database database = new DatabaseBuilder()
                 .addTable(new TableBuilder("middle_table")
-                        .addNullColumn("bigint_column", DbType.BIGINT)
+                        .addNotNullColumn("bigint_column", DbType.BIGINT)
                         .addNullColumn("int_column", DbType.INT)
                         .addNullColumn("bit_column", DbType.BIT)
                         .setUniqueClusteredIndex("unique_clustered", "bigint_column")
