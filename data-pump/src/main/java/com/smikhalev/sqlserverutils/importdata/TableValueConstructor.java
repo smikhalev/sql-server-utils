@@ -27,8 +27,8 @@ public class TableValueConstructor {
                 stringBuilder.append(",");
 
             stringBuilder.append("(");
-            for(int j = 2; j < dataTable.get(i).size(); j++) {
-                if (j != 2)
+            for(int j = 0; j < dataTable.get(i).size(); j++) {
+                if (j != 0)
                     stringBuilder.append(",");
 
                 String value = dataTable.get(i).get(j);

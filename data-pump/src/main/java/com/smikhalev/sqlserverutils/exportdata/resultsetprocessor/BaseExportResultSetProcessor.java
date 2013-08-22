@@ -47,7 +47,6 @@ public abstract class BaseExportResultSetProcessor implements ResultSetProcessor
         ResultSetMetaData metaData = results.getMetaData();
 
         while (results.next()) {
-            writeTableRowPrefix();
             writeRowData(results, metaData);
             writeNewLine();
             lineExportedCount++;
@@ -65,14 +64,6 @@ public abstract class BaseExportResultSetProcessor implements ResultSetProcessor
             if (columnIndex != metaData.getColumnCount())
                 writeSeparator();
         }
-    }
-
-    private void writeTableRowPrefix() throws IOException {
-        writeValue(table.getSchema());
-        writeSeparator();
-
-        writeValue(table.getName());
-        writeSeparator();
     }
 
     @Override

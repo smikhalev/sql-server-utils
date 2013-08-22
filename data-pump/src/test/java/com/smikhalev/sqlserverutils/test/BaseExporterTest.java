@@ -23,23 +23,21 @@ public class BaseExporterTest extends AbstractTestNGSpringContextTests {
     private DataGenerator generator;
 
     protected String exportDatabase(Database database, Exporter exporter, int exportSize) throws Exception {
-        String result;
+        TableWriterProviderStub writerProvider = new TableWriterProviderStub();
 
-        try(Writer writer = new StringWriter()) {
-            try (DatabaseContext dbContext = new DatabaseContext(database, executor)) {
-                dbContext.create();
+        try (DatabaseContext dbContext = new DatabaseContext(database, executor)) {
+            dbContext.create();
 
-                generator.generateData(database, exportSize);
+            generator.generateData(database, exportSize);
 
-                exporter.exportData(database, writer);
-            }
-            result = ((StringWriter) writer).getBuffer().toString();
+            exporter.exportData(database, writerProvider);
         }
 
-        return result;
+        return writerProvider.getAggregateResult();
     }
 
     protected int getExportStringSize(String export) {
         return export.length() - export.replace("\n", "").length();
     }
 }
+

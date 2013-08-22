@@ -8,13 +8,11 @@ import java.util.List;
 public class Packet {
 
     private final Table table;
-    private final long uniqueId;
     private final List<List<String>> dataTable = new ArrayList<>();
     private final int size;
 
-    public Packet(Table table, long uniqueId, int size) {
+    public Packet(Table table, int size) {
         this.table = table;
-        this.uniqueId = uniqueId;
         this.size = size;
     }
 
@@ -30,15 +28,15 @@ public class Packet {
         return table;
     }
 
-    public long getUniqueId(){
-        return uniqueId;
-    }
-
     public int size() {
         return dataTable.size();
     }
 
     public boolean isFull() {
         return dataTable.size() == size;
+    }
+
+    public boolean isEmpty() {
+        return dataTable.size() == 0;
     }
 }

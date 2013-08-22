@@ -2,9 +2,9 @@ package com.smikhalev.sqlserverutils.importdata.importer;
 
 import com.smikhalev.sqlserverutils.RestorableAction;
 import com.smikhalev.sqlserverutils.RestorableContext;
+import com.smikhalev.sqlserverutils.TableReaderProvider;
 import com.smikhalev.sqlserverutils.importdata.*;
 import com.smikhalev.sqlserverutils.schema.Database;
-import com.smikhalev.sqlserverutils.schema.dbobjects.DbObject;
 import com.smikhalev.sqlserverutils.schema.dbobjects.Table;
 
 import java.io.BufferedReader;
@@ -26,56 +26,98 @@ public abstract class BaseImporter implements Importer {
         this.csvLineParser = csvLineParser;
     }
 
-    public void importData(Database database, Reader reader) {
+    @Override
+    public void importData(Database database, TableReaderProvider readerProvider) {
         try (RestorableContext context = new RestorableContext(restorableActions)) {
             context.prepare(database);
-            importDataBody(database, context, reader);
+            importDataBody(database, context, readerProvider);
         }
 
         isFinished = true;
     }
 
-    private void importDataBody(Database database, RestorableContext context, Reader reader) {
+    private void importDataBody(Database database, RestorableContext context, TableReaderProvider readerProvider) {
         startImport();
 
-        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
-            String line;
-            Map<String, Packet> packets = new HashMap<>();
-            Set<String> processingTables = new TreeSet<>();
-            long uniquePacketId = 0;
-            while ((line = bufferedReader.readLine()) != null) {
-                List<String> lineValues = csvLineParser.parse(line);
-                Packet packet = loadPackets(database, packets, lineValues, uniquePacketId, context, processingTables);
-
-                if (packet.getUniqueId() > uniquePacketId) {
-                    uniquePacketId = packet.getUniqueId();
-                }
-
-                if (packet.isFull()) {
-                    importPacket(packet);
-                    packets.remove(packet.getTable().getFullName());
+        Map<Table, BufferedReader> tableReaders = new HashMap<>();
+        try {
+            for (Table table : database.getTables()) {
+                Reader reader = readerProvider.provide(table);
+                if (reader != null) {
+                    BufferedReader bufferedReader = new BufferedReader(reader);
+                    ImportStrategy strategy = strategySelector.select(table);
+                    context.prepare(strategy.getRestorableAction(table), database);
+                    tableReaders.put(table, bufferedReader);
                 }
             }
 
-            importLastPackets(packets);
-        } catch (IOException e) {
-            throw new ImportException(e.getMessage(), e);
+            while(!tableReaders.isEmpty()){
+                List<Table> importedTables = new ArrayList<>();
+
+                performImportCycle(tableReaders, importedTables);
+
+                for(Table table : importedTables) {
+                    tableReaders.remove(table);
+                }
+            }
+        }
+        finally {
+            for(Reader currentReader : tableReaders.values()) {
+                try {
+                    currentReader.close();
+                }
+                catch (IOException e) {
+                    throw new ImportException(e.getMessage(), e);
+                }
+            }
         }
 
         finishImport();
+    }
+
+    private void performImportCycle(Map<Table, BufferedReader> tableReaders, List<Table> importedTables) {
+        for(Map.Entry<Table, BufferedReader> entry : tableReaders.entrySet()) {
+            Table table = entry.getKey();
+            BufferedReader reader = entry.getValue();
+            try {
+                boolean isReaderEnd = importPacket(table, reader);
+
+                if (isReaderEnd) {
+                    reader.close();
+                    importedTables.add(table);
+                }
+            }
+            catch (IOException e) {
+                throw new ImportException(e.getMessage(), e);
+            }
+        }
+    }
+
+    private boolean importPacket(Table table, BufferedReader reader) throws IOException {
+        String line;
+        ImportStrategy strategy = strategySelector.select(table);
+        Packet packet = new Packet(table, strategy.getSize());
+        while ((line = reader.readLine()) != null) {
+            List<String> lineValues = csvLineParser.parse(line);
+            packet.add(lineValues);
+
+            if (packet.isFull()) {
+                importPacket(packet);
+                return false;
+            }
+        }
+
+        if (!packet.isEmpty()) {
+            importPacket(packet);
+        }
+
+        return true;
     }
 
     protected void startImport() {
     }
 
     protected void finishImport() {
-    }
-
-    protected void importLastPackets(Map<String, Packet> packets) {
-        for (Packet packet : packets.values()) {
-            if (packet.size() != 0)
-                importPacket(packet);
-        }
     }
 
     private void importPacket(Packet packet) {
@@ -87,28 +129,6 @@ public abstract class BaseImporter implements Importer {
 
     protected PacketImporter getPacketImporter() {
         return packetImporter;
-    }
-
-    private Packet loadPackets(Database database, Map<String, Packet> packets, List<String> lineValues, long uniquePacketId, RestorableContext context, Set<String> processingTables) {
-        String tableFullName = DbObject.buildFullName(lineValues.get(0), lineValues.get(1));
-
-        if (!packets.containsKey(tableFullName)) {
-            Table table = database.getTableByFullName(tableFullName);
-            uniquePacketId++;
-            ImportStrategy strategy = strategySelector.select(table);
-
-            if (!processingTables.contains(tableFullName)){
-                context.prepare(strategy.getRestorableAction(table), database);
-                processingTables.add(tableFullName);
-            }
-
-            Packet packet = new Packet(table, uniquePacketId, strategy.getSize());
-            packets.put(tableFullName, packet);
-        }
-
-        Packet packet = packets.get(tableFullName);
-        packet.add(lineValues);
-        return packet;
     }
 
     @Override

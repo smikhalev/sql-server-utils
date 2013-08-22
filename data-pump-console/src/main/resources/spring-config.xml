@@ -56,7 +56,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.encoder.SimpleValueEncoder"/>
+    <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.ValueEncoder"/>
 
     <bean id="exporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.ParallelExporter">
         <constructor-arg ref="exportStrategySelector"/>

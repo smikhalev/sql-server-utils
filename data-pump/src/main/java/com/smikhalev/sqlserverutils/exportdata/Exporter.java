@@ -6,5 +6,5 @@ import com.smikhalev.sqlserverutils.schema.Database;
 import java.io.Writer;
 
 public interface Exporter extends Worker {
-    public void exportData(Database database, Writer writer);
+    public void exportData(Database database, TableWriterProvider writerProvider);
 }

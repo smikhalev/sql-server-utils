@@ -6,7 +6,7 @@
 
     <bean id="simpleConnectionProvider" class="com.smikhalev.sqlserverutils.core.connection.SimpleConnectionProvider">
         <constructor-arg>
-            <value>jdbc:jtds:sqlserver://data-pump.cloudapp.net/mini-pump;user=pumper;password=pumper2013;</value>
+            <value>jdbc:jtds:sqlserver://mikhalevpc/mini-pump;user=pumper;password=pumper;</value>
         </constructor-arg>
     </bean>
 
@@ -125,7 +125,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.encoder.SimpleValueEncoder"/>
+    <bean id="valueEncoder" class="com.smikhalev.sqlserverutils.exportdata.ValueEncoder"/>
 
     <bean id="sequentialExporter" class="com.smikhalev.sqlserverutils.exportdata.exporter.SequentialExporter">
         <constructor-arg ref="strategySelector"/>

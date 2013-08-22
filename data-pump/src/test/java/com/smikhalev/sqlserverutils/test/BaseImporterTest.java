@@ -17,9 +17,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,27 +36,22 @@ public class BaseImporterTest extends AbstractTestNGSpringContextTests {
     private TableComparator comparator;
 
     protected void importDatabase(Database database, Importer importer, int size) throws Exception {
-        String result;
+        try (DatabaseContext dbContext = new DatabaseContext(database, executor)) {
+            dbContext.create();
 
-        try(Writer writer = new StringWriter()) {
-            try (DatabaseContext dbContext = new DatabaseContext(database, executor)) {
-                dbContext.create();
+            generator.generateData(database, size);
 
-                generator.generateData(database, size);
+            TableWriterProviderStub tableWriterProvider = new TableWriterProviderStub();
+            exporter.exportData(database, tableWriterProvider);
 
-                exporter.exportData(database, writer);
+            renameDatabaseTables(database);
+            dbContext.create();
+            addRenamedTablesToDatabase(database);
 
-                result = ((StringWriter) writer).getBuffer().toString();
+            TableReaderProviderStub readerProvider = new TableReaderProviderStub(tableWriterProvider.getWriters());
 
-                StringReader reader = new StringReader(result);
-
-                renameDatabaseTables(database);
-                dbContext.create();
-                addRenamedTablesToDatabase(database);
-
-                importer.importData(database, reader);
-                compareImportTables(database);
-            }
+            importer.importData(database, readerProvider);
+            compareImportTables(database);
         }
     }
 
